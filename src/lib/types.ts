@@ -46,6 +46,8 @@ export interface Flavour {
   /** cookies still on the rack at the start of the day */
   stock: number
   art: CookieArt
+  /** optional override — when set the shop renders this instead of the drawn cookie */
+  photo?: string
 }
 
 export interface Box {
