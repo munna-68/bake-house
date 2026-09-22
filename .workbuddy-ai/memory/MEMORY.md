@@ -37,7 +37,7 @@ Source of truth for what to build is that spec plus the 35 screenshots beside it
 
 ## Verification
 
-`npm run build` must pass, then drive the real app in a browser. Three suites, all
+`npm run build` must pass, then drive the real app in a browser. Six suites, all
 plain CDP over WebSocket (no Playwright):
 
 ```bash
@@ -45,11 +45,22 @@ NODE_OPTIONS= node /tmp/qa-bakehouse.mjs                    # happy paths, dev
 QA_MODE=preview NODE_OPTIONS= node /tmp/qa-bakehouse.mjs    # happy paths, prod dist
 NODE_OPTIONS= node /tmp/audit-bakehouse.mjs                 # a11y, focus, kitchen mode, menu save
 NODE_OPTIONS= node /tmp/edge-bakehouse.mjs                  # edge cases, sold-out day, geometry
+NODE_OPTIONS= node /tmp/polish-bakehouse.mjs                # doc structure, print, fonts, photo wiring
+NODE_OPTIONS= node /tmp/loading-bakehouse.mjs               # weight, lazy-loading, CLS (needs dist)
 ```
 
-Expect **48 / 48 / 29 / 27 = 152 checks** with no console errors before calling
-anything done. Use ports 5188-5198; a leaked dev server will collide — check with
-`lsof -nP -iTCP:<port> -sTCP:LISTEN`.
+Expect **48 · 48 · 29 · 27 · 17 · 12 = 181 checks** with no console errors before
+calling anything done. Use ports 5188-5204; a leaked dev server will collide —
+check with `lsof -nP -iTCP:<port> -sTCP:LISTEN`.
+
+## Images
+
+`public/cookies/<flavour-id>.webp`, 720² WebP q84, transparent, ~115KB each. Cut
+out by flood-filling from the frame edge, **not** by keying out white — three
+cookies have white chocolate chips that a white key would hollow out. Sources are
+in `src/imgs/` (29MB, gitignored-free, never bundled). `picture.md` holds the
+generation prompts and the source→flavour mapping. Both the tile and the carousel
+fall back to the drawn SVG cookie if a file is missing.
 
 ## Deployment
 
