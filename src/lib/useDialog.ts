@@ -8,10 +8,10 @@ const FOCUSABLE =
  * traps Tab inside, closes on Escape, and hands focus back to the trigger.
  */
 export function useDialog(open: boolean, onClose: () => void): {
-  ref: RefObject<HTMLDivElement | null>
+  ref: RefObject<HTMLDivElement>
   onKeyDown: (e: React.KeyboardEvent) => void
 } {
-  const ref = useRef<HTMLDivElement | null>(null)
+  const ref = useRef<HTMLDivElement>(null)
   const restore = useRef<HTMLElement | null>(null)
   const closeRef = useRef(onClose)
   closeRef.current = onClose

@@ -296,10 +296,6 @@ export function MobileBoxControls() {
           {money(orderTotal)}
         </span>
       </div>
-
-      <div className="mt-3.5">
-        <MobileCheckoutButton />
-      </div>
     </div>
   )
 }
@@ -314,21 +310,6 @@ function AddBoxPill() {
       className="label-caps rounded-full border border-ink/20 px-3.5 py-2 text-[10px] text-ink-soft transition-colors hover:border-ink/40"
     >
       + Box
-    </button>
-  )
-}
-
-function MobileCheckoutButton() {
-  const { openCheckout, totalCookies } = useShop()
-  const cta = useCta()
-  if (totalCookies === 0) return null
-  return (
-    <button
-      type="button"
-      onClick={() => openCheckout(1)}
-      className="w-full rounded-full bg-brick px-6 py-4 text-[12px] font-bold tracking-[0.09em] text-white uppercase transition-colors hover:bg-brick-dark"
-    >
-      {cta.label}
     </button>
   )
 }

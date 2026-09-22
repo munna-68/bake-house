@@ -207,7 +207,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   const toast = useCallback(
     (message: string, tone: Toast['tone'] = 'default') => {
       const id = ++toastSeq.current
-      setToasts((prev) => [...prev.slice(-2), { id, message, tone }])
+      setToasts((prev) => [...prev.slice(-1), { id, message, tone }])
       const t = window.setTimeout(() => {
         setToasts((prev) => prev.filter((x) => x.id !== id))
       }, TOAST_MS)

@@ -54,16 +54,35 @@ interface Crumb {
 
 function build(art: CookieArt, seedKey: string) {
   const rand = mulberry32(hash(seedKey))
+
+  // Wobbly outline — a real bake is never a perfect circle.
+  const POINTS = 30
+  const pts: Array<[number, number]> = []
+  for (let i = 0; i < POINTS; i++) {
+    const a = (i / POINTS) * Math.PI * 2
+    const r = 49 * (1 + (rand() - 0.5) * 0.075)
+    pts.push([60 + Math.cos(a) * r, 58 + Math.sin(a) * r * 0.97])
+  }
+  const mid = (a: [number, number], b: [number, number]) =>
+    `${((a[0] + b[0]) / 2).toFixed(2)} ${((a[1] + b[1]) / 2).toFixed(2)}`
+  let outline = `M ${mid(pts[POINTS - 1], pts[0])}`
+  for (let i = 0; i < POINTS; i++) {
+    const p = pts[i]
+    const next = pts[(i + 1) % POINTS]
+    outline += ` Q ${p[0].toFixed(2)} ${p[1].toFixed(2)} ${mid(p, next)}`
+  }
+  outline += ' Z'
+
   const chunks: Chunk[] = []
-  const count = 8 + Math.floor(rand() * 4)
+  const count = 12 + Math.floor(rand() * 5)
 
   for (let i = 0; i < count; i++) {
     const angle = rand() * Math.PI * 2
-    const dist = Math.sqrt(rand()) * 33
+    const dist = Math.sqrt(rand()) * 34
     const x = 60 + Math.cos(angle) * dist
     const y = 58 + Math.sin(angle) * dist * 0.94
-    const rx = 5 + rand() * 6
-    const ry = rx * (0.62 + rand() * 0.3)
+    const rx = 4 + rand() * 5
+    const ry = rx * (0.58 + rand() * 0.34)
     const fill = art.chips[Math.floor(rand() * art.chips.length)]
     chunks.push({
       x,
@@ -77,18 +96,18 @@ function build(art: CookieArt, seedKey: string) {
   }
 
   const crumbs: Crumb[] = []
-  for (let i = 0; i < 26; i++) {
+  for (let i = 0; i < 34; i++) {
     const angle = rand() * Math.PI * 2
     const dist = Math.sqrt(rand()) * 44
     crumbs.push({
       x: 60 + Math.cos(angle) * dist,
       y: 58 + Math.sin(angle) * dist * 0.95,
-      r: 0.7 + rand() * 1.5,
-      o: 0.18 + rand() * 0.4,
+      r: 0.6 + rand() * 1.6,
+      o: 0.16 + rand() * 0.4,
     })
   }
 
-  return { chunks, crumbs }
+  return { chunks, crumbs, outline }
 }
 
 interface Props {
@@ -100,31 +119,32 @@ interface Props {
 
 /** A deterministic, drawn-from-scratch cookie. Same seed always renders the same bake. */
 export function CookieArtSvg({ art, seedKey, className, title }: Props) {
-  const { chunks, crumbs } = useMemo(() => build(art, seedKey), [art, seedKey])
+  const { chunks, crumbs, outline } = useMemo(() => build(art, seedKey), [art, seedKey])
   const uid = `ck-${seedKey.replace(/[^a-z0-9]/gi, '')}`
-  const rim = darken(art.edge, 0.12)
+  const rim = darken(art.edge, 0.16)
 
   return (
     <svg viewBox="0 0 120 120" className={className} role="img" aria-label={title ?? 'Cookie'} focusable="false">
       <defs>
-        <radialGradient id={`${uid}-body`} cx="34%" cy="26%" r="82%">
-          <stop offset="0%" stopColor={lighten(art.base, 0.2)} />
-          <stop offset="52%" stopColor={art.base} />
-          <stop offset="100%" stopColor={art.edge} />
+        <radialGradient id={`${uid}-body`} cx="34%" cy="26%" r="84%">
+          <stop offset="0%" stopColor={lighten(art.base, 0.24)} />
+          <stop offset="46%" stopColor={art.base} />
+          <stop offset="88%" stopColor={art.edge} />
+          <stop offset="100%" stopColor={darken(art.edge, 0.14)} />
         </radialGradient>
-        <radialGradient id={`${uid}-shade`} cx="72%" cy="82%" r="66%">
-          <stop offset="0%" stopColor={darken(art.edge, 0.3)} stopOpacity="0.5" />
-          <stop offset="100%" stopColor={darken(art.edge, 0.3)} stopOpacity="0" />
+        <radialGradient id={`${uid}-shade`} cx="74%" cy="84%" r="64%">
+          <stop offset="0%" stopColor={darken(art.edge, 0.34)} stopOpacity="0.45" />
+          <stop offset="100%" stopColor={darken(art.edge, 0.34)} stopOpacity="0" />
         </radialGradient>
         <clipPath id={`${uid}-clip`}>
-          <circle cx="60" cy="58" r="49.2" />
+          <path d={outline} />
         </clipPath>
       </defs>
 
-      <ellipse cx="60" cy="108" rx="36" ry="5.5" fill="rgba(43,29,19,0.16)" />
+      <ellipse cx="60" cy="108" rx="35" ry="5" fill="rgba(43,29,19,0.15)" />
 
-      <circle cx="60" cy="58" r="50" fill={`url(#${uid}-body)`} />
-      <circle cx="60" cy="58" r="50" fill={`url(#${uid}-shade)`} />
+      <path d={outline} fill={`url(#${uid}-body)`} />
+      <path d={outline} fill={`url(#${uid}-shade)`} />
 
       <g clipPath={`url(#${uid}-clip)`}>
         {crumbs.map((c, i) => (
@@ -135,21 +155,28 @@ export function CookieArtSvg({ art, seedKey, className, title }: Props) {
           <g key={`k${i}`} transform={`translate(${c.x} ${c.y}) rotate(${c.rot})`}>
             <ellipse rx={c.rx} ry={c.ry} fill={c.fill} />
             <ellipse
-              cx={-c.rx * 0.22}
-              cy={-c.ry * 0.28}
-              rx={c.rx * 0.42}
-              ry={c.ry * 0.34}
+              cx={-c.rx * 0.2}
+              cy={-c.ry * 0.3}
+              rx={c.rx * 0.4}
+              ry={c.ry * 0.32}
               fill={c.highlight}
-              opacity="0.5"
+              opacity="0.45"
             />
           </g>
         ))}
 
-        <ellipse cx="41" cy="32" rx="21" ry="13" fill="#ffffff" opacity="0.13" transform="rotate(-26 41 32)" />
+        <ellipse cx="40" cy="31" rx="22" ry="13" fill="#ffffff" opacity="0.12" transform="rotate(-26 40 31)" />
       </g>
 
-      <circle cx="60" cy="58" r="49.2" fill="none" stroke={rim} strokeWidth="1.3" opacity="0.55" />
-      <circle cx="60" cy="58" r="45" fill="none" stroke={lighten(art.base, 0.3)} strokeWidth="0.8" opacity="0.35" />
+      <path d={outline} fill="none" stroke={rim} strokeWidth="1.4" opacity="0.5" />
+      <path
+        d={outline}
+        fill="none"
+        stroke={lighten(art.base, 0.34)}
+        strokeWidth="4"
+        opacity="0.18"
+        transform="translate(60 58) scale(0.9) translate(-60 -58)"
+      />
     </svg>
   )
 }

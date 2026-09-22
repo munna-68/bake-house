@@ -12,6 +12,16 @@ const DELIVERY_WINDOWS = [
   { label: '3.00 – 5.00pm', full: true },
 ]
 
+/** Opening time for each window, used in the confirmation headline. */
+const WINDOW_STARTS: Record<string, string> = {
+  '11.00 – 2.00pm': '11.00am',
+  '2.00 – 5.00pm': '2.00pm',
+  '5.00 – 8.00pm': '5.00pm',
+  '10.00 – 12.00': '10.00am',
+  '12.30 – 2.30pm': '12.30pm',
+  '3.00 – 5.00pm': '3.00pm',
+}
+
 const PAY_ORDER: PaymentMethod[] = ['card', 'cashapp', 'venmo', 'bank']
 
 export function CheckoutModal() {
@@ -255,6 +265,8 @@ function SummaryCard({ showRef }: { showRef?: boolean }) {
   const { boxes, flavours, fulfilment, orderTotal, lastOrder } = useShop()
   const source = lastOrder ? lastOrder.boxes : null
   const ref = lastOrder?.ref
+  /** Once the order is placed the builder is cleared, so the receipt reads from the order itself. */
+  const shown = lastOrder?.fulfilment ?? fulfilment
 
   const paymentLabel = lastOrder
     ? lastOrder.payment.method === 'card'
@@ -315,11 +327,11 @@ function SummaryCard({ showRef }: { showRef?: boolean }) {
 
       <div className="mt-4 border-t border-line-soft pt-3.5">
         <p className="text-[13px] text-ink-soft">
-          {fulfilment.mode === 'pickup'
-            ? `Pickup ${dayLabel(fulfilment.day)}, ${fulfilment.window ?? 'window to choose'}`
-            : `Delivery ${dayLabel(fulfilment.day)}, ${fulfilment.window ?? 'window to choose'} · ${fulfilment.address || 'address to confirm'}`}
+          {shown.mode === 'pickup'
+            ? `Pickup ${dayLabel(shown.day)}, ${shown.window ?? 'window to choose'}`
+            : `Delivery ${dayLabel(shown.day)}, ${shown.window ?? 'window to choose'} · ${shown.address || 'address to confirm'}`}
         </p>
-        {fulfilment.mode === 'delivery' ? (
+        {shown.mode === 'delivery' ? (
           <p className="mt-1 flex items-baseline justify-between gap-3 text-[13px] text-ink-soft">
             <span>Delivery fee</span>
             <span>{money(DELIVERY_FEE)}</span>
@@ -330,7 +342,9 @@ function SummaryCard({ showRef }: { showRef?: boolean }) {
 
       <div className="mt-3.5 flex items-baseline justify-between gap-3 border-t border-line-soft pt-3.5">
         <span className="label-caps text-[10px] text-ink-soft">Total</span>
-        <span className="font-display text-[30px] leading-none text-ink">{money(orderTotal)}</span>
+        <span className="font-display text-[30px] leading-none text-ink">
+          {money(lastOrder?.payment.total ?? orderTotal)}
+        </span>
       </div>
     </div>
   )
@@ -757,8 +771,8 @@ function Confirmation() {
 
   const windowStart = useMemo(() => {
     const w = lastOrder?.fulfilment.window ?? ''
-    const first = w.split('–')[0]?.trim()
-    return first || null
+    if (!w) return null
+    return WINDOW_STARTS[w] ?? w.split('–')[0]?.trim() ?? null
   }, [lastOrder])
 
   if (!lastOrder) return null

@@ -109,8 +109,9 @@ function FlavourCarousel() {
   }, [flavour.name, left, soldOut])
 
   const stockLabel = useMemo(() => {
+    if (left === 0) return 'All in your order'
     if (left === 1) return 'Only 1 left'
-    if (left > 0 && left <= 4) return `Only ${left} left`
+    if (left <= 4) return `Only ${left} left`
     return `${left} left today`
   }, [left])
 
@@ -131,7 +132,7 @@ function FlavourCarousel() {
           {String(index + 1).padStart(2, '0')}
         </span>
 
-        <div className="relative flex items-start justify-end gap-3">
+        <div className="relative flex flex-col items-end gap-2.5">
           <div
             className="grid h-[74px] w-[74px] shrink-0 -rotate-12 place-items-center rounded-full bg-gold text-center"
             aria-hidden="true"
@@ -144,29 +145,29 @@ function FlavourCarousel() {
               daily
             </span>
           </div>
-        </div>
 
-        <div className="relative -mt-12 flex items-center gap-3">
-          <span className="label-caps text-[11px] text-cream/60">
-            {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
-          </span>
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => go(-1)}
-              aria-label="Previous flavour"
-              className="grid h-9 w-9 place-items-center rounded-full border border-cream/25 text-cream transition-colors hover:border-cream/60 active:scale-95"
-            >
-              <span aria-hidden="true">←</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => go(1)}
-              aria-label="Next flavour"
-              className="grid h-9 w-9 place-items-center rounded-full border border-cream/25 text-cream transition-colors hover:border-cream/60 active:scale-95"
-            >
-              <span aria-hidden="true">→</span>
-            </button>
+          <div className="flex items-center gap-3">
+            <span className="label-caps text-[11px] text-cream/60">
+              {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+            </span>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => go(-1)}
+                aria-label="Previous flavour"
+                className="grid h-9 w-9 place-items-center rounded-full border border-cream/25 text-cream transition-colors hover:border-cream/60 active:scale-95"
+              >
+                <span aria-hidden="true">←</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => go(1)}
+                aria-label="Next flavour"
+                className="grid h-9 w-9 place-items-center rounded-full border border-cream/25 text-cream transition-colors hover:border-cream/60 active:scale-95"
+              >
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -213,7 +214,7 @@ function FlavourCarousel() {
                   <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
                   <span className="label-caps text-[10px] text-gold">
                     {stockLabel}
-                    {inOrder > 0 ? ` · ${inOrder} in your order` : ''}
+                    {left > 0 && inOrder > 0 ? ` · ${inOrder} in your order` : ''}
                   </span>
                 </span>
                 <button

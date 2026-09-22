@@ -42,7 +42,15 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
   const boxFull = !canAdd(flavour.id) && !soldOut && qty === 0
 
   const stockLine =
-    left === 0 ? 'All in your order' : left === 1 ? 'Only 1 left' : left <= 4 ? `Only ${left} left` : `${left} left today`
+    left === 0
+      ? 'All in your order'
+      : qty > 0
+        ? `${left} left`
+        : left === 1
+          ? 'Only 1 left'
+          : left <= 4
+            ? `Only ${left} left`
+            : `${left} left today`
 
   if (soldOut) {
     return (

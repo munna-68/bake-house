@@ -399,15 +399,15 @@ export const WINDOWS = [
 ]
 
 export const BAKE_SHEET = [
-  { name: 'Salted butter chip', cookies: 34, note: null as string | null },
-  { name: 'Caramel speculoos', cookies: 22, note: null },
-  { name: 'Triple chocolate', cookies: 19, note: null },
-  { name: 'Burnt marshmallow', cookies: 14, note: null },
-  { name: 'Beetroot red velvet', cookies: 12, note: null },
+  { name: 'Salted butter chip', cookies: 26, note: null as string | null },
+  { name: 'Caramel speculoos', cookies: 18, note: null },
+  { name: 'Triple chocolate', cookies: 16, note: null },
+  { name: 'Burnt marshmallow', cookies: 12, note: null },
+  { name: 'Beetroot red velvet', cookies: 10, note: null },
   { name: 'Ceremonial matcha', cookies: 9, note: '1 turned away, bake extra' },
   { name: 'Raspberry dark', cookies: 8, note: null },
-  { name: 'Peanut butter cup', cookies: 7, note: null },
-  { name: 'Oat and cinnamon', cookies: 6, note: null },
+  { name: 'Peanut butter cup', cookies: 6, note: null },
+  { name: 'Oat and cinnamon', cookies: 5, note: null },
 ]
 
 export const INSIGHTS_RANKED = [
