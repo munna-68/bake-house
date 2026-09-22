@@ -22,7 +22,12 @@ export function BatchGrid() {
       </div>
 
       <div className="mt-7 grid gap-5 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)] lg:items-start lg:gap-7">
-        <div className="hidden lg:sticky lg:top-[92px] lg:block">
+        {/* The panel is taller than a laptop viewport, and `sticky` would pin its
+            bottom — including the checkout CTA — permanently below the fold. Cap
+            the height and let the panel's own body scroll, with the total and the
+            CTA pinned to the bottom, so the primary action is reachable at any
+            window size. `flex` + `max-h` makes the child stretch to the cap. */}
+        <div className="hidden lg:sticky lg:top-[92px] lg:flex lg:max-h-[calc(100dvh-112px)]">
           <BoxBuilderPanel />
         </div>
 

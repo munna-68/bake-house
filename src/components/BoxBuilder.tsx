@@ -28,9 +28,10 @@ function SlotGrid({ box }: { box: Box }) {
     for (let i = 0; i < n; i++) filled.push(f.id)
   }
   const cols = box.size === 12 ? 'grid-cols-3' : 'grid-cols-2'
+  const width = box.size === 12 ? 'max-w-[240px]' : 'max-w-[204px]'
 
   return (
-    <ul className={`grid ${cols} gap-2.5`} aria-hidden="true">
+    <ul className={`mx-auto grid w-full ${cols} ${width} gap-2.5`} aria-hidden="true">
       {Array.from({ length: box.size }).map((_, i) => {
         const flavourId = filled[i]
         const flavour = flavourId ? flavours.find((f) => f.id === flavourId) : undefined
@@ -154,88 +155,96 @@ export function BoxBuilderPanel() {
   const others = boxes.filter((b) => b.id !== activeBox.id)
 
   return (
-    <div className="rounded-[26px] bg-cocoa p-5 text-cream">
-      <BoxTabs />
+    <div className="flex w-full min-h-0 flex-col rounded-[26px] bg-cocoa p-5 text-cream">
+      {/* Scrollable: everything the customer edits. */}
+      <div className="min-h-0 flex-1 lg:overflow-y-auto lg:overscroll-contain">
+        <BoxTabs />
 
-      <div className="mt-4 flex items-baseline justify-between gap-3">
-        <h3 className="font-display text-[26px] leading-none text-cream">Box {index + 1}</h3>
-        <span className="label-caps text-[10px] text-cream/55">
-          {boxCount(activeBox)} of {activeBox.size}
-        </span>
-      </div>
-
-      <SizePills />
-
-      <div className="mt-4">
-        <SlotGrid box={activeBox} />
-      </div>
-
-      <div className="mt-5 border-t border-cream/12 pt-4">
-        {others.map((b) => (
-          <div key={b.id} className="mb-3 flex items-baseline justify-between gap-3">
-            <span className="text-[13px] text-cream/60">
-              Box {boxes.indexOf(b) + 1} · {boxCount(b)} {boxCount(b) === 1 ? 'cookie' : 'cookies'}
-            </span>
-            <span className="text-[13px] text-cream/60">{money(BOX_PRICES[b.size])}</span>
-          </div>
-        ))}
-
-        {items.length === 0 ? (
-          <p className="text-[13px] leading-relaxed text-cream/50">
-            Nothing in this box yet. Tap add on a flavour and it drops in.
-          </p>
-        ) : (
-          <ul className="space-y-2">
-            {items.map((f) => (
-              <li key={f.id} className="flex items-baseline justify-between gap-3">
-                <span className="text-[13px] text-cream/85">{f.name}</span>
-                <span className="text-[13px] text-cream/55">× {activeBox.items[f.id]}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-
-        <div className="mt-4 flex items-baseline justify-between gap-3 border-t border-cream/12 pt-3">
-          <span className="text-[13px] text-cream/60">
-            {items.length > 0 ? `Box of ${activeBox.size}` : '\u00a0'}
+        <div className="mt-4 flex items-baseline justify-between gap-3">
+          <h3 className="font-display text-[26px] leading-none text-cream">Box {index + 1}</h3>
+          <span className="label-caps text-[10px] text-cream/55">
+            {boxCount(activeBox)} of {activeBox.size}
           </span>
-          <span className="text-[13px] text-cream/60">{items.length > 0 ? money(BOX_PRICES[activeBox.size]) : ''}</span>
         </div>
 
-        <div className="mt-3 flex items-baseline justify-between gap-3">
+        <SizePills />
+
+        <div className="mt-4">
+          <SlotGrid box={activeBox} />
+        </div>
+
+        <div className="mt-5 border-t border-cream/12 pt-4">
+          {others.map((b) => (
+            <div key={b.id} className="mb-3 flex items-baseline justify-between gap-3">
+              <span className="text-[13px] text-cream/60">
+                Box {boxes.indexOf(b) + 1} · {boxCount(b)} {boxCount(b) === 1 ? 'cookie' : 'cookies'}
+              </span>
+              <span className="text-[13px] text-cream/60">{money(BOX_PRICES[b.size])}</span>
+            </div>
+          ))}
+
+          {items.length === 0 ? (
+            <p className="text-[13px] leading-relaxed text-cream/50">
+              Nothing in this box yet. Tap add on a flavour and it drops in.
+            </p>
+          ) : (
+            <ul className="space-y-2">
+              {items.map((f) => (
+                <li key={f.id} className="flex items-baseline justify-between gap-3">
+                  <span className="text-[13px] text-cream/85">{f.name}</span>
+                  <span className="text-[13px] text-cream/55">× {activeBox.items[f.id]}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="mt-4 flex items-baseline justify-between gap-3">
+            <span className="text-[13px] text-cream/60">
+              {items.length > 0 ? `Box of ${activeBox.size}` : '\u00a0'}
+            </span>
+            <span className="text-[13px] text-cream/60">
+              {items.length > 0 ? money(BOX_PRICES[activeBox.size]) : ''}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Pinned: the total and the primary action, always on screen. */}
+      <div className="shrink-0 border-t border-cream/12 pt-4">
+        <div className="flex items-baseline justify-between gap-3">
           <span className="label-caps text-[11px] text-cream/60">Total</span>
           <span className="font-display text-[34px] leading-none text-cream">{money(orderTotal)}</span>
         </div>
-      </div>
 
-      <div className="mt-5">
-        <CtaButton />
-      </div>
+        <div className="mt-4">
+          <CtaButton />
+        </div>
 
-      <p className="mt-3 text-center text-[10px] tracking-[0.08em] text-cream/40 uppercase">
-        No account needed
-        <br />
-        Change or cancel up to 2 hours before
-      </p>
+        <p className="mt-3 text-center text-[10px] tracking-[0.08em] text-cream/45 uppercase">
+          No account needed
+          <br />
+          Change or cancel up to 2 hours before
+        </p>
 
-      <button
-        type="button"
-        onClick={addBox}
-        disabled={boxes.length >= 4}
-        className="mt-4 min-h-11 w-full rounded-full border border-cream/22 px-6 py-3.5 text-[11px] font-bold tracking-[0.09em] text-cream/80 uppercase transition-colors hover:border-cream/45 disabled:cursor-not-allowed disabled:opacity-40"
-      >
-        + Add another box
-      </button>
-
-      {boxes.length > 1 ? (
         <button
           type="button"
-          onClick={() => removeBox(activeBox.id)}
-          className="mt-2 w-full text-center text-[11px] text-cream/40 underline underline-offset-4 hover:text-cream/70"
+          onClick={addBox}
+          disabled={boxes.length >= 4}
+          className="mt-4 min-h-11 w-full rounded-full border border-cream/22 px-6 py-3.5 text-[11px] font-bold tracking-[0.09em] text-cream/80 uppercase transition-colors hover:border-cream/45 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Remove box {index + 1}
+          + Add another box
         </button>
-      ) : null}
+
+        {boxes.length > 1 ? (
+          <button
+            type="button"
+            onClick={() => removeBox(activeBox.id)}
+            className="mt-2 w-full text-center text-[11px] text-cream/45 underline underline-offset-4 hover:text-cream/70"
+          >
+            Remove box {index + 1}
+          </button>
+        ) : null}
+      </div>
     </div>
   )
 }
