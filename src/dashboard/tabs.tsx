@@ -363,7 +363,7 @@ export function BakeSheetTab() {
         <button
           type="button"
           onClick={() => window.print()}
-          className="rounded-full border border-ink/20 px-5 py-2.5 text-[10px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/50"
+          className="no-print min-h-11 rounded-full border border-ink/20 px-5 py-2.5 text-[10px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/50"
         >
           Print
         </button>
@@ -381,7 +381,9 @@ export function BakeSheetTab() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-[15px] font-semibold text-ink">{row.name}</p>
-              <p className="text-[12px] text-ink-soft">{trays(row.cookies)} trays at 12 a tray</p>
+              <p className="text-[12px] text-ink-soft">
+                {trays(row.cookies)} {trays(row.cookies) === 1 ? 'tray' : 'trays'} at 12 a tray
+              </p>
               {row.note ? <p className="mt-1 text-[12px] font-semibold text-gold">{row.note}</p> : null}
             </div>
             <div className="shrink-0 rounded-[14px] bg-cream-deep px-3.5 py-2 text-center">

@@ -118,6 +118,16 @@ function makeBox(seq: number, size: BoxSize = 6): Box {
   return { id: `box-${seq}`, size, items: {} }
 }
 
+/** Cookies currently sitting in one box. */
+function sumItems(box: Box): number {
+  return Object.values(box.items).reduce((a, c) => a + c, 0)
+}
+
+/** How many of one flavour are spread across every box. */
+function totalInBoxes(boxes: Box[], flavourId: string): number {
+  return boxes.reduce((a, b) => a + (b.items[flavourId] ?? 0), 0)
+}
+
 function freshFulfilment(): Fulfilment {
   return { mode: 'pickup', day: isoDate(new Date()), window: null, zip: '', address: '', note: '' }
 }
@@ -261,13 +271,31 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
   const canAdd = useCallback(
     (flavourId: string) => {
-      const box = stateRef.current.boxes.find((b) => b.id === stateRef.current.activeBoxId)
+      const cur = stateRef.current
+      const box = cur.boxes.find((b) => b.id === cur.activeBoxId)
       if (!box) return false
-      if (boxCount(box) >= box.size) return false
-      return available(flavourId) > 0
+      if (sumItems(box) >= box.size) return false
+      const f = cur.flavours.find((x) => x.id === flavourId)
+      if (!f) return false
+      return Math.max(0, f.stock - totalInBoxes(cur.boxes, flavourId)) > 0
     },
-    [available, boxCount],
+    [],
   )
+
+  /**
+   * Commit a state change and update the ref **synchronously**.
+   *
+   * React batches several `setState` calls made in one task, so a second click in
+   * the same tick would otherwise read the pre-batch state — which let a box of six
+   * accept ten cookies and made the "n of 6" toast repeat. Anything that reads
+   * current state to decide, or that reports it to the user, goes through here.
+   */
+  const commit = useCallback((updater: (s: Persisted) => Persisted): Persisted => {
+    const next = updater(stateRef.current)
+    stateRef.current = next
+    setState(next)
+    return next
+  }, [])
 
   const add = useCallback(
     (flavourId: string) => {
@@ -275,13 +303,13 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       const f = cur.flavours.find((x) => x.id === flavourId)
       const box = cur.boxes.find((b) => b.id === cur.activeBoxId)
       if (!f || !box) return
-      if (boxCount(box) >= box.size) return
-      if (Math.max(0, f.stock - (qtyByFlavour[flavourId] ?? 0)) <= 0) return
+      if (sumItems(box) >= box.size) return
+      if (f.stock - totalInBoxes(cur.boxes, flavourId) <= 0) return
 
-      const nextCount = boxCount(box) + 1
+      const nextCount = sumItems(box) + 1
       const boxIndex = cur.boxes.findIndex((b) => b.id === box.id) + 1
 
-      setState((s) => ({
+      commit((s) => ({
         ...s,
         boxes: s.boxes.map((b) =>
           b.id === box.id ? { ...b, items: { ...b.items, [flavourId]: (b.items[flavourId] ?? 0) + 1 } } : b,
@@ -293,7 +321,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         window.setTimeout(() => toast('Box full. Ready when you are', 'full'), 260)
       }
     },
-    [boxCount, qtyByFlavour, toast],
+    [commit, toast],
   )
 
   const remove = useCallback(
@@ -303,7 +331,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       if (!box) return
       const current = box.items[flavourId] ?? 0
       if (current <= 0) return
-      setState((s) => ({
+      commit((s) => ({
         ...s,
         boxes: s.boxes.map((b) => {
           if (b.id !== box.id) return b
@@ -314,24 +342,27 @@ export function ShopProvider({ children }: { children: ReactNode }) {
         }),
       }))
     },
-    [],
+    [commit],
   )
 
-  const setSize = useCallback((size: BoxSize) => {
-    setState((s) => ({
-      ...s,
-      boxes: s.boxes.map((b) => (b.id === s.activeBoxId ? { ...b, size, items: {} } : b)),
-    }))
-  }, [])
+  const setSize = useCallback(
+    (size: BoxSize) => {
+      commit((s) => ({
+        ...s,
+        boxes: s.boxes.map((b) => (b.id === s.activeBoxId ? { ...b, size, items: {} } : b)),
+      }))
+    },
+    [commit],
+  )
 
   const addBox = useCallback(() => {
     const cur = stateRef.current
     if (cur.boxes.length >= MAX_BOXES) return
     const seq = cur.boxSeq + 1
     const box = makeBox(seq)
-    setState((s) => ({ ...s, boxes: [...s.boxes, box], activeBoxId: box.id, boxSeq: seq }))
+    commit((s) => ({ ...s, boxes: [...s.boxes, box], activeBoxId: box.id, boxSeq: seq }))
     toast(`Box ${cur.boxes.length + 1} started`)
-  }, [toast])
+  }, [commit, toast])
 
   const setActiveBox = useCallback((id: string) => {
     setState((s) => (s.boxes.some((b) => b.id === id) ? { ...s, activeBoxId: id } : s))
@@ -339,13 +370,14 @@ export function ShopProvider({ children }: { children: ReactNode }) {
 
   const removeBox = useCallback(
     (id: string) => {
-      setState((s) => {
-        if (s.boxes.length <= 1) return s
+      const cur = stateRef.current
+      if (cur.boxes.length <= 1) return
+      commit((s) => {
         const boxes = s.boxes.filter((b) => b.id !== id)
         return { ...s, boxes, activeBoxId: s.activeBoxId === id ? boxes[0].id : s.activeBoxId }
       })
     },
-    [],
+    [commit],
   )
 
   const vote = useCallback(
@@ -381,15 +413,29 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     const cur = stateRef.current
     if (cur.ref) return cur.ref
     const ref = makeRef(new Set(cur.issuedRefs))
-    stateRef.current = { ...cur, ref, issuedRefs: [...cur.issuedRefs, ref] }
-    setState((s) => ({ ...s, ref, issuedRefs: s.issuedRefs.includes(ref) ? s.issuedRefs : [...s.issuedRefs, ref] }))
+    commit((s) => ({
+      ...s,
+      ref,
+      issuedRefs: s.issuedRefs.includes(ref) ? s.issuedRefs : [...s.issuedRefs, ref],
+    }))
     return ref
-  }, [])
+  }, [commit])
 
   const placeOrder = useCallback((): PlacedOrder => {
     const cur = stateRef.current
     const ref = cur.ref ?? makeRef(new Set(cur.issuedRefs))
-    const ordered = { ...qtyByFlavour }
+
+    // Derive everything from the committed state rather than render-time memos, so
+    // a fast "add then place order" can never bill or deplete the wrong quantities.
+    const ordered: Record<string, number> = {}
+    for (const b of cur.boxes) {
+      for (const [flavourId, qty] of Object.entries(b.items)) {
+        ordered[flavourId] = (ordered[flavourId] ?? 0) + qty
+      }
+    }
+    const total =
+      cur.boxes.reduce((a, b) => a + BOX_PRICES[b.size], 0) +
+      (cur.fulfilment.mode === 'delivery' ? DELIVERY_FEE : 0)
 
     const order: PlacedOrder = {
       ref,
@@ -402,12 +448,12 @@ export function ShopProvider({ children }: { children: ReactNode }) {
       customer: { ...cur.customer },
       payment: {
         method: cur.paymentMethod,
-        total: orderTotal,
+        total,
         status: cur.paymentMethod === 'card' ? 'paid' : 'pending',
       },
     }
 
-    setState((s) => ({
+    commit((s) => ({
       ...s,
       flavours: s.flavours.map((f) =>
         ordered[f.id] ? { ...f, stock: Math.max(0, f.stock - ordered[f.id]) } : f,
@@ -423,7 +469,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     }))
 
     return order
-  }, [orderTotal, qtyByFlavour])
+  }, [commit])
 
   const resetBuilder = useCallback(() => {
     setState((s) => {

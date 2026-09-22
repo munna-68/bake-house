@@ -26,7 +26,7 @@ export function Wordmark({ className = '' }: { className?: string }) {
 
 export function AnnouncementBar() {
   return (
-    <div className="bg-cocoa text-cream">
+    <div className="no-print bg-cocoa text-cream">
       <div className="container-page flex flex-wrap items-center justify-between gap-x-6 gap-y-1 py-2">
         <p className="label-caps text-[10px] leading-snug text-cream/80 sm:text-[11px]">{DEMO_BANNER}</p>
         <a
@@ -43,7 +43,7 @@ export function AnnouncementBar() {
 export function Ticker() {
   const items = [...TICKER, ...TICKER]
   return (
-    <div className="overflow-hidden border-b border-line bg-cream-deep py-2.5" aria-hidden="true">
+    <div className="no-print overflow-hidden border-b border-line bg-cream-deep py-2.5" aria-hidden="true">
       <div className="ticker-track">
         {items.map((item, i) => (
           <span key={i} className="flex items-center">
@@ -83,7 +83,7 @@ export function Header() {
   }, [navOpen])
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-cream/92 backdrop-blur-md">
+    <header className="no-print sticky top-0 z-40 border-b border-line bg-cream/92 backdrop-blur-md">
       <div className="container-page flex items-center gap-4 py-3 sm:py-3.5">
         <Wordmark />
 

@@ -193,9 +193,12 @@ function FlavourCarousel() {
             )}
           </div>
 
-          <h2 className="mt-4 text-center font-display text-[30px] leading-none text-cream sm:text-[34px]">
+          {/* Not a heading: this is the current slide's label, and it sits before
+              the page h1 in DOM order. As an h2 it made screen readers announce a
+              flavour name before the page title. */}
+          <p className="mt-4 text-center font-display text-[30px] leading-none text-cream sm:text-[34px]">
             {flavour.name}
-          </h2>
+          </p>
           <p className="mx-auto mt-2.5 max-w-[34ch] text-center text-[14px] leading-relaxed text-cream/70">
             {flavour.desc}
           </p>

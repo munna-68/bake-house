@@ -23,6 +23,13 @@ Source of truth for what to build is that spec plus the 35 screenshots beside it
   `min-h-11 sm:min-h-0` / `h-11 w-11 sm:h-8 sm:w-8` so desktop density is kept.
 - **Overlays handle Escape and Tab on `document`**, not via a React `onKeyDown` on
   the panel — element-level handlers die the moment focus lands outside.
+- **Store mutations that read state go through `commit()`** in `src/lib/store.tsx`.
+  It writes `stateRef` synchronously so consecutive clicks in one task see each
+  other; plain `setState` batching let a box of six accept ten cookies. Never
+  derive an order total or quantity from a render-time memo inside a mutation.
+- **The desktop box panel is height-capped and its CTA is pinned.** It uses
+  `lg:max-h-[calc(100dvh-112px)]` + `grid-rows-[minmax(0,1fr)_auto]`. Do not
+  "simplify" this to `flex-col` + `flex-1` — that collapses the panel.
 - **Config knobs are in `src/lib/types.ts`**: `BOX_PRICES`, `DELIVERY_FEE`,
   `DELIVERY_ZIPS`. Change them there, not in components.
 - Prices, windows and day options are hardcoded demo data by design — there is no
@@ -30,17 +37,18 @@ Source of truth for what to build is that spec plus the 35 screenshots beside it
 
 ## Verification
 
-`npm run build` must pass, then drive the real app in a browser. Two suites, both
+`npm run build` must pass, then drive the real app in a browser. Three suites, all
 plain CDP over WebSocket (no Playwright):
 
 ```bash
 NODE_OPTIONS= node /tmp/qa-bakehouse.mjs                    # happy paths, dev
 QA_MODE=preview NODE_OPTIONS= node /tmp/qa-bakehouse.mjs    # happy paths, prod dist
 NODE_OPTIONS= node /tmp/audit-bakehouse.mjs                 # a11y, focus, kitchen mode, menu save
+NODE_OPTIONS= node /tmp/edge-bakehouse.mjs                  # edge cases, sold-out day, geometry
 ```
 
-Expect **48/48, 48/48 and 29/29** with no console errors before calling anything
-done. Use ports 5188/5189/5190/5191 — a leaked dev server will collide; check with
+Expect **48 / 48 / 29 / 27 = 152 checks** with no console errors before calling
+anything done. Use ports 5188-5198; a leaked dev server will collide — check with
 `lsof -nP -iTCP:<port> -sTCP:LISTEN`.
 
 ## Deployment
