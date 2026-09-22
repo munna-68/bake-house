@@ -155,9 +155,9 @@ export function BoxBuilderPanel() {
   const others = boxes.filter((b) => b.id !== activeBox.id)
 
   return (
-    <div className="flex w-full min-h-0 flex-col rounded-[26px] bg-cocoa p-5 text-cream">
+    <div className="grid grid-rows-[minmax(0,1fr)_auto] rounded-[26px] bg-cocoa p-5 text-cream lg:max-h-[calc(100dvh-112px)]">
       {/* Scrollable: everything the customer edits. */}
-      <div className="min-h-0 flex-1 lg:overflow-y-auto lg:overscroll-contain">
+      <div className="overflow-y-auto overscroll-contain">
         <BoxTabs />
 
         <div className="mt-4 flex items-baseline justify-between gap-3">
@@ -210,7 +210,7 @@ export function BoxBuilderPanel() {
       </div>
 
       {/* Pinned: the total and the primary action, always on screen. */}
-      <div className="shrink-0 border-t border-cream/12 pt-4">
+      <div className="border-t border-cream/12 pt-4">
         <div className="flex items-baseline justify-between gap-3">
           <span className="label-caps text-[11px] text-cream/60">Total</span>
           <span className="font-display text-[34px] leading-none text-cream">{money(orderTotal)}</span>
