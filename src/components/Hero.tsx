@@ -62,6 +62,8 @@ export function Hero() {
 function FlavourCarousel() {
   const { flavours, add, canAdd, qtyInOrder, available } = useShop()
   const [index, setIndex] = useState(0)
+  /* A missing photo file falls back to the drawn cookie rather than a broken icon. */
+  const [brokenSrc, setBrokenSrc] = useState<string | null>(null)
   const liveRef = useRef<HTMLDivElement>(null)
   const total = flavours.length
   const flavour = flavours[Math.min(index, total - 1)]
@@ -172,11 +174,13 @@ function FlavourCarousel() {
         </div>
 
         <div key={flavour.id} className="fade-enter mt-2">
-          <div className="mx-auto aspect-square w-[68%] max-w-[280px]">
-            {flavour.photo ? (
+          <div className="mx-auto aspect-square w-[78%] max-w-[340px]">
+            {flavour.photo && brokenSrc !== flavour.photo ? (
               <img
                 src={flavour.photo}
                 alt={flavour.name}
+                decoding="async"
+                onError={() => setBrokenSrc(flavour.photo ?? null)}
                 className={`h-full w-full object-contain drop-shadow-[0_18px_30px_rgba(0,0,0,0.45)] ${
                   soldOut ? 'opacity-60 saturate-[0.35]' : ''
                 }`}

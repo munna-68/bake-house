@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import type { CookieArt } from '../lib/types'
 
 function mulberry32(seed: number) {
@@ -195,6 +195,12 @@ interface TileProps {
 
 /** The cookie sat on a warm tile, the way the product cards and carousel show it. */
 export function CookieTile({ art, seedKey, className = '', inset = 9, title, dim, photo }: TileProps) {
+  /* A renamed or missing file falls back to the drawn cookie instead of leaving a
+     broken-image icon in the grid. Keyed on the URL so editing the Photo URL in
+     the dashboard retries rather than staying stuck on the failed source. */
+  const [brokenSrc, setBrokenSrc] = useState<string | null>(null)
+  const showPhoto = Boolean(photo) && brokenSrc !== photo
+
   return (
     <div
       className={`relative flex items-center justify-center overflow-hidden ${className}`}
@@ -208,8 +214,15 @@ export function CookieTile({ art, seedKey, className = '', inset = 9, title, dim
       {/* The same inset wraps both paths so a real photo and a drawn cookie land
           at the same size in the same tile. */}
       <div className="absolute inset-0" style={{ padding: `${inset}%` }}>
-        {photo ? (
-          <img src={photo} alt={title ?? ''} className="h-full w-full object-contain" loading="lazy" />
+        {showPhoto ? (
+          <img
+            src={photo}
+            alt={title ?? ''}
+            loading="lazy"
+            decoding="async"
+            onError={() => setBrokenSrc(photo ?? null)}
+            className="h-full w-full object-contain"
+          />
         ) : (
           <CookieArtSvg art={art} seedKey={seedKey} title={title} className="h-full w-full" />
         )}
