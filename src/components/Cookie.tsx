@@ -205,13 +205,15 @@ export function CookieTile({ art, seedKey, className = '', inset = 9, title, dim
         )} 100%)`,
       }}
     >
-      {photo ? (
-        <img src={photo} alt={title ?? ''} className="h-full w-full object-cover" loading="lazy" />
-      ) : (
-        <div className="absolute inset-0" style={{ padding: `${inset}%` }}>
+      {/* The same inset wraps both paths so a real photo and a drawn cookie land
+          at the same size in the same tile. */}
+      <div className="absolute inset-0" style={{ padding: `${inset}%` }}>
+        {photo ? (
+          <img src={photo} alt={title ?? ''} className="h-full w-full object-contain" loading="lazy" />
+        ) : (
           <CookieArtSvg art={art} seedKey={seedKey} title={title} className="h-full w-full" />
-        </div>
-      )}
+        )}
+      </div>
       {dim ? <div className="absolute inset-0 bg-cream/55" /> : null}
     </div>
   )

@@ -177,7 +177,7 @@ function FlavourCarousel() {
               <img
                 src={flavour.photo}
                 alt={flavour.name}
-                className={`h-full w-full rounded-full object-cover ${
+                className={`h-full w-full object-contain drop-shadow-[0_18px_30px_rgba(0,0,0,0.45)] ${
                   soldOut ? 'opacity-60 saturate-[0.35]' : ''
                 }`}
               />

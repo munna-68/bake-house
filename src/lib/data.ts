@@ -33,6 +33,7 @@ export const FLAVOURS: Flavour[] = [
     desc: 'The house standard. Dark chocolate chunks, flaked sea salt on top.',
     allergens: ['Wheat', 'Milk', 'Soy'],
     stock: 1,
+    photo: '/cookies/salted-butter-chip.webp',
     art: {
       base: '#d8a968',
       edge: '#bd8946',
@@ -46,6 +47,7 @@ export const FLAVOURS: Flavour[] = [
     desc: 'Cocoa dough, three kinds of chocolate, still gooey in the middle.',
     allergens: ['Wheat', 'Milk', 'Egg'],
     stock: 12,
+    photo: '/cookies/triple-chocolate.webp',
     art: {
       base: '#4a2e1d',
       edge: '#341f11',
@@ -59,6 +61,7 @@ export const FLAVOURS: Flavour[] = [
     desc: 'Spiced biscuit folded through the dough and a spoonful hidden inside.',
     allergens: ['Wheat', 'Milk', 'Soy'],
     stock: 15,
+    photo: '/cookies/caramel-speculoos.webp',
     art: {
       base: '#c98f4e',
       edge: '#a96f32',
@@ -72,6 +75,7 @@ export const FLAVOURS: Flavour[] = [
     desc: 'Cream cheese centre, white chocolate, softer than it looks.',
     allergens: ['Wheat', 'Milk', 'Egg'],
     stock: 11,
+    photo: '/cookies/beetroot-red-velvet.webp',
     art: {
       base: '#8e3b34',
       edge: '#6e2a25',
@@ -85,6 +89,7 @@ export const FLAVOURS: Flavour[] = [
     desc: 'Stone-ground matcha and white chocolate. Grassy, not sweet.',
     allergens: ['Wheat', 'Milk', 'Soy'],
     stock: 0,
+    photo: '/cookies/ceremonial-matcha.webp',
     art: {
       base: '#93a96a',
       edge: '#76894f',
@@ -98,6 +103,7 @@ export const FLAVOURS: Flavour[] = [
     desc: 'Freeze dried raspberry against dark chocolate. Sharp on the finish.',
     allergens: ['Wheat', 'Milk', 'Soy'],
     stock: 7,
+    photo: '/cookies/raspberry-dark.webp',
     art: {
       base: '#4a2a1e',
       edge: '#341a11',
@@ -111,6 +117,7 @@ export const FLAVOURS: Flavour[] = [
     desc: 'A peanut butter cup pressed into the middle, salted on top.',
     allergens: ['Wheat', 'Milk', 'Peanuts'],
     stock: 6,
+    photo: '/cookies/peanut-butter-cup.webp',
     art: {
       base: '#c48a4e',
       edge: '#a36c33',
@@ -124,6 +131,7 @@ export const FLAVOURS: Flavour[] = [
     desc: 'Torched marshmallow and graham crumb, caramelised at the edges.',
     allergens: ['Wheat', 'Milk', 'Egg'],
     stock: 9,
+    photo: '/cookies/burnt-marshmallow.webp',
     art: {
       base: '#c09a6b',
       edge: '#9e7a4c',
@@ -137,6 +145,7 @@ export const FLAVOURS: Flavour[] = [
     desc: 'Chewy oat dough, cinnamon sugar, raisins if you ask nicely.',
     allergens: ['Wheat', 'Oats', 'Milk'],
     stock: 0,
+    photo: '/cookies/oat-and-cinnamon.webp',
     art: {
       base: '#c7a97c',
       edge: '#a98a5c',
