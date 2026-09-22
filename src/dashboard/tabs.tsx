@@ -73,8 +73,8 @@ function ReadyButton({
   onDark?: boolean
 }) {
   const base = onDark
-    ? 'rounded-full bg-cream px-4 py-2.5 text-[10px] font-bold tracking-[0.09em] text-cocoa uppercase transition-colors hover:bg-white'
-    : 'rounded-full border border-ink/20 px-4 py-2 text-[10px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/50'
+    ? 'min-h-11 rounded-full bg-cream px-4 py-2.5 text-[10px] font-bold tracking-[0.09em] text-cocoa uppercase transition-colors hover:bg-white'
+    : 'min-h-11 rounded-full border border-ink/20 px-4 py-2 text-[10px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/50'
 
   if (order.stage === 'collected') {
     return <span className={`label-caps text-[9px] ${onDark ? 'text-cream/50' : 'text-ink-faint'}`}>Collected</span>

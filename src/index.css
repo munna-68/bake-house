@@ -12,8 +12,10 @@
   --color-shell: #ffffff;
 
   --color-ink: #241a12;
-  --color-ink-soft: #7b6a5b;
-  --color-ink-faint: #a3947f;
+  /* Both secondary tones are held above 4.5:1 against the cream shell — the
+     review meta line and the small caps labels are real text, not decoration. */
+  --color-ink-soft: #635647;
+  --color-ink-faint: #75685a;
 
   --color-cocoa: #2b1d13;
   --color-cocoa-soft: #3b2919;

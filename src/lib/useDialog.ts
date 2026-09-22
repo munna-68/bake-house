@@ -6,11 +6,13 @@ const FOCUSABLE =
 /**
  * Dialog plumbing: locks the page behind the overlay, moves focus in on open,
  * traps Tab inside, closes on Escape, and hands focus back to the trigger.
+ *
+ * Both keys are handled on `document` rather than on the overlay element. An
+ * element-level handler only fires while focus is inside the dialog, so a click
+ * on a non-focusable part of the panel — which drops focus to `<body>` — would
+ * silently kill Escape.
  */
-export function useDialog(open: boolean, onClose: () => void): {
-  ref: RefObject<HTMLDivElement>
-  onKeyDown: (e: React.KeyboardEvent) => void
-} {
+export function useDialog(open: boolean, onClose: () => void): { ref: RefObject<HTMLDivElement> } {
   const ref = useRef<HTMLDivElement>(null)
   const restore = useRef<HTMLElement | null>(null)
   const closeRef = useRef(onClose)
@@ -25,38 +27,46 @@ export function useDialog(open: boolean, onClose: () => void): {
     const first = node?.querySelector<HTMLElement>(FOCUSABLE)
     ;(first ?? node)?.focus({ preventScroll: true })
 
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        closeRef.current()
+        return
+      }
+      if (e.key !== 'Tab') return
+
+      const host = ref.current
+      if (!host) return
+      const items = Array.from(host.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
+        (el) => el.offsetParent !== null,
+      )
+      if (items.length === 0) return
+
+      const firstItem = items[0]
+      const lastItem = items[items.length - 1]
+      const active = document.activeElement as HTMLElement | null
+
+      if (!active || !host.contains(active)) {
+        e.preventDefault()
+        firstItem.focus()
+        return
+      }
+      if (!e.shiftKey && active === lastItem) {
+        e.preventDefault()
+        firstItem.focus()
+      } else if (e.shiftKey && active === firstItem) {
+        e.preventDefault()
+        lastItem.focus()
+      }
+    }
+
+    document.addEventListener('keydown', onKey)
     return () => {
+      document.removeEventListener('keydown', onKey)
       delete document.body.dataset.locked
       restore.current?.focus?.({ preventScroll: true })
     }
   }, [open])
 
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      e.stopPropagation()
-      closeRef.current()
-      return
-    }
-    if (e.key !== 'Tab') return
-
-    const node = ref.current
-    if (!node) return
-    const items = Array.from(node.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
-      (el) => el.offsetParent !== null || el === document.activeElement,
-    )
-    if (items.length === 0) return
-    const first = items[0]
-    const last = items[items.length - 1]
-    const active = document.activeElement as HTMLElement | null
-
-    if (!e.shiftKey && active === last) {
-      e.preventDefault()
-      first.focus()
-    } else if (e.shiftKey && active === first) {
-      e.preventDefault()
-      last.focus()
-    }
-  }
-
-  return { ref, onKeyDown }
+  return { ref }
 }

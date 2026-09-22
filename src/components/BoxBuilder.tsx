@@ -77,7 +77,7 @@ function SizePills({ tone = 'dark' }: { tone?: 'dark' | 'light' }) {
             type="button"
             aria-pressed={on}
             onClick={() => setSize(size)}
-            className={`flex items-center justify-center gap-1.5 rounded-full px-3 py-3 transition-colors ${cls}`}
+            className={`flex min-h-11 items-center justify-center gap-1.5 rounded-full px-3 py-3 transition-colors ${cls}`}
           >
             <span className="font-display text-[19px] leading-none">{size}</span>
             <span
@@ -106,7 +106,7 @@ function BoxTabs() {
             type="button"
             aria-pressed={on}
             onClick={() => setActiveBox(b.id)}
-            className={`label-caps rounded-full px-3.5 py-2 text-[10px] transition-colors ${
+            className={`label-caps min-h-11 rounded-full px-3.5 py-2 text-[10px] transition-colors ${
               on ? 'bg-gold text-cocoa' : 'border border-cream/22 text-cream/70 hover:border-cream/45'
             }`}
           >
@@ -118,7 +118,7 @@ function BoxTabs() {
         <button
           type="button"
           onClick={addBox}
-          className="label-caps rounded-full border border-cream/22 px-3.5 py-2 text-[10px] text-cream/70 transition-colors hover:border-cream/45"
+          className="label-caps min-h-11 rounded-full border border-cream/22 px-3.5 py-2 text-[10px] text-cream/70 transition-colors hover:border-cream/45"
         >
           + Box
         </button>
@@ -222,7 +222,7 @@ export function BoxBuilderPanel() {
         type="button"
         onClick={addBox}
         disabled={boxes.length >= 4}
-        className="mt-4 w-full rounded-full border border-cream/22 px-6 py-3.5 text-[11px] font-bold tracking-[0.09em] text-cream/80 uppercase transition-colors hover:border-cream/45 disabled:cursor-not-allowed disabled:opacity-40"
+        className="mt-4 min-h-11 w-full rounded-full border border-cream/22 px-6 py-3.5 text-[11px] font-bold tracking-[0.09em] text-cream/80 uppercase transition-colors hover:border-cream/45 disabled:cursor-not-allowed disabled:opacity-40"
       >
         + Add another box
       </button>
@@ -307,7 +307,7 @@ function AddBoxPill() {
     <button
       type="button"
       onClick={addBox}
-      className="label-caps rounded-full border border-ink/20 px-3.5 py-2 text-[10px] text-ink-soft transition-colors hover:border-ink/40"
+      className="label-caps min-h-11 rounded-full border border-ink/20 px-3.5 py-2 text-[10px] text-ink-soft transition-colors hover:border-ink/40"
     >
       + Box
     </button>

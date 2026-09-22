@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { BASE_BUILD_CHECKLIST, BRAND, EXPLAINER, FAQS, REVIEWS } from '../lib/data'
 import { money } from '../lib/format'
+import { useShop } from '../lib/store'
 
 export function Reviews() {
   return (
@@ -198,6 +199,8 @@ export function Pricing() {
 }
 
 export function Footer() {
+  const { hardReset, toast } = useShop()
+
   return (
     <footer className="border-t border-line bg-cocoa pt-14 pb-28 text-cream md:pb-14">
       <div className="container-page">
@@ -272,9 +275,21 @@ export function Footer() {
           <span className="text-brick">{BRAND.wordmark[1]}</span>
         </p>
 
-        <p className="label-caps mt-8 text-[10px] text-cream/40">
-          © {new Date().getFullYear()} {BRAND.name} · Demo storefront
-        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
+          <p className="label-caps text-[10px] text-cream/45">
+            © {new Date().getFullYear()} {BRAND.name} · Demo storefront
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              hardReset()
+              toast('Demo reset. Stock, boxes and menu are back to the start.')
+            }}
+            className="label-caps min-h-11 rounded-full border border-cream/20 px-4 py-2 text-[10px] text-cream/55 transition-colors hover:border-cream/45 hover:text-cream"
+          >
+            Reset this demo
+          </button>
+        </div>
       </div>
     </footer>
   )

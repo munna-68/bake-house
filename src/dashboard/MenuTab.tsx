@@ -92,7 +92,7 @@ export function MenuTab() {
                       type="button"
                       aria-label={`Remove one ${d.name}`}
                       onClick={() => patch(d.id, { stock: Math.max(0, d.stock - 1) })}
-                      className="grid h-8 w-8 place-items-center rounded-full border border-line text-ink"
+                      className="grid h-11 w-11 place-items-center rounded-full border border-line text-ink"
                     >
                       <span aria-hidden="true">−</span>
                     </button>
@@ -101,14 +101,17 @@ export function MenuTab() {
                       min={0}
                       value={d.stock}
                       aria-label={`${d.name} stock on the rack`}
-                      onChange={(e) => patch(d.id, { stock: Number(e.target.value) })}
+                      onChange={(e) => {
+                        const n = Number(e.target.value)
+                        patch(d.id, { stock: Number.isFinite(n) ? Math.max(0, Math.round(n)) : 0 })
+                      }}
                       className="w-[62px] rounded-[12px] border border-line bg-cream px-2 py-1.5 text-center text-[15px] font-bold text-ink focus:border-ink/40 focus:outline-none"
                     />
                     <button
                       type="button"
                       aria-label={`Add one ${d.name}`}
                       onClick={() => patch(d.id, { stock: d.stock + 1 })}
-                      className="grid h-8 w-8 place-items-center rounded-full border border-line text-ink"
+                      className="grid h-11 w-11 place-items-center rounded-full border border-line text-ink"
                     >
                       <span aria-hidden="true">+</span>
                     </button>

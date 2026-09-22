@@ -26,7 +26,7 @@ const PAY_ORDER: PaymentMethod[] = ['card', 'cashapp', 'venmo', 'bank']
 
 export function CheckoutModal() {
   const { checkoutOpen, checkoutStep, closeCheckout, setCheckoutStep, ensureRef } = useShop()
-  const { ref, onKeyDown } = useDialog(checkoutOpen, closeCheckout)
+  const { ref } = useDialog(checkoutOpen, closeCheckout)
   const [dir, setDir] = useState<'forward' | 'back'>('forward')
   const prev = useRef<CheckoutStep>(checkoutStep)
 
@@ -60,7 +60,6 @@ export function CheckoutModal() {
         role="dialog"
         aria-modal="true"
         aria-label="Checkout"
-        onKeyDown={onKeyDown}
         className="modal-enter relative flex h-[calc(100dvh-24px)] w-full flex-col overflow-hidden rounded-t-[30px] bg-cream shadow-lift md:h-auto md:max-h-[88dvh] md:w-[440px] md:rounded-[30px]"
       >
         <div className="flex shrink-0 items-start justify-between gap-4 px-5 pt-4 pb-3 md:px-6 md:pt-6">
@@ -71,7 +70,7 @@ export function CheckoutModal() {
             type="button"
             onClick={closeCheckout}
             aria-label="Close"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-shell text-[18px] text-ink"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line bg-shell text-[18px] text-ink"
           >
             <span aria-hidden="true">×</span>
           </button>
@@ -220,7 +219,7 @@ function GhostButton({ children, onClick }: { children: React.ReactNode; onClick
     <button
       type="button"
       onClick={onClick}
-      className="w-full rounded-full border border-ink/20 px-6 py-3.5 text-[11px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/45"
+      className="min-h-11 w-full rounded-full border border-ink/20 px-6 py-3.5 text-[11px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/45"
     >
       {children}
     </button>
@@ -253,7 +252,7 @@ function CopyRow({ label, value }: { label: string; value: string }) {
           timer.current = window.setTimeout(() => setCopied(false), 1500)
         }}
         aria-label={`Copy ${label}`}
-        className="shrink-0 rounded-full border border-ink/20 px-4 py-2 text-[10px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/50"
+        className="min-h-11 shrink-0 rounded-full border border-ink/20 px-4 py-2 text-[10px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/50 sm:min-h-0"
       >
         {copied ? 'Copied' : 'Copy'}
       </button>
@@ -429,7 +428,7 @@ function StepOne({ onNext }: { onNext: () => void }) {
             type="button"
             aria-pressed={fulfilment.day === d.iso}
             onClick={() => patchFulfilment({ day: d.iso, window: null })}
-            className={`rounded-[16px] border px-1 py-2.5 transition-colors ${
+            className={`min-h-11 rounded-[16px] border px-1 py-2.5 transition-colors ${
               fulfilment.day === d.iso
                 ? 'border-ink bg-ink text-cream'
                 : 'border-line bg-shell text-ink hover:border-ink/35'
@@ -461,7 +460,7 @@ function StepOne({ onNext }: { onNext: () => void }) {
                 patchFulfilment({ window: w.label })
                 setError(null)
               }}
-              className={`rounded-full border px-3 py-3 text-[12px] font-semibold transition-colors ${
+              className={`min-h-11 rounded-full border px-3 py-3 text-[12px] font-semibold transition-colors ${
                 w.full
                   ? 'cursor-not-allowed border-line bg-cream-deep text-ink-faint line-through'
                   : pressed
@@ -510,7 +509,7 @@ function ModeCard({
       type="button"
       aria-pressed={pressed}
       onClick={onClick}
-      className={`rounded-[18px] border px-4 py-3.5 text-left transition-colors ${
+      className={`min-h-11 rounded-[18px] border px-4 py-3.5 text-left transition-colors ${
         pressed ? 'border-ink bg-ink text-cream' : 'border-line bg-shell text-ink hover:border-ink/35'
       }`}
     >
@@ -630,7 +629,7 @@ function StepThree({ onBack, onDone }: { onBack: () => void; onDone: () => void 
               type="button"
               aria-pressed={on}
               onClick={() => setPaymentMethod(m)}
-              className={`rounded-[16px] border px-3 py-3 text-left transition-colors ${
+              className={`min-h-11 rounded-[16px] border px-3 py-3 text-left transition-colors ${
                 on ? 'border-ink bg-ink text-cream' : 'border-line bg-shell text-ink hover:border-ink/35'
               }`}
             >

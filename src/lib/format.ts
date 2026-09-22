@@ -2,10 +2,6 @@ export function money(n: number): string {
   return `$${n.toLocaleString('en-US', { maximumFractionDigits: 2 })}`
 }
 
-export function money2(n: number): string {
-  return `$${n.toFixed(2)}`
-}
-
 export function isoDate(d: Date): string {
   const y = d.getFullYear()
   const m = String(d.getMonth() + 1).padStart(2, '0')

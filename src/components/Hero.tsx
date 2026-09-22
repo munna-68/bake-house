@@ -24,16 +24,16 @@ export function Hero() {
             twelve, then collect it warm from the counter or take an evening delivery slot.
           </p>
 
-          <div className="mt-7 flex flex-wrap items-center gap-3">
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
             <a
               href="#build"
-              className="rounded-full bg-brick px-7 py-4 text-[12px] font-bold tracking-[0.09em] text-white uppercase transition-colors hover:bg-brick-dark"
+              className="min-h-11 rounded-full bg-brick px-7 py-4 text-center text-[12px] font-bold tracking-[0.09em] text-white uppercase transition-colors hover:bg-brick-dark sm:w-auto"
             >
               Build your box
             </a>
             <a
               href="#pickup"
-              className="rounded-full border border-ink/25 px-7 py-4 text-[12px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink hover:bg-shell"
+              className="min-h-11 rounded-full border border-ink/25 px-7 py-4 text-center text-[12px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink hover:bg-shell sm:w-auto"
             >
               How pickup works
             </a>
@@ -155,7 +155,7 @@ function FlavourCarousel() {
                 type="button"
                 onClick={() => go(-1)}
                 aria-label="Previous flavour"
-                className="grid h-9 w-9 place-items-center rounded-full border border-cream/25 text-cream transition-colors hover:border-cream/60 active:scale-95"
+                className="grid h-11 w-11 place-items-center rounded-full border border-cream/25 text-cream transition-colors hover:border-cream/60 active:scale-95 sm:h-9 sm:w-9"
               >
                 <span aria-hidden="true">←</span>
               </button>
@@ -163,7 +163,7 @@ function FlavourCarousel() {
                 type="button"
                 onClick={() => go(1)}
                 aria-label="Next flavour"
-                className="grid h-9 w-9 place-items-center rounded-full border border-cream/25 text-cream transition-colors hover:border-cream/60 active:scale-95"
+                className="grid h-11 w-11 place-items-center rounded-full border border-cream/25 text-cream transition-colors hover:border-cream/60 active:scale-95 sm:h-9 sm:w-9"
               >
                 <span aria-hidden="true">→</span>
               </button>
@@ -221,7 +221,7 @@ function FlavourCarousel() {
                   type="button"
                   onClick={onAdd}
                   disabled={!addable}
-                  className="rounded-full bg-cream px-4 py-2 text-[11px] font-bold tracking-[0.09em] text-cocoa uppercase transition-transform active:scale-95 disabled:cursor-not-allowed disabled:bg-cream/35 disabled:text-cocoa/50"
+                  className="min-h-11 rounded-full bg-cream px-4 py-2 text-[11px] font-bold tracking-[0.09em] text-cocoa uppercase transition-transform active:scale-95 disabled:cursor-not-allowed disabled:bg-cream/35 disabled:text-cocoa/50 sm:min-h-0"
                 >
                   Add to box
                 </button>
@@ -242,7 +242,7 @@ function FlavourCarousel() {
                 aria-pressed={i === index}
                 aria-label={`Show ${f.name}`}
                 title={f.name}
-                className={`h-9 w-9 shrink-0 overflow-hidden rounded-full transition-all ${
+                className={`h-11 w-11 shrink-0 overflow-hidden rounded-full transition-all sm:h-9 sm:w-9 ${
                   i === index
                     ? 'ring-2 ring-gold ring-offset-2 ring-offset-cocoa'
                     : 'opacity-70 hover:opacity-100'

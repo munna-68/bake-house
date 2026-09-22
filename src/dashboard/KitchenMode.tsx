@@ -12,7 +12,7 @@ interface Props {
 
 /** Bench view: big type, one window at a time, for the tablet on the pass. */
 export function KitchenMode({ open, orders, onClose, onReady }: Props) {
-  const { ref, onKeyDown } = useDialog(open, onClose)
+  const { ref } = useDialog(open, onClose)
   if (!open) return null
 
   const open_ = orders.filter((o) => o.stage !== 'collected')
@@ -29,14 +29,14 @@ export function KitchenMode({ open, orders, onClose, onReady }: Props) {
         <button
           type="button"
           onClick={onClose}
-          className="rounded-full bg-cocoa px-6 py-3 text-[11px] font-bold tracking-[0.09em] text-cream uppercase"
+          className="min-h-11 rounded-full bg-cocoa px-6 py-3 text-[11px] font-bold tracking-[0.09em] text-cream uppercase"
         >
           Close
         </button>
       </div>
 
       <div className="mx-auto max-w-[900px] px-5 py-8">
-        <div onKeyDown={onKeyDown}>
+        <div>
           {WINDOWS.map((w) => {
             const rows = orders.filter((o) => o.window === w.key)
             if (rows.length === 0) return null

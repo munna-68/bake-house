@@ -1,10 +1,12 @@
-import { FLAVOURS } from '../lib/data'
 import { useShop } from '../lib/store'
 import type { Flavour } from '../lib/types'
 import { BoxBuilderPanel, MobileBoxControls } from './BoxBuilder'
 import { CookieTile } from './Cookie'
 
 export function BatchGrid() {
+  /* Read from the store, not the seed module — the dashboard menu editor writes here. */
+  const { flavours } = useShop()
+
   return (
     <section id="build" className="container-page scroll-mt-24 pb-4">
       <header className="max-w-[52ch]">
@@ -25,7 +27,7 @@ export function BatchGrid() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-          {FLAVOURS.map((f, i) => (
+          {flavours.map((f, i) => (
             <ProductCard key={f.id} flavour={f} index={i + 1} />
           ))}
         </div>
@@ -134,7 +136,7 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
               type="button"
               onClick={() => remove(flavour.id)}
               aria-label={`Remove one ${flavour.name}`}
-              className="grid h-8 w-8 place-items-center rounded-full text-ink transition-colors hover:bg-cream-deep"
+              className="grid h-11 w-11 place-items-center rounded-full text-ink transition-colors hover:bg-cream-deep sm:h-8 sm:w-8"
             >
               <span aria-hidden="true">−</span>
             </button>
@@ -146,7 +148,7 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
               onClick={() => add(flavour.id)}
               disabled={!canAdd(flavour.id)}
               aria-label={`Add another ${flavour.name}`}
-              className="grid h-8 w-8 place-items-center rounded-full text-ink transition-colors hover:bg-cream-deep disabled:cursor-not-allowed disabled:text-ink-faint"
+              className="grid h-11 w-11 place-items-center rounded-full text-ink transition-colors hover:bg-cream-deep disabled:cursor-not-allowed disabled:text-ink-faint sm:h-8 sm:w-8"
             >
               <span aria-hidden="true">+</span>
             </button>
@@ -157,7 +159,7 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
             onClick={() => add(flavour.id)}
             disabled={boxFull}
             aria-label={`Add ${flavour.name} to your box`}
-            className="shrink-0 rounded-full border border-ink/25 px-5 py-2 text-[11px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink hover:bg-cream-deep disabled:cursor-not-allowed disabled:border-line disabled:text-ink-faint"
+            className="min-h-11 shrink-0 rounded-full border border-ink/25 px-5 py-2 text-[11px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink hover:bg-cream-deep disabled:cursor-not-allowed disabled:border-line disabled:text-ink-faint sm:min-h-0"
           >
             Add
           </button>

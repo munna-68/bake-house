@@ -229,7 +229,7 @@ export function MobileOrderBar() {
         <button
           type="button"
           onClick={openReview}
-          className="shrink-0 rounded-full bg-brick px-6 py-3.5 text-[12px] font-bold tracking-[0.09em] text-white uppercase transition-colors hover:bg-brick-dark"
+          className="min-h-11 shrink-0 rounded-full bg-brick px-6 py-3.5 text-[12px] font-bold tracking-[0.09em] text-white uppercase transition-colors hover:bg-brick-dark"
         >
           Review order
         </button>

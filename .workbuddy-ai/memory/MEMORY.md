@@ -15,6 +15,14 @@ Source of truth for what to build is that spec plus the 35 screenshots beside it
   new words.
 - **Cookies are generated SVG** (`src/components/Cookie.tsx`), seeded per flavour.
   Don't add stock photography; set `Flavour.photo` if a real image is ever wanted.
+- **Always read flavours from `useShop().flavours`, never from `FLAVOURS` in
+  `lib/data.ts`.** The seed module is only for `initialState()` and `hardReset()`.
+  Importing it into a component silently breaks the dashboard menu editor.
+- **Accessibility floors, non-negotiable:** text ≥4.5:1 on cream (both `ink-soft`
+  and `ink-faint` are tuned for this), and touch targets ≥44px on mobile — use
+  `min-h-11 sm:min-h-0` / `h-11 w-11 sm:h-8 sm:w-8` so desktop density is kept.
+- **Overlays handle Escape and Tab on `document`**, not via a React `onKeyDown` on
+  the panel — element-level handlers die the moment focus lands outside.
 - **Config knobs are in `src/lib/types.ts`**: `BOX_PRICES`, `DELIVERY_FEE`,
   `DELIVERY_ZIPS`. Change them there, not in components.
 - Prices, windows and day options are hardcoded demo data by design — there is no
@@ -22,15 +30,18 @@ Source of truth for what to build is that spec plus the 35 screenshots beside it
 
 ## Verification
 
-`npm run build` must pass, then drive the real app in a browser — the checks live in
-`/tmp/qa-bakehouse.mjs` (CDP over WebSocket, no Playwright). Run it in both modes:
+`npm run build` must pass, then drive the real app in a browser. Two suites, both
+plain CDP over WebSocket (no Playwright):
 
 ```bash
-NODE_OPTIONS= node /tmp/qa-bakehouse.mjs                  # dev  (StrictMode on)
-QA_MODE=preview NODE_OPTIONS= node /tmp/qa-bakehouse.mjs  # production dist
+NODE_OPTIONS= node /tmp/qa-bakehouse.mjs                    # happy paths, dev
+QA_MODE=preview NODE_OPTIONS= node /tmp/qa-bakehouse.mjs    # happy paths, prod dist
+NODE_OPTIONS= node /tmp/audit-bakehouse.mjs                 # a11y, focus, kitchen mode, menu save
 ```
 
-Both must be 48/48 with no console errors before calling anything done.
+Expect **48/48, 48/48 and 29/29** with no console errors before calling anything
+done. Use ports 5188/5189/5190/5191 — a leaked dev server will collide; check with
+`lsof -nP -iTCP:<port> -sTCP:LISTEN`.
 
 ## Deployment
 

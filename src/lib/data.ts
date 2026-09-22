@@ -442,13 +442,11 @@ export const INSIGHTS_PAY = [
 ]
 
 export const CUSTOMERS = [
-  { initials: 'SM', name: 'Sarah Mendez', orders: '1 order', window: 'Pickup 2-5', value: 76 },
-  { initials: 'EC', name: 'Emily Carter', orders: '1 order', window: 'Pickup 11-2', value: 30 },
-  { initials: 'MO', name: 'Marcus Obi', orders: '1 order', window: 'Pickup 11-2', value: 54 },
-  { initials: 'JM', name: 'Jessica Moore', orders: '1 order', window: 'Pickup 2-5', value: 30 },
-  { initials: 'TW', name: 'Tom Whelan', orders: '1 order', window: 'Pickup 2-5', value: 22 },
-  { initials: 'PS', name: 'Priya Shah', orders: '1 order', window: 'Pickup 5-8', value: 54 },
-  { initials: 'DR', name: 'Dan Reyes', orders: '1 order', window: 'Pickup 5-8', value: 30 },
+  { name: 'Sarah Mendez', orders: '1 order', window: 'Pickup 2-5', value: 76 },
+  { name: 'Emily Carter', orders: '1 order', window: 'Pickup 11-2', value: 30 },
+  { name: 'Marcus Obi', orders: '1 order', window: 'Pickup 11-2', value: 54 },
+  { name: 'Jessica Moore', orders: '1 order', window: 'Pickup 2-5', value: 30 },
+  { name: 'Tom Whelan', orders: '1 order', window: 'Pickup 2-5', value: 22 },
+  { name: 'Priya Shah', orders: '1 order', window: 'Pickup 5-8', value: 54 },
+  { name: 'Dan Reyes', orders: '1 order', window: 'Pickup 5-8', value: 30 },
 ]
-
-export const DAYS_AHEAD = 4

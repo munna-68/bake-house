@@ -6,7 +6,7 @@ import { useDialog } from '../lib/useDialog'
 export function ReviewSheet() {
   const { reviewOpen, closeReview, boxes, boxCount, orderTotal, flavours, addBox, openCheckout, totalCookies } =
     useShop()
-  const { ref, onKeyDown } = useDialog(reviewOpen, closeReview)
+  const { ref } = useDialog(reviewOpen, closeReview)
 
   if (!reviewOpen) return null
 
@@ -24,7 +24,6 @@ export function ReviewSheet() {
         role="dialog"
         aria-modal="true"
         aria-label="Your order"
-        onKeyDown={onKeyDown}
         className="sheet-enter relative max-h-[88dvh] w-full overflow-y-auto rounded-t-[30px] bg-cream px-5 pt-4 pb-[max(20px,env(safe-area-inset-bottom))] shadow-lift md:max-w-[420px] md:rounded-[30px] md:pb-6"
       >
         <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-ink/15 md:hidden" aria-hidden="true" />
@@ -35,7 +34,7 @@ export function ReviewSheet() {
             type="button"
             onClick={closeReview}
             aria-label="Close"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-shell text-[18px] text-ink"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line bg-shell text-[18px] text-ink"
           >
             <span aria-hidden="true">×</span>
           </button>
