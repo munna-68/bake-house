@@ -74,22 +74,20 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
       } ${soldOut ? 'bg-shell/70' : ''}`}
     >
       {/* Top row: Index number */}
-      <div className="flex items-center justify-between">
-        <span className="label-caps text-[11px] text-ink-soft/60">
-          {String(index).padStart(2, '0')}
-        </span>
-      </div>
+      <span className="label-caps absolute top-3 left-4 text-[10.5px] text-ink-soft/60 sm:left-5">
+        {String(index).padStart(2, '0')}
+      </span>
 
-      {/* Centered Cookie Image with smooth spin animation on hover */}
-      <div className="my-2 flex items-center justify-center">
-        <div className="aspect-square w-[68%] max-w-[160px] sm:max-w-[175px]">
+      <div className="flex flex-1 items-start gap-3.5 pt-4 sm:flex-col sm:items-center sm:gap-2 sm:pt-4">
+        {/* Cookie Image: compact on mobile, large centered on desktop */}
+        <div className="h-[84px] w-[84px] shrink-0 sm:my-2 sm:h-auto sm:w-[68%] sm:max-w-[165px] sm:aspect-square flex items-center justify-center">
           {showPhoto ? (
             <img
               src={flavour.photo}
               alt={flavour.name}
               decoding="async"
               onError={() => setBrokenSrc(flavour.photo ?? null)}
-              className={`cookie-spin h-full w-full object-contain drop-shadow-[0_12px_20px_rgba(43,29,19,0.18)] ${
+              className={`cookie-spin h-full w-full object-contain drop-shadow-[0_8px_16px_rgba(43,29,19,0.16)] ${
                 soldOut ? 'opacity-55 saturate-[0.35]' : ''
               }`}
             />
@@ -98,33 +96,33 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
               art={flavour.art}
               seedKey={flavour.id}
               title={flavour.name}
-              className={`cookie-spin h-full w-full drop-shadow-[0_12px_20px_rgba(43,29,19,0.18)] ${
+              className={`cookie-spin h-full w-full drop-shadow-[0_8px_16px_rgba(43,29,19,0.16)] ${
                 soldOut ? 'opacity-55 saturate-[0.35]' : ''
               }`}
             />
           )}
         </div>
-      </div>
 
-      {/* Details: Name, description, allergen chips */}
-      <div className="min-w-0 flex-1">
-        <h3 className="font-display text-[21px] sm:text-[23px] font-bold leading-tight text-ink">
-          {flavour.name}
-        </h3>
-        <p className="mt-1 text-[13px] leading-snug text-ink-soft">
-          {flavour.desc}
-        </p>
+        {/* Details: Name, description, allergen chips */}
+        <div className="min-w-0 flex-1 sm:w-full">
+          <h3 className="font-display text-[20px] sm:text-[22px] font-bold leading-tight text-ink">
+            {flavour.name}
+          </h3>
+          <p className="mt-1 text-[13px] leading-snug text-ink-soft">
+            {flavour.desc}
+          </p>
 
-        <ul className="mt-2.5 flex flex-wrap gap-1" aria-label="Allergens">
-          {flavour.allergens.map((a) => (
-            <li
-              key={a}
-              className="label-caps rounded-full border border-line bg-shell/80 px-2 py-0.5 text-[8.5px] font-semibold tracking-wider text-ink-soft/90"
-            >
-              {a}
-            </li>
-          ))}
-        </ul>
+          <ul className="mt-2.5 flex flex-wrap gap-1" aria-label="Allergens">
+            {flavour.allergens.map((a) => (
+              <li
+                key={a}
+                className="label-caps rounded-full border border-line bg-shell/80 px-2 py-0.5 text-[8.5px] font-semibold tracking-wider text-ink-soft/90"
+              >
+                {a}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       {/* Bottom row: Stock indicator and Add button / Stepper */}
@@ -152,7 +150,7 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
             aria-label={`${flavour.name}, sold out today. Tap to tell us you wanted it.`}
             className="min-h-11 shrink-0 rounded-full border border-line bg-cream/50 px-4 py-2.5 text-[10px] font-bold tracking-[0.08em] text-ink-soft uppercase transition-colors hover:border-ink/40 active:scale-95"
           >
-            Add
+            Tell us
           </button>
         ) : qty > 0 ? (
           <div className="flex shrink-0 items-center gap-1 rounded-full border border-line bg-shell px-1.5 py-1">

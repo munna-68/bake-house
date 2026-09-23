@@ -104,15 +104,18 @@ export function Header() {
           <button
             type="button"
             onClick={() => openCheckout(1)}
-            className="flex min-h-11 items-center gap-2 rounded-full bg-brick px-5 py-2.5 text-white shadow-sm transition-all hover:bg-brick-dark active:scale-95 sm:min-h-0 sm:px-6"
+            aria-label={`Your order: ${totalCookies} ${totalCookies === 1 ? 'cookie' : 'cookies'}`}
+            className="flex min-h-11 items-center gap-2 rounded-full bg-cocoa px-4 py-2 text-cream shadow-sm transition-all hover:bg-cocoa-soft active:scale-95 sm:min-h-0 sm:px-5 sm:py-2.5"
           >
+            <span className="label-caps text-[11px] text-cream">Your order</span>
             <span
               key={bump}
-              className={`label-caps text-[11px] text-white ${totalCookies > 0 ? 'count-pop' : ''}`}
+              className={`grid h-[22px] min-w-[22px] place-items-center rounded-full px-1.5 text-[10.5px] font-bold ${
+                totalCookies > 0 ? 'count-pop bg-brick text-white' : 'bg-cream/15 text-cream/70'
+              }`}
             >
-              {totalCookies > 0 ? `Order · ${totalCookies}` : 'Order'}
+              {totalCookies}
             </span>
-            <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
 
           <button
