@@ -12,6 +12,7 @@ import { FLAVOURS } from './data'
 import { dayOptions, isoDate, makeRef } from './format'
 import {
   BOX_PRICES,
+  BOX_SIZES,
   DELIVERY_FEE,
   type Box,
   type BoxSize,
@@ -72,6 +73,7 @@ interface ShopValue {
   reviewOpen: boolean
   add: (flavourId: string) => void
   remove: (flavourId: string) => void
+  clearBox: () => void
   setSize: (size: BoxSize) => void
   addBox: () => void
   setActiveBox: (id: string) => void
@@ -142,6 +144,78 @@ const NEW_FLAVOUR_ART: CookieArt[] = [
   { base: '#a35348', edge: '#7f3a31', chips: ['#f6ece2', '#5c2620'], crumb: '#7a3830' },
 ]
 
+/**
+ * Reconcile a saved flavour list against the current seed, by `id`.
+ *
+ * A persisted flavour is only ever as complete as the seed was on the day it was
+ * first written, and `load()` used to take that array wholesale. So any field
+ * added to `FLAVOURS` afterwards was permanently absent for anyone who had
+ * already visited — when the photos landed, every returning visitor got the
+ * drawn SVG cookies back and no amount of reloading fixed it. Only a dashboard
+ * reset did.
+ *
+ * The saved copy wins for every key it actually has; the seed fills the rest.
+ * Note the distinction that makes this safe: a photo cleared in the dashboard
+ * saves as `''`, which is a key that exists, so an intentional blank survives.
+ * Only a genuinely missing key is treated as "never set".
+ */
+function mergeSeedFlavours(saved: Flavour[]): Flavour[] {
+  return saved.map((f) => {
+    const seed = FLAVOURS.find((s) => s.id === f.id)
+    if (!seed) return f
+    return { ...seed, ...f }
+  })
+}
+
+/**
+ * Cheap shape check for a saved flavour, so a corrupt payload still falls back to
+ * the seed instead of rendering `undefined` all over the shop.
+ *
+ * This replaced a `length !== FLAVOURS.length` guard. That guard threw away the
+ * whole saved state — order and all — the moment the menu editor added or removed
+ * a flavour, so any dashboard edit was silently lost on reload. Merging by `id`
+ * already handles a list that is longer or shorter than the seed, so only the
+ * shape genuinely needs checking.
+ */
+function isFlavourLike(value: unknown): value is Flavour {
+  if (typeof value !== 'object' || value === null) return false
+  const f = value as Partial<Flavour>
+  return typeof f.id === 'string' && typeof f.name === 'string' && typeof f.stock === 'number'
+}
+
+/**
+ * Drop anything a box is not allowed to hold.
+ *
+ * Two ways a saved box goes wrong. A `size` that is no longer one of `BOX_SIZES`
+ * indexes `BOX_PRICES` with a missing key, and `money(undefined)` throws — which
+ * white-screens the whole shop, since there is no error boundary. And an item
+ * pointing at a flavour that is gone still counts towards `boxCount` and the box
+ * price, but the slot grid has nothing to draw for it, so the box reads "1 of 6"
+ * with nothing in it. Coerce the size, drop the orphans.
+ */
+function sanitiseItems(items: unknown, known: Set<string>): Record<string, number> {
+  if (typeof items !== 'object' || items === null) return {}
+  const out: Record<string, number> = {}
+  for (const [flavourId, qty] of Object.entries(items as Record<string, unknown>)) {
+    if (!known.has(flavourId)) continue
+    if (typeof qty !== 'number' || !Number.isFinite(qty) || qty <= 0) continue
+    out[flavourId] = Math.floor(qty)
+  }
+  return out
+}
+
+function sanitiseBoxes(saved: unknown, fallback: Box[], known: Set<string>): Box[] {
+  if (!Array.isArray(saved) || saved.length === 0) return fallback
+  const boxes = saved
+    .filter((b): b is Box => typeof b === 'object' && b !== null && typeof (b as Box).id === 'string')
+    .map((b) => ({
+      ...b,
+      size: BOX_SIZES.includes(b.size) ? b.size : fallback[0].size,
+      items: sanitiseItems(b.items, known),
+    }))
+  return boxes.length > 0 ? boxes : fallback
+}
+
 function initialState(): Persisted {
   return {
     flavours: cloneFlavours(),
@@ -165,12 +239,14 @@ function load(): Persisted {
     if (!raw) return initialState()
     const parsed = JSON.parse(raw) as Partial<Persisted>
     const base = initialState()
-    if (!Array.isArray(parsed.flavours) || parsed.flavours.length !== FLAVOURS.length) return base
-    const boxes = Array.isArray(parsed.boxes) && parsed.boxes.length ? parsed.boxes : base.boxes
+    if (!Array.isArray(parsed.flavours) || !parsed.flavours.every(isFlavourLike)) return base
+    const flavours = mergeSeedFlavours(parsed.flavours as Flavour[])
+    const known = new Set(flavours.map((f) => f.id))
+    const boxes = sanitiseBoxes(parsed.boxes, base.boxes, known)
     return {
       ...base,
       ...parsed,
-      flavours: parsed.flavours as Flavour[],
+      flavours,
       boxes,
       activeBoxId: boxes.some((b) => b.id === parsed.activeBoxId) ? (parsed.activeBoxId as string) : boxes[0].id,
       fulfilment: { ...base.fulfilment, ...(parsed.fulfilment ?? {}) },
@@ -345,6 +421,13 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     [commit],
   )
 
+  const clearBox = useCallback(() => {
+    commit((s) => ({
+      ...s,
+      boxes: s.boxes.map((b) => (b.id === s.activeBoxId ? { ...b, items: {} } : b)),
+    }))
+  }, [commit])
+
   const setSize = useCallback(
     (size: BoxSize) => {
       commit((s) => ({
@@ -507,7 +590,18 @@ export function ShopProvider({ children }: { children: ReactNode }) {
   }, [])
 
   const resetFlavours = useCallback(() => {
-    setState((s) => ({ ...s, flavours: cloneFlavours() }))
+    setState((s) => {
+      const flavours = cloneFlavours()
+      const known = new Set(flavours.map((f) => f.id))
+      /* Reset drops any flavour added from the menu editor, so a box still
+         holding one has to let it go. `removeFlavour` already prunes; without
+         this, Reset left the box counting a cookie it could not draw. */
+      return {
+        ...s,
+        flavours,
+        boxes: s.boxes.map((b) => ({ ...b, items: sanitiseItems(b.items, known) })),
+      }
+    })
   }, [])
 
   const addFlavour = useCallback(() => {
@@ -583,6 +677,7 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     reviewOpen,
     add,
     remove,
+    clearBox,
     setSize,
     addBox,
     setActiveBox,

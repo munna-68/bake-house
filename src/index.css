@@ -144,6 +144,29 @@
   }
 }
 
+/* The desktop box panel caps its own height and scrolls its body so the total and
+   the CTA can stay pinned. That is deliberate, but a default browser scrollbar
+   inside a dark rounded card reads as a stray page scrollbar next to the real one.
+   This makes it slim and cocoa-toned so it belongs to the card. */
+@utility panel-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(247, 241, 231, 0.26) transparent;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(247, 241, 231, 0.22);
+    border-radius: 999px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(247, 241, 231, 0.4);
+  }
+}
+
 @utility container-page {
   margin-inline: auto;
   width: 100%;

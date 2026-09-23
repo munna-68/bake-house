@@ -15,7 +15,7 @@ export function Wordmark({ className = '' }: { className?: string }) {
   return (
     <a
       href="#top"
-      className={`font-display text-[26px] leading-none tracking-[-0.02em] ${className}`}
+      className={`inline-flex min-h-11 items-center font-display text-[26px] leading-none tracking-[-0.02em] sm:min-h-0 ${className}`}
       aria-label={`${BRAND.name} — back to top`}
     >
       <span className="text-ink">{BRAND.wordmark[0]}</span>
@@ -103,7 +103,7 @@ export function Header() {
           <button
             type="button"
             onClick={() => openCheckout(1)}
-            className="flex items-center gap-2.5 rounded-full bg-cocoa px-4 py-2.5 text-cream transition-colors hover:bg-cocoa-soft sm:px-5"
+            className="flex min-h-11 items-center gap-2.5 rounded-full bg-cocoa px-4 py-2.5 text-cream transition-colors hover:bg-cocoa-soft sm:min-h-0 sm:px-5"
           >
             <span className="label-caps text-[11px]">Your order</span>
             <span

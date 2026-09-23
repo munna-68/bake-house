@@ -12,7 +12,9 @@ function useCta() {
   if (allFull) {
     return { label: `Checkout · ${money(orderTotal)}`, disabled: false, tone: 'primary' as const }
   }
-  const more = capacity - totalCookies
+  /* Clamped: an over-filled box (only reachable from a hand-edited saved state)
+     would otherwise read "add -2 more free". */
+  const more = Math.max(0, capacity - totalCookies)
   return {
     label: `Checkout with ${totalCookies} (add ${more} more free)`,
     disabled: false,
@@ -21,7 +23,7 @@ function useCta() {
 }
 
 function SlotGrid({ box }: { box: Box }) {
-  const { flavours } = useShop()
+  const { flavours, remove } = useShop()
   const filled: string[] = []
   for (const f of flavours) {
     const n = box.items[f.id] ?? 0
@@ -31,25 +33,39 @@ function SlotGrid({ box }: { box: Box }) {
   const width = box.size === 12 ? 'max-w-[240px]' : 'max-w-[204px]'
 
   return (
-    <ul className={`mx-auto grid w-full ${cols} ${width} gap-2.5`} aria-hidden="true">
+    /* Not aria-hidden: a filled slot carries its own remove button, and that is
+       the only way to take a cookie back out without scrolling to the grid. */
+    <ul className={`mx-auto grid w-full ${cols} ${width} gap-2.5`}>
       {Array.from({ length: box.size }).map((_, i) => {
         const flavourId = filled[i]
         const flavour = flavourId ? flavours.find((f) => f.id === flavourId) : undefined
         return (
           <li
             key={i}
-            className={`aspect-square overflow-hidden rounded-[16px] ${
+            className={`relative aspect-square rounded-[16px] ${
               flavour ? '' : 'border border-dashed border-cream/18'
             }`}
           >
             {flavour ? (
-              <CookieTile
-                art={flavour.art}
-                seedKey={`slot-${box.id}-${flavour.id}-${i}`}
-                photo={flavour.photo}
-                className="h-full w-full"
-                inset={6}
-              />
+              <>
+                <div className="h-full w-full overflow-hidden rounded-[16px]">
+                  <CookieTile
+                    art={flavour.art}
+                    seedKey={`slot-${box.id}-${flavour.id}-${i}`}
+                    photo={flavour.photo}
+                    className="h-full w-full"
+                    inset={6}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => remove(flavour.id)}
+                  aria-label={`Remove one ${flavour.name}`}
+                  className="absolute -top-1.5 -right-1.5 grid h-6 w-6 place-items-center rounded-full bg-cream text-[13px] leading-none text-cocoa transition-colors hover:bg-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold"
+                >
+                  <span aria-hidden="true">×</span>
+                </button>
+              </>
             ) : null}
           </li>
         )
@@ -149,7 +165,8 @@ function CtaButton({ full = false }: { full?: boolean }) {
 
 /** Desktop: the dark sticky panel beside the grid. */
 export function BoxBuilderPanel() {
-  const { activeBox, boxes, boxCount, orderTotal, flavours, addBox, removeBox } = useShop()
+  const { activeBox, boxes, boxCount, orderTotal, flavours, add, remove, clearBox, canAdd, addBox, removeBox } =
+    useShop()
   const index = boxes.findIndex((b) => b.id === activeBox.id)
   const items = flavours.filter((f) => (activeBox.items[f.id] ?? 0) > 0)
   const others = boxes.filter((b) => b.id !== activeBox.id)
@@ -157,7 +174,7 @@ export function BoxBuilderPanel() {
   return (
     <div className="grid grid-rows-[minmax(0,1fr)_auto] rounded-[26px] bg-cocoa p-5 text-cream lg:max-h-[calc(100dvh-112px)]">
       {/* Scrollable: everything the customer edits. */}
-      <div className="overflow-y-auto overscroll-contain">
+      <div className="panel-scroll overflow-y-auto overscroll-contain">
         <BoxTabs />
 
         <div className="mt-4 flex items-baseline justify-between gap-3">
@@ -188,14 +205,42 @@ export function BoxBuilderPanel() {
               Nothing in this box yet. Tap add on a flavour and it drops in.
             </p>
           ) : (
-            <ul className="space-y-2">
-              {items.map((f) => (
-                <li key={f.id} className="flex items-baseline justify-between gap-3">
-                  <span className="text-[13px] text-cream/85">{f.name}</span>
-                  <span className="text-[13px] text-cream/55">× {activeBox.items[f.id]}</span>
-                </li>
-              ))}
-            </ul>
+            <>
+              <ul className="space-y-1.5">
+                {items.map((f) => (
+                  <li key={f.id} className="flex items-center justify-between gap-3">
+                    <span className="min-w-0 truncate text-[13px] text-cream/85">{f.name}</span>
+                    <span className="flex shrink-0 items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => remove(f.id)}
+                        aria-label={`Remove one ${f.name} from the box`}
+                        className="grid h-7 w-7 place-items-center rounded-full border border-cream/25 text-[15px] leading-none text-cream transition-colors hover:border-cream/55"
+                      >
+                        <span aria-hidden="true">−</span>
+                      </button>
+                      <span className="w-5 text-center text-[13px] text-cream/70">{activeBox.items[f.id]}</span>
+                      <button
+                        type="button"
+                        onClick={() => add(f.id)}
+                        disabled={!canAdd(f.id)}
+                        aria-label={`Add another ${f.name} to the box`}
+                        className="grid h-7 w-7 place-items-center rounded-full border border-cream/25 text-[15px] leading-none text-cream transition-colors hover:border-cream/55 disabled:cursor-not-allowed disabled:opacity-35"
+                      >
+                        <span aria-hidden="true">+</span>
+                      </button>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <button
+                type="button"
+                onClick={clearBox}
+                className="mt-3 text-[11px] text-cream/45 underline underline-offset-4 transition-colors hover:text-cream/70"
+              >
+                Empty box {index + 1}
+              </button>
+            </>
           )}
 
           <div className="mt-4 flex items-baseline justify-between gap-3">

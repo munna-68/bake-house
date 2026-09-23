@@ -10,6 +10,13 @@ Source of truth for what to build is that spec plus the 35 screenshots beside it
 - **One store.** `src/lib/store.tsx` owns all shop state and persists to
   `localStorage` (`bakehouse.v1`). The dashboard reads the same store, which is why
   the Menu tab can update the storefront.
+- **Never take persisted state wholesale.** `load()` reconciles saved flavours
+  against the seed by `id` (`mergeSeedFlavours`). Reading the saved array as-is
+  means every field added to `FLAVOURS` after a visitor's first load is missing for
+  them forever, and no reload fixes it — that is exactly what hid the photos. The
+  saved copy must win for keys it has, the seed only fills absent ones. A photo
+  cleared in the dashboard is `''` (present), not absent, so it stays cleared.
+  Any new persisted field inherits this rule.
 - **Copy is ours.** The spec forbids reusing the reference brand, flavour names,
   review quotes, photos or marketing copy. Match the *structure and behaviour*, write
   new words.

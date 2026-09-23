@@ -16,27 +16,35 @@ from `src/lib/data.ts`. The prompts below are kept so any flavour can be
 re-shot to match.
 
 Two generated files were **not** used, because nine were needed and eleven were
-supplied:
+supplied. Both are kept as spares:
 
-| Source | Became |
+| Source (`src/imgs/`) | Became |
 |---|---|
-| `ChatGPT Image ... 02_04_29 AM.png` | `triple-chocolate.webp` |
-| `ChatGPT Image ... 02_04_34 AM.png` | `ceremonial-matcha.webp` |
-| `ChatGPT Image ... 02_04_46 AM.png` | `raspberry-dark.webp` |
-| `ChatGPT Image ... 02_04_49 AM.png` | `oat-and-cinnamon.webp` |
-| `ChatGPT Image ... 02_05_04 AM.png` | `beetroot-red-velvet.webp` |
-| `ChatGPT Image ... 02_05_08 AM.png` | `burnt-marshmallow.webp` |
-| `ChatGPT Image ... 02_05_18 AM.png` | `caramel-speculoos.webp` |
-| `ChatGPT Image ... 02_05_20 AM.png` | *unused — second raspberry dark* |
-| `ChatGPT Image ... 02_05_23 AM.png` | `peanut-butter-cup.webp` |
-| `ChatGPT Image ... 02_05_40 AM.png` | `salted-butter-chip.webp` |
-| `ChatGPT Image ... 02_05_49 AM.png` | *unused — plain choc chip, no sea salt* |
+| `triple-chocolate.png` | `public/cookies/triple-chocolate.webp` |
+| `ceremonial-matcha.png` | `public/cookies/ceremonial-matcha.webp` |
+| `raspberry-dark.png` | `public/cookies/raspberry-dark.webp` |
+| `oat-and-cinnamon.png` | `public/cookies/oat-and-cinnamon.webp` |
+| `beetroot-red-velvet.png` | `public/cookies/beetroot-red-velvet.webp` |
+| `burnt-marshmallow.png` | `public/cookies/burnt-marshmallow.webp` |
+| `caramel-speculoos.png` | `public/cookies/caramel-speculoos.webp` |
+| `peanut-butter-cup.png` | `public/cookies/peanut-butter-cup.webp` |
+| `salted-butter-chip.png` | `public/cookies/salted-butter-chip.webp` |
+| `raspberry-dark-spare.png` | *unused — second take on raspberry dark* |
+| `chocolate-chip-spare.png` | *unused — plain choc chip, no sea salt* |
 
-**Why those two were left out.** `02_05_20` is a second take on raspberry dark,
-near-identical to `02_04_46`. `02_05_49` is a clean chocolate chip cookie but with
-small uniform chips and no sea salt, so it does not match Salted butter chip's
-description — `02_05_40` has the big dark chunks and visible salt flakes. Keep
-them as spares if you ever want a different look.
+The sources are named after the flavour `id`, the same as the shipped `.webp`, so
+a source and its output share a name and nothing needs a lookup table to go from
+one to the other. They arrived from the generator as
+`ChatGPT Image Sep 23, 2026, 02_04_29 AM.png` and were renamed; nothing in the
+build ever referenced the original names, since `src/imgs/` is a source folder
+and is never bundled.
+
+**Why those two were left out.** `raspberry-dark-spare` is a second take on
+raspberry dark, near-identical to `raspberry-dark`. `chocolate-chip-spare` is a
+clean chocolate chip cookie but with small uniform chips and no sea salt, so it
+does not match Salted butter chip's description — `salted-butter-chip` has the
+big dark chunks and visible salt flakes. Keep them as spares if you ever want a
+different look.
 
 **How they were processed.** Background removed by flood-filling inwards from the
 frame edge rather than keying out white — three of these cookies have white
