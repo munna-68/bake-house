@@ -79,7 +79,7 @@ function SlotGrid({ box }: { box: Box }) {
 function SizePills() {
   const { activeBox, setSize } = useShop()
   return (
-    <div role="group" aria-label="Box size" className="grid grid-cols-3 gap-2">
+    <div role="group" aria-label="Box size" className="grid grid-cols-3 gap-1.5 sm:gap-2">
       {BOX_SIZES.map((size: BoxSize) => {
         const on = activeBox.size === size
         return (
@@ -88,14 +88,14 @@ function SizePills() {
             type="button"
             aria-pressed={on}
             onClick={() => setSize(size)}
-            className={`min-h-11 flex items-baseline justify-center gap-1.5 rounded-full py-2.5 px-2.5 transition-all active:scale-95 ${
+            className={`min-h-11 flex items-center justify-center gap-1.5 rounded-full py-1.5 px-2 transition-all active:scale-95 ${
               on
                 ? 'bg-cocoa text-cream shadow-xs'
                 : 'border border-line bg-shell text-ink hover:border-ink/30'
             }`}
           >
-            <span className="font-display text-[19px] leading-tight font-bold">{size}</span>
-            <span className={`text-[12px] font-semibold ${on ? 'text-cream/80' : 'text-ink-soft'}`}>
+            <span className="font-display text-[18px] leading-tight font-bold">{size}</span>
+            <span className={`text-[11.5px] font-semibold ${on ? 'text-cream/80' : 'text-ink-soft'}`}>
               {money(BOX_PRICES[size])}
             </span>
           </button>
@@ -321,25 +321,25 @@ export function MobileBoxControls() {
   }
 
   return (
-    <div className="rounded-[22px] border border-line bg-[#faf6f0] p-3 sm:p-4 shadow-sm">
+    <div className="rounded-[20px] border border-line bg-[#faf6f0] p-2.5 sm:p-3.5 shadow-xs">
       {/* 1. Size pills */}
       <SizePills />
 
       {/* 2. Stock progress bar line */}
-      <div className="mt-2.5 flex items-center gap-3">
-        <div className="h-[3px] flex-1 overflow-hidden rounded-full bg-line">
+      <div className="mt-2 flex items-center gap-2.5">
+        <div className="h-[2.5px] flex-1 overflow-hidden rounded-full bg-line">
           <div
             className="h-full rounded-full bg-brick transition-all duration-300"
             style={{ width: `${Math.max(3, pct)}%` }}
           />
         </div>
-        <span className="label-caps shrink-0 text-[9.5px] font-bold text-ink-soft tracking-wider">
+        <span className="label-caps shrink-0 text-[9px] font-bold text-ink-soft tracking-wider">
           {cookiesLeftToday} LEFT TODAY
         </span>
       </div>
 
       {/* 3. Box selector tabs */}
-      <div className="mt-2.5 flex items-center gap-2">
+      <div className="mt-2 flex items-center gap-1.5">
         {boxes.map((b, i) => {
           const on = b.id === activeBoxId
           return (
@@ -348,7 +348,7 @@ export function MobileBoxControls() {
               type="button"
               aria-pressed={on}
               onClick={() => setActiveBox(b.id)}
-              className={`min-h-11 inline-flex items-center label-caps rounded-full px-3.5 py-2 text-[9.5px] font-bold tracking-wider transition-colors ${
+              className={`min-h-11 inline-flex items-center label-caps rounded-full px-3 py-1 text-[9px] font-bold tracking-wider transition-colors ${
                 on
                   ? 'bg-brick text-white shadow-xs'
                   : 'border border-line bg-shell text-ink-soft hover:border-ink/30'
@@ -362,7 +362,7 @@ export function MobileBoxControls() {
           <button
             type="button"
             onClick={addBox}
-            className="min-h-11 inline-flex items-center label-caps rounded-full border border-dashed border-line bg-transparent px-3.5 py-2 text-[9.5px] font-bold tracking-wider text-ink-soft hover:border-ink/40 active:scale-95"
+            className="min-h-11 inline-flex items-center label-caps rounded-full border border-dashed border-line bg-transparent px-2.5 py-1 text-[9px] font-bold tracking-wider text-ink-soft hover:border-ink/40 active:scale-95"
           >
             + BOX
           </button>
@@ -370,7 +370,7 @@ export function MobileBoxControls() {
       </div>
 
       {/* 4. Slot circles with real cookie photos + price badge */}
-      <div className="mt-2.5 flex items-center justify-between gap-2">
+      <div className="mt-2 flex items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           {Array.from({ length: activeBox.size }).map((_, i) => {
             const flavour = filledFlavours[i]
@@ -379,7 +379,7 @@ export function MobileBoxControls() {
                 key={i}
                 className={`relative h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-full flex items-center justify-center transition-all ${
                   flavour
-                    ? 'border-2 border-cocoa bg-shell shadow-xs overflow-hidden'
+                    ? 'border-[1.5px] border-cocoa bg-shell shadow-xs overflow-hidden'
                     : 'border border-dashed border-[#d8cdbf] bg-cream/50'
                 }`}
               >

@@ -9,31 +9,31 @@ export function BatchGrid() {
   const { flavours } = useShop()
 
   return (
-    <section id="build" className="container-page scroll-mt-24 pt-6 pb-12 sm:pt-8">
+    <section id="build" className="container-page scroll-mt-24 pt-4 pb-12 sm:pt-8">
       {/* Section Header: Clean title without any hyphen or badge */}
       <header className="max-w-[58ch]">
-        <h2 className="font-display text-[38px] sm:text-[48px] lg:text-[54px] leading-[1.04] tracking-[-0.015em] text-ink">
+        <h2 className="font-display text-[28px] sm:text-[44px] lg:text-[50px] leading-[1.05] tracking-[-0.015em] text-ink">
           Fresh cookies. Your way.
         </h2>
-        <p className="mt-3 text-[15.5px] sm:text-[17px] leading-relaxed text-ink-soft">
+        <p className="mt-1.5 text-[13.5px] sm:text-[16.5px] leading-relaxed text-ink-soft">
           Every number below is a real count of what is left on the rack right now. When a flavour runs out we do not
           bake it again until tomorrow.
         </p>
       </header>
 
       {/* Mobile box controls: Sticky below header when scrolling */}
-      <div className="sticky top-[64px] sm:top-[68px] z-30 -mx-4 px-4 py-2 bg-cream/95 backdrop-blur-md border-y border-line/80 shadow-[0_4px_16px_-4px_rgba(43,29,19,0.06)] lg:hidden my-4">
+      <div className="sticky top-[58px] sm:top-[64px] z-30 -mx-4 px-4 py-1.5 bg-cream/95 backdrop-blur-md border-y border-line/70 lg:hidden my-2.5">
         <MobileBoxControls />
       </div>
 
       {/* Main layout: Sidebar + 3-column Cookie Grid */}
-      <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,330px)_minmax(0,1fr)] lg:items-start lg:gap-8">
+      <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,330px)_minmax(0,1fr)] lg:items-start lg:gap-8">
         <div className="hidden lg:sticky lg:top-[92px] lg:block">
           <BoxBuilderPanel />
         </div>
 
         {/* 3 columns on desktop as requested */}
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 sm:gap-4">
           {flavours.map((f, i) => (
             <ProductCard key={f.id} flavour={f} index={i + 1} />
           ))}
@@ -67,27 +67,27 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
 
   return (
     <article
-      className={`group cookie-card-hover relative flex flex-col justify-between rounded-[22px] border bg-shell p-4 sm:p-5 pt-3.5 sm:pt-4 text-left shadow-xs transition-all duration-200 ${
+      className={`group cookie-card-hover relative flex flex-col justify-between rounded-[20px] border bg-shell p-3 sm:p-5 text-left shadow-xs transition-all duration-200 ${
         qty > 0
           ? 'border-brick/75 ring-1 ring-brick/25 shadow-sm'
           : 'border-line hover:border-[#dbcbb9] hover:shadow-sm'
       } ${soldOut ? 'bg-shell/70' : ''}`}
     >
       {/* Top row: Index number */}
-      <span className="label-caps absolute top-3 left-4 text-[10.5px] text-ink-soft/60 sm:left-5">
+      <span className="label-caps absolute top-2.5 left-3 text-[9.5px] text-ink-soft/50 sm:top-3 sm:left-5">
         {String(index).padStart(2, '0')}
       </span>
 
-      <div className="flex flex-1 items-start gap-3.5 pt-4 sm:flex-col sm:items-center sm:gap-2 sm:pt-4">
-        {/* Cookie Image: compact on mobile, large centered on desktop */}
-        <div className="h-[84px] w-[84px] shrink-0 sm:my-2 sm:h-auto sm:w-[68%] sm:max-w-[165px] sm:aspect-square flex items-center justify-center">
+      <div className="flex flex-1 items-start gap-3 pt-3.5 sm:flex-col sm:items-center sm:gap-2 sm:pt-4">
+        {/* Cookie Image: compact 64px on mobile, centered on desktop */}
+        <div className="h-[64px] w-[64px] shrink-0 sm:my-2 sm:h-auto sm:w-[68%] sm:max-w-[160px] sm:aspect-square flex items-center justify-center">
           {showPhoto ? (
             <img
               src={flavour.photo}
               alt={flavour.name}
               decoding="async"
               onError={() => setBrokenSrc(flavour.photo ?? null)}
-              className={`cookie-spin h-full w-full object-contain drop-shadow-[0_8px_16px_rgba(43,29,19,0.16)] ${
+              className={`cookie-spin h-full w-full object-contain drop-shadow-[0_6px_12px_rgba(43,29,19,0.14)] ${
                 soldOut ? 'opacity-55 saturate-[0.35]' : ''
               }`}
             />
@@ -96,7 +96,7 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
               art={flavour.art}
               seedKey={flavour.id}
               title={flavour.name}
-              className={`cookie-spin h-full w-full drop-shadow-[0_8px_16px_rgba(43,29,19,0.16)] ${
+              className={`cookie-spin h-full w-full drop-shadow-[0_6px_12px_rgba(43,29,19,0.14)] ${
                 soldOut ? 'opacity-55 saturate-[0.35]' : ''
               }`}
             />
@@ -105,18 +105,18 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
 
         {/* Details: Name, description, allergen chips */}
         <div className="min-w-0 flex-1 sm:w-full">
-          <h3 className="font-display text-[20px] sm:text-[22px] font-bold leading-tight text-ink">
+          <h3 className="font-display text-[17px] sm:text-[21px] font-bold leading-tight text-ink">
             {flavour.name}
           </h3>
-          <p className="mt-1 text-[13px] leading-snug text-ink-soft">
+          <p className="mt-0.5 text-[12px] sm:text-[13px] leading-snug text-ink-soft line-clamp-2 sm:line-clamp-none">
             {flavour.desc}
           </p>
 
-          <ul className="mt-2.5 flex flex-wrap gap-1" aria-label="Allergens">
+          <ul className="mt-1.5 flex flex-wrap gap-1" aria-label="Allergens">
             {flavour.allergens.map((a) => (
               <li
                 key={a}
-                className="label-caps rounded-full border border-line bg-shell/80 px-2 py-0.5 text-[8.5px] font-semibold tracking-wider text-ink-soft/90"
+                className="label-caps rounded-full border border-line bg-shell/80 px-1.5 py-0.5 text-[8px] font-semibold tracking-wider text-ink-soft/90"
               >
                 {a}
               </li>
@@ -126,10 +126,10 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
       </div>
 
       {/* Bottom row: Stock indicator and Add button / Stepper */}
-      <div className="mt-4 flex items-center justify-between gap-2 border-t border-line-soft pt-3">
+      <div className="mt-2.5 flex items-center justify-between gap-2 border-t border-line-soft pt-2 sm:mt-3.5 sm:pt-3">
         <span className="flex min-w-0 items-center gap-1.5">
           <span
-            className={`h-2 w-2 shrink-0 rounded-full ${
+            className={`h-1.5 w-1.5 shrink-0 rounded-full ${
               soldOut
                 ? 'bg-ink/25'
                 : left <= 2
@@ -138,7 +138,7 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
             }`}
             aria-hidden="true"
           />
-          <span className="label-caps truncate text-[10px] text-ink-soft font-semibold">
+          <span className="label-caps truncate text-[9.5px] text-ink-soft font-semibold">
             {stockLine}
           </span>
         </span>
@@ -148,12 +148,12 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
             type="button"
             onClick={() => vote(flavour.id)}
             aria-label={`${flavour.name}, sold out today. Tap to tell us you wanted it.`}
-            className="min-h-11 shrink-0 rounded-full border border-line bg-cream/50 px-4 py-2.5 text-[10px] font-bold tracking-[0.08em] text-ink-soft uppercase transition-colors hover:border-ink/40 active:scale-95"
+            className="min-h-11 shrink-0 rounded-full border border-line bg-cream/50 px-3.5 py-1.5 text-[9.5px] font-bold tracking-[0.08em] text-ink-soft uppercase transition-colors hover:border-ink/40 active:scale-95"
           >
             Tell us
           </button>
         ) : qty > 0 ? (
-          <div className="flex shrink-0 items-center gap-1 rounded-full border border-line bg-shell px-1.5 py-1">
+          <div className="flex shrink-0 items-center gap-1 rounded-full border border-line bg-shell px-1 py-0.5">
             <button
               type="button"
               onClick={() => remove(flavour.id)}
