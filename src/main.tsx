@@ -8,9 +8,15 @@ import './index.css'
 const root = document.getElementById('root')
 if (!root) throw new Error('Missing #root')
 
+const basename = window.location.pathname.startsWith('/bake-house')
+  ? '/bake-house'
+  : window.location.pathname.startsWith('/bakehouse')
+  ? '/bakehouse'
+  : undefined
+
 createRoot(root).render(
   <StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <ShopProvider>
         <App />
       </ShopProvider>

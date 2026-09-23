@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react'
-import { NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { Link, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { BRAND, DASHBOARD_ORDERS } from '../lib/data'
 import { longDate } from '../lib/format'
 import { useShop } from '../lib/store'
@@ -148,13 +148,13 @@ export function Dashboard() {
               <span>Open bench mode</span>
             </button>
           </div>
-          <a
-            href="/"
+          <Link
+            to="/"
             className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-line bg-shell px-4 py-2.5 text-[12px] font-medium text-ink transition-all hover:border-ink/40 active:scale-95"
           >
             <Store className="h-3.5 w-3.5 text-brick" />
             <span>View the shop</span>
-          </a>
+          </Link>
         </div>
       </aside>
 

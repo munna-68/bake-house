@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { BASE_BUILD_CHECKLIST, BRAND, EXPLAINER, FAQS, REVIEWS } from '../lib/data'
 import { useShop } from '../lib/store'
 import {
@@ -279,12 +280,12 @@ export function Pricing() {
                   <span>Try the ordering flow</span>
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </a>
-                <a
-                  href="/dashboard/"
+                <Link
+                  to="/dashboard/"
                   className="inline-flex min-h-12 items-center justify-center rounded-full bg-cream px-6 py-3.5 text-center text-[11.5px] font-bold tracking-[0.09em] text-cocoa uppercase shadow-xs transition-all hover:bg-white active:scale-95"
                 >
                   See kitchen dashboard
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -417,9 +418,9 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/dashboard/" className="hover:text-cream transition-colors">
+                <Link to="/dashboard/" className="hover:text-cream transition-colors">
                   Kitchen dashboard
-                </a>
+                </Link>
               </li>
               <li>
                 <a href={BRAND.allergenSheet} className="hover:text-cream transition-colors">
