@@ -4,6 +4,7 @@ import { copyText, dayLabel, money } from '../lib/format'
 import { useShop, type CheckoutStep } from '../lib/store'
 import { BOX_PRICES, DELIVERY_FEE, DELIVERY_ZIPS, type PaymentMethod } from '../lib/types'
 import { useDialog } from '../lib/useDialog'
+import { Check, Copy, X } from 'lucide-react'
 
 const PICKUP_WINDOWS = ['11.00 – 2.00pm', '2.00 – 5.00pm', '5.00 – 8.00pm']
 const DELIVERY_WINDOWS = [
@@ -60,19 +61,22 @@ export function CheckoutModal() {
         role="dialog"
         aria-modal="true"
         aria-label="Checkout"
-        className="modal-enter relative flex h-[calc(100dvh-24px)] w-full flex-col overflow-hidden rounded-t-[30px] bg-cream shadow-lift md:h-auto md:max-h-[88dvh] md:w-[440px] md:rounded-[30px]"
+        className="modal-enter relative flex h-[calc(100dvh-24px)] w-full flex-col overflow-hidden rounded-t-[30px] bg-cream shadow-lift md:h-auto md:max-h-[88dvh] md:w-[460px] md:rounded-[30px]"
       >
         <div className="flex shrink-0 items-start justify-between gap-4 px-5 pt-4 pb-3 md:px-6 md:pt-6">
-          <h2 className="font-display text-[26px] leading-none text-ink">
-            {checkoutStep === 4 ? 'Order confirmed' : 'Checkout'}
-          </h2>
+          <div>
+            <p className="label-caps text-[10px] text-ink-soft">Bakehouse checkout</p>
+            <h2 className="font-display text-[26px] leading-none text-ink">
+              {checkoutStep === 4 ? 'Order confirmed' : 'Checkout'}
+            </h2>
+          </div>
           <button
             type="button"
             onClick={closeCheckout}
             aria-label="Close"
-            className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-line bg-shell text-[18px] text-ink"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-line bg-shell text-ink transition-transform hover:scale-105 active:scale-95"
           >
-            <span aria-hidden="true">×</span>
+            <X className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
 
@@ -207,7 +211,7 @@ function PrimaryButton({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className="w-full rounded-full bg-brick px-6 py-4 text-[12px] font-bold tracking-[0.09em] text-white uppercase transition-colors hover:bg-brick-dark disabled:cursor-not-allowed disabled:bg-line disabled:text-ink-faint"
+      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brick px-6 py-4 text-[12px] font-bold tracking-[0.09em] text-white uppercase shadow-sm transition-all hover:bg-brick-dark active:scale-95 disabled:cursor-not-allowed disabled:bg-line disabled:text-ink-faint"
     >
       {children}
     </button>
@@ -219,7 +223,7 @@ function GhostButton({ children, onClick }: { children: React.ReactNode; onClick
     <button
       type="button"
       onClick={onClick}
-      className="min-h-11 w-full rounded-full border border-ink/20 px-6 py-3.5 text-[11px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/45"
+      className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-line bg-shell px-6 py-3.5 text-[11px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink/45 active:scale-95"
     >
       {children}
     </button>
@@ -252,9 +256,19 @@ function CopyRow({ label, value }: { label: string; value: string }) {
           timer.current = window.setTimeout(() => setCopied(false), 1500)
         }}
         aria-label={`Copy ${label}`}
-        className="min-h-11 shrink-0 rounded-full border border-ink/20 px-4 py-2 text-[10px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/50 sm:min-h-0"
+        className="inline-flex items-center gap-1.5 min-h-10 shrink-0 rounded-full border border-line bg-shell px-3.5 py-1.5 text-[10px] font-bold tracking-[0.08em] text-ink uppercase transition-all hover:border-ink/50 active:scale-95 sm:min-h-0"
       >
-        {copied ? 'Copied' : 'Copy'}
+        {copied ? (
+          <>
+            <Check className="h-3 w-3 text-leaf" strokeWidth={2.5} />
+            <span className="text-leaf">Copied</span>
+          </>
+        ) : (
+          <>
+            <Copy className="h-3 w-3 text-ink-soft" />
+            <span>Copy</span>
+          </>
+        )}
       </button>
     </div>
   )
@@ -274,7 +288,7 @@ function SummaryCard({ showRef }: { showRef?: boolean }) {
     : null
 
   return (
-    <div className="rounded-[22px] border border-line bg-shell p-4">
+    <div className="rounded-[22px] border border-line bg-[#faf6f0] p-4.5 shadow-xs">
       {showRef && ref ? (
         <p className="mb-3 font-display text-[24px] leading-none text-ink">{ref}</p>
       ) : null}

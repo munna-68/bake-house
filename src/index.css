@@ -32,7 +32,11 @@
   --color-leaf: #3f7a4a;
   --color-leaf-soft: #e7f0e6;
 
-  --font-display: 'Anton', 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --color-card-warm: #faf6f0;
+  --color-card-border: #e8ded2;
+
+  --font-display: 'DM Serif Display', 'Fraunces', Georgia, serif;
+  --font-logo: 'Anton', 'Archivo', 'Helvetica Neue', Arial, sans-serif;
   --font-sans: 'Archivo', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --radius-card: 26px;
@@ -40,6 +44,7 @@
   --radius-sheet: 30px;
 
   --shadow-card: 0 1px 2px rgb(43 29 19 / 0.04), 0 10px 30px -18px rgb(43 29 19 / 0.25);
+  --shadow-card-subtle: 0 2px 12px -4px rgb(43 29 19 / 0.08);
   --shadow-lift: 0 2px 4px rgb(43 29 19 / 0.06), 0 24px 60px -24px rgb(43 29 19 / 0.35);
 }
 
@@ -333,6 +338,27 @@
   80% {
     transform: translateX(2px);
   }
+}
+
+/* Slight gentle cookie hover tilt with slow silky easing */
+.cookie-spin {
+  transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
+  will-change: transform;
+}
+
+.group:hover .cookie-spin,
+.cookie-spin:hover {
+  transform: rotate(7deg) scale(1.03);
+}
+
+.cookie-card-hover {
+  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.cookie-card-hover:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px -8px rgba(43, 29, 19, 0.12);
+  border-color: rgba(192, 69, 44, 0.3);
 }
 
 .accordion-body {

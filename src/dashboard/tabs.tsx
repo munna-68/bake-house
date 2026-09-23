@@ -11,6 +11,21 @@ import {
 import { initials as toInitials, money, trays } from '../lib/format'
 import { useShop } from '../lib/store'
 import type { DashboardOrder } from '../lib/types'
+import {
+  AlertCircle,
+  Check,
+  CheckCircle2,
+  ChefHat,
+  Clock,
+  DollarSign,
+  PackageOpen,
+  Printer,
+  RotateCcw,
+  Sparkles,
+  TrendingUp,
+  Users,
+  UtensilsCrossed,
+} from 'lucide-react'
 
 export interface OrderActions {
   markReady: (id: string) => void
@@ -29,28 +44,35 @@ function StatCard({
   value,
   sub,
   highlight,
+  icon: Icon,
 }: {
   label: string
   value: string
   sub?: string
   highlight?: boolean
+  icon?: React.ComponentType<{ className?: string }>
 }) {
   return (
     <div
-      className={`rounded-[22px] border p-5 ${
-        highlight ? 'border-transparent bg-cream-deep' : 'border-line bg-shell'
+      className={`rounded-[22px] border p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm ${
+        highlight
+          ? 'border-brick/30 bg-[#faf6f0] ring-1 ring-brick/20'
+          : 'border-line bg-[#faf6f0]'
       }`}
     >
-      <p className="label-caps text-[10px] text-ink-soft">{label}</p>
-      <p className="mt-2.5 font-display text-[34px] leading-none text-ink">{value}</p>
-      {sub ? <p className="mt-2 text-[13px] text-ink-soft">{sub}</p> : null}
+      <div className="flex items-center justify-between">
+        <p className="label-caps text-[10px] text-ink-soft">{label}</p>
+        {Icon ? <Icon className={`h-4 w-4 ${highlight ? 'text-brick' : 'text-ink-soft/60'}`} /> : null}
+      </div>
+      <p className="mt-2.5 font-display text-[32px] sm:text-[34px] leading-none text-ink">{value}</p>
+      {sub ? <p className="mt-2 text-[12.5px] text-ink-soft">{sub}</p> : null}
     </div>
   )
 }
 
 export function Avatar({ name }: { name: string }) {
   return (
-    <span className="label-caps grid h-9 w-9 shrink-0 place-items-center rounded-full bg-cream-deep text-[11px] text-ink-soft">
+    <span className="label-caps grid h-9 w-9 shrink-0 place-items-center rounded-full bg-cream-deep text-[11px] font-bold text-ink-soft border border-line-soft">
       {toInitials(name)}
     </span>
   )
@@ -58,9 +80,19 @@ export function Avatar({ name }: { name: string }) {
 
 export function PaymentChip({ order }: { order: DashboardOrder }) {
   if (order.payment === 'pending') {
-    return <span className="label-caps rounded-full bg-brick/12 px-2.5 py-1 text-[9px] text-brick">Unpaid</span>
+    return (
+      <span className="inline-flex items-center gap-1 label-caps rounded-full bg-brick/12 px-2.5 py-1 text-[9px] font-bold text-brick">
+        <Clock className="h-2.5 w-2.5" />
+        <span>Unpaid</span>
+      </span>
+    )
   }
-  return <span className="label-caps rounded-full bg-leaf-soft px-2.5 py-1 text-[9px] text-leaf">Paid</span>
+  return (
+    <span className="inline-flex items-center gap-1 label-caps rounded-full bg-leaf-soft px-2.5 py-1 text-[9px] font-bold text-leaf">
+      <CheckCircle2 className="h-2.5 w-2.5" />
+      <span>Paid</span>
+    </span>
+  )
 }
 
 function ReadyButton({
@@ -73,22 +105,28 @@ function ReadyButton({
   onDark?: boolean
 }) {
   const base = onDark
-    ? 'min-h-11 rounded-full bg-cream px-4 py-2.5 text-[10px] font-bold tracking-[0.09em] text-cocoa uppercase transition-colors hover:bg-white'
-    : 'min-h-11 rounded-full border border-ink/20 px-4 py-2 text-[10px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/50'
+    ? 'inline-flex items-center justify-center gap-1.5 min-h-10 rounded-full bg-cream px-4 py-2 text-[10.5px] font-bold tracking-[0.09em] text-cocoa uppercase shadow-xs transition-all hover:bg-white active:scale-95'
+    : 'inline-flex items-center justify-center gap-1.5 min-h-9 rounded-full border border-line bg-shell px-3.5 py-1.5 text-[10px] font-bold tracking-[0.08em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95'
 
   if (order.stage === 'collected') {
-    return <span className={`label-caps text-[9px] ${onDark ? 'text-cream/50' : 'text-ink-faint'}`}>Collected</span>
+    return (
+      <span className={`inline-flex items-center gap-1 label-caps text-[9.5px] ${onDark ? 'text-cream/50' : 'text-ink-faint'}`}>
+        <CheckCircle2 className="h-3 w-3 text-leaf" />
+        <span>Collected</span>
+      </span>
+    )
   }
   if (order.stage === 'ready') {
     return (
       <button type="button" onClick={() => actions.markCollected(order.id)} className={base}>
-        Mark collected
+        <Check className="h-3 w-3 text-leaf" strokeWidth={2.5} />
+        <span>Mark collected</span>
       </button>
     )
   }
   return (
     <button type="button" onClick={() => actions.markReady(order.id)} className={base}>
-      Mark ready
+      <span>Mark ready</span>
     </button>
   )
 }
@@ -115,29 +153,32 @@ export function TodayTab({
   return (
     <div className="space-y-5">
       {next ? (
-        <section className="rounded-[26px] bg-cocoa p-6 text-cream">
+        <section className="rounded-[26px] bg-cocoa p-6 text-cream shadow-card">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className="label-caps text-[10px] text-cream/50">Next out the door</p>
-              <h2 className="mt-3 font-display text-[36px] leading-none text-cream">{next.customer}</h2>
-              <p className="mt-2.5 text-[14px] text-cream/70">
+              <div className="flex items-center gap-2">
+                <ChefHat className="h-4 w-4 text-gold" />
+                <p className="label-caps text-[10px] text-cream/70">Next out the door</p>
+              </div>
+              <h2 className="mt-3 font-display text-[34px] sm:text-[38px] leading-none text-cream">{next.customer}</h2>
+              <p className="mt-2 text-[14px] text-cream/75">
                 {next.boxes} · {next.number}
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
-                <span className="label-caps rounded-full bg-cream/12 px-3 py-1.5 text-[9px] text-cream/80">
+                <span className="label-caps rounded-full bg-cream/12 px-3 py-1.5 text-[9px] text-cream/85">
                   Pickup, {next.windowLabel}
                 </span>
-                <span className="label-caps rounded-full bg-cream/12 px-3 py-1.5 text-[9px] text-cream/80">
+                <span className="label-caps rounded-full bg-cream/12 px-3 py-1.5 text-[9px] text-cream/85">
                   {next.source}
                 </span>
-                <span className="label-caps rounded-full bg-cream/12 px-3 py-1.5 text-[9px] text-cream/80">
+                <span className="label-caps rounded-full bg-cream/12 px-3 py-1.5 text-[9px] text-cream/85">
                   {next.payment === 'paid' ? `Paid ${money(next.total)}` : `Unpaid ${money(next.total)}`}
                 </span>
               </div>
             </div>
             <div className="text-right">
-              <p className="font-display text-[44px] leading-none text-cream">{open.length}</p>
-              <p className="label-caps mt-1 text-[9px] text-cream/50">Still open</p>
+              <p className="font-display text-[44px] leading-none text-gold">{open.length}</p>
+              <p className="label-caps mt-1 text-[9px] text-cream/60">Still open</p>
             </div>
           </div>
 
@@ -146,27 +187,29 @@ export function TodayTab({
             <button
               type="button"
               onClick={onKitchen}
-              className="rounded-full border border-cream/25 px-4 py-2.5 text-[10px] font-bold tracking-[0.09em] text-cream uppercase transition-colors hover:border-cream/60"
+              className="inline-flex items-center justify-center gap-1.5 rounded-full border border-cream/25 px-4 py-2 text-[10.5px] font-bold tracking-[0.09em] text-cream uppercase transition-all hover:border-cream/60 active:scale-95"
             >
-              Kitchen mode
+              <ChefHat className="h-3.5 w-3.5 text-gold" />
+              <span>Kitchen mode</span>
             </button>
           </div>
         </section>
       ) : null}
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Taken today" value={money(taken)} sub={`${orders.length} orders`} highlight />
-        <StatCard label="Cookies to bake" value={String(cookies)} sub="9 flavours on" />
+        <StatCard label="Taken today" value={money(taken)} sub={`${orders.length} orders`} highlight icon={DollarSign} />
+        <StatCard label="Cookies to bake" value={String(cookies)} sub="9 flavours on" icon={UtensilsCrossed} />
         <StatCard
           label="Handed over"
           value={`${handedOver} of ${orders.length}`}
           sub={`${orders.length - handedOver} still to make up`}
+          icon={CheckCircle2}
         />
-        <StatCard label="Waiting on payment" value={money(outstanding)} sub="Chase these" />
+        <StatCard label="Waiting on payment" value={money(outstanding)} sub="Chase these" icon={Clock} />
       </section>
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
-        <section className="rounded-[22px] border border-line bg-shell p-5">
+        <section className="rounded-[22px] border border-line bg-[#faf6f0] p-5 shadow-xs">
           <h2 className="font-display text-[22px] leading-none text-ink">The day, window by window</h2>
           <p className="mt-1.5 text-[13px] text-ink-soft">Who is coming and when</p>
 
@@ -187,7 +230,7 @@ export function TodayTab({
                   <div className="mt-2.5 flex items-center gap-3">
                     <div className="h-[3px] flex-1 overflow-hidden rounded-full bg-cream-deep">
                       <div
-                        className="h-full rounded-full bg-cocoa"
+                        className="h-full rounded-full bg-cocoa transition-all duration-300"
                         style={{ width: `${rows.length ? (collected / rows.length) * 100 : 0}%` }}
                       />
                     </div>
@@ -200,7 +243,7 @@ export function TodayTab({
                     {rows.map((o) => (
                       <li
                         key={o.id}
-                        className="flex flex-wrap items-center gap-3 rounded-[16px] border border-line-soft px-3 py-2.5"
+                        className="flex flex-wrap items-center gap-3 rounded-[16px] border border-line-soft bg-shell/80 px-3.5 py-2.5 shadow-xs transition-colors hover:border-line"
                       >
                         <Avatar name={o.customer} />
                         <div className="min-w-0 flex-1">
@@ -220,7 +263,7 @@ export function TodayTab({
           </div>
         </section>
 
-        <section className="rounded-[22px] border border-line bg-shell p-5">
+        <section className="rounded-[22px] border border-line bg-[#faf6f0] p-5 shadow-xs">
           <h2 className="font-display text-[22px] leading-none text-ink">Needs attention</h2>
           <p className="mt-1.5 text-[13px] text-ink-soft">Only what will not sort itself out</p>
 
@@ -228,48 +271,65 @@ export function TodayTab({
             {orders
               .filter((o) => o.payment === 'pending')
               .map((o) => (
-                <li key={o.id} className="rounded-[16px] border-l-[3px] border-brick bg-cream px-4 py-3.5">
-                  <p className="text-[14px] font-semibold text-ink">{o.customer} has not paid</p>
-                  <p className="mt-1 text-[12px] text-ink-soft">
+                <li key={o.id} className="rounded-[16px] border-l-[3.5px] border-brick bg-shell p-4 shadow-xs">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-brick shrink-0" />
+                    <p className="text-[14px] font-semibold text-ink">{o.customer} has not paid</p>
+                  </div>
+                  <p className="mt-1 text-[12px] text-ink-soft pl-6">
                     {o.number} · {money(o.total)} · Pickup, {o.windowLabel}
                   </p>
-                  <button
-                    type="button"
-                    onClick={() => actions.markReceived(o.id)}
-                    className="mt-2.5 rounded-full border border-ink/20 px-4 py-1.5 text-[10px] font-bold tracking-[0.09em] text-ink uppercase"
-                  >
-                    Mark received
-                  </button>
+                  <div className="mt-3 pl-6">
+                    <button
+                      type="button"
+                      onClick={() => actions.markReceived(o.id)}
+                      className="inline-flex items-center gap-1 rounded-full border border-ink/20 bg-shell px-3.5 py-1.5 text-[10px] font-bold tracking-[0.08em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
+                    >
+                      <Check className="h-3 w-3 text-leaf" strokeWidth={2.5} />
+                      <span>Mark received</span>
+                    </button>
+                  </div>
                 </li>
               ))}
 
-            <li className="rounded-[16px] border-l-[3px] border-gold bg-cream px-4 py-3.5">
-              <p className="text-[14px] font-semibold text-ink">Note from Sarah Mendez</p>
-              <p className="mt-1 text-[12px] text-ink-soft">Nut allergy, please keep separate</p>
-              <button
-                type="button"
-                onClick={() => toast('Order note opened')}
-                className="mt-2.5 rounded-full border border-ink/20 px-4 py-1.5 text-[10px] font-bold tracking-[0.09em] text-ink uppercase"
-              >
-                Open
-              </button>
+            <li className="rounded-[16px] border-l-[3.5px] border-gold bg-shell p-4 shadow-xs">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-gold shrink-0" />
+                <p className="text-[14px] font-semibold text-ink">Note from Sarah Mendez</p>
+              </div>
+              <p className="mt-1 text-[12px] text-ink-soft pl-6">Nut allergy, please keep separate</p>
+              <div className="mt-3 pl-6">
+                <button
+                  type="button"
+                  onClick={() => toast('Order note opened')}
+                  className="rounded-full border border-ink/20 bg-shell px-3.5 py-1.5 text-[10px] font-bold tracking-[0.08em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
+                >
+                  Open
+                </button>
+              </div>
             </li>
 
-            <li className="rounded-[16px] border-l-[3px] border-gold bg-cream px-4 py-3.5">
-              <p className="text-[14px] font-semibold text-ink">2 flavours are sold out</p>
-              <p className="mt-1 text-[12px] text-ink-soft">
+            <li className="rounded-[16px] border-l-[3.5px] border-gold bg-shell p-4 shadow-xs">
+              <div className="flex items-center gap-2">
+                <RotateCcw className="h-4 w-4 text-gold shrink-0" />
+                <p className="text-[14px] font-semibold text-ink">2 flavours are sold out</p>
+              </div>
+              <p className="mt-1 text-[12px] text-ink-soft pl-6">
                 Ceremonial matcha, Oat and cinnamon. The shop is still taking the rest.
               </p>
-              <button
-                type="button"
-                onClick={() => {
-                  restockAll()
-                  toast('Sold-out flavours restocked')
-                }}
-                className="mt-2.5 rounded-full border border-ink/20 px-4 py-1.5 text-[10px] font-bold tracking-[0.09em] text-ink uppercase"
-              >
-                Restock
-              </button>
+              <div className="mt-3 pl-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    restockAll()
+                    toast('Sold-out flavours restocked')
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-ink/20 bg-shell px-3.5 py-1.5 text-[10px] font-bold tracking-[0.08em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
+                >
+                  <RotateCcw className="h-3 w-3 text-ink-soft" />
+                  <span>Restock</span>
+                </button>
+              </div>
             </li>
           </ul>
         </section>
@@ -293,7 +353,7 @@ export function OrdersTab({ orders, actions }: { orders: DashboardOrder[]; actio
   })
 
   return (
-    <section className="rounded-[22px] border border-line bg-shell p-5">
+    <section className="rounded-[22px] border border-line bg-[#faf6f0] p-5 shadow-xs">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 className="font-display text-[24px] leading-none text-ink">All orders</h2>
@@ -308,8 +368,8 @@ export function OrdersTab({ orders, actions }: { orders: DashboardOrder[]; actio
               type="button"
               aria-pressed={state === f}
               onClick={() => setState(f)}
-              className={`label-caps rounded-full px-3.5 py-2 text-[10px] transition-colors ${
-                state === f ? 'bg-cocoa text-cream' : 'border border-line text-ink-soft hover:border-ink/35'
+              className={`label-caps rounded-full px-3.5 py-2 text-[10px] transition-all active:scale-95 ${
+                state === f ? 'bg-cocoa text-cream shadow-xs' : 'border border-line bg-shell text-ink-soft hover:border-ink/35'
               }`}
             >
               {f}
@@ -322,7 +382,7 @@ export function OrdersTab({ orders, actions }: { orders: DashboardOrder[]; actio
         {rows.map((o) => (
           <li
             key={o.id}
-            className="flex flex-wrap items-center gap-3 rounded-[16px] border border-line-soft px-3.5 py-3"
+            className="flex flex-wrap items-center gap-3 rounded-[16px] border border-line-soft bg-shell px-3.5 py-3 shadow-xs transition-colors hover:border-line"
           >
             <Avatar name={o.customer} />
             <div className="min-w-0 flex-1">
@@ -332,12 +392,12 @@ export function OrdersTab({ orders, actions }: { orders: DashboardOrder[]; actio
               </p>
             </div>
             <PaymentChip order={o} />
-            <span className="label-caps hidden text-[9px] text-ink-faint sm:block">{money(o.total)}</span>
+            <span className="label-caps hidden text-[11px] font-bold text-ink sm:block">{money(o.total)}</span>
             <ReadyButton order={o} actions={actions} />
           </li>
         ))}
         {rows.length === 0 ? (
-          <li className="rounded-[16px] border border-dashed border-line px-4 py-8 text-center text-[13px] text-ink-soft">
+          <li className="rounded-[16px] border border-dashed border-line bg-shell/50 px-4 py-8 text-center text-[13px] text-ink-soft">
             Nothing in this filter right now.
           </li>
         ) : null}
@@ -352,7 +412,7 @@ export function BakeSheetTab() {
   const total = BAKE_SHEET.reduce((a, r) => a + r.cookies, 0)
 
   return (
-    <section className="rounded-[22px] border border-line bg-shell p-5">
+    <section className="rounded-[22px] border border-line bg-[#faf6f0] p-5 shadow-xs">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 className="font-display text-[24px] leading-none text-ink">Bake sheet</h2>
@@ -363,9 +423,10 @@ export function BakeSheetTab() {
         <button
           type="button"
           onClick={() => window.print()}
-          className="no-print min-h-11 rounded-full border border-ink/20 px-5 py-2.5 text-[10px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/50"
+          className="no-print inline-flex items-center gap-1.5 min-h-11 rounded-full border border-ink/20 bg-shell px-5 py-2.5 text-[10px] font-bold tracking-[0.09em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
         >
-          Print
+          <Printer className="h-3.5 w-3.5 text-ink-soft" />
+          <span>Print bake sheet</span>
         </button>
       </div>
 
@@ -373,7 +434,7 @@ export function BakeSheetTab() {
         {BAKE_SHEET.map((row) => (
           <li
             key={row.name}
-            className="flex flex-wrap items-center gap-4 rounded-[16px] border border-line-soft px-4 py-3.5"
+            className="flex flex-wrap items-center gap-4 rounded-[16px] border border-line-soft bg-shell px-4 py-3.5 shadow-xs transition-colors hover:border-line"
           >
             <div className="w-[86px] shrink-0">
               <p className="font-display text-[30px] leading-none text-ink">{row.cookies}</p>
@@ -386,7 +447,7 @@ export function BakeSheetTab() {
               </p>
               {row.note ? <p className="mt-1 text-[12px] font-semibold text-gold">{row.note}</p> : null}
             </div>
-            <div className="shrink-0 rounded-[14px] bg-cream-deep px-3.5 py-2 text-center">
+            <div className="shrink-0 rounded-[14px] bg-cream-deep px-3.5 py-2 text-center border border-line-soft">
               <p className="font-display text-[18px] leading-none text-ink">{trays(row.cookies)}</p>
               <p className="label-caps mt-0.5 text-[8px] text-ink-soft">Trays</p>
             </div>
@@ -412,19 +473,19 @@ export function InsightsTab() {
   return (
     <div className="space-y-5">
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Cookies sold" value="316" sub="in the last 7 days" highlight />
-        <StatCard label="Best seller" value="Salted butter chip" sub="68 of them" />
-        <StatCard label="Typical box" value="4 cookies" sub="across 88 boxes" />
-        <StatCard label="Repeat customers" value="38%" sub="had ordered before" />
+        <StatCard label="Cookies sold" value="316" sub="in the last 7 days" highlight icon={TrendingUp} />
+        <StatCard label="Best seller" value="Salted butter chip" sub="68 of them" icon={Sparkles} />
+        <StatCard label="Typical box" value="4 cookies" sub="across 88 boxes" icon={PackageOpen} />
+        <StatCard label="Repeat customers" value="38%" sub="had ordered before" icon={Users} />
       </section>
 
-      <section className="rounded-[22px] border border-line bg-shell p-5">
+      <section className="rounded-[22px] border border-line bg-[#faf6f0] p-5 shadow-xs">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="font-display text-[22px] leading-none text-ink">What sold this week</h2>
             <p className="mt-1.5 text-[13px] text-ink-soft">Every flavour, ranked</p>
           </div>
-          <span className="label-caps rounded-full bg-cream-deep px-3 py-1.5 text-[9px] text-ink-soft">
+          <span className="label-caps rounded-full bg-cream-deep px-3 py-1.5 text-[9px] text-ink-soft font-bold">
             316 cookies
           </span>
         </div>
@@ -433,7 +494,7 @@ export function InsightsTab() {
           {INSIGHTS_RANKED.map((row, i) => (
             <li key={row.name}>
               <div className="flex items-center gap-3">
-                <span className="label-caps grid h-6 w-6 shrink-0 place-items-center rounded-full bg-cream-deep text-[10px] text-ink-soft">
+                <span className="label-caps grid h-6 w-6 shrink-0 place-items-center rounded-full bg-cream-deep text-[10px] font-bold text-ink-soft">
                   {i + 1}
                 </span>
                 <span className="min-w-0 flex-1 truncate text-[14px] font-semibold text-ink">{row.name}</span>
@@ -444,7 +505,7 @@ export function InsightsTab() {
               </div>
               <div className="mt-2 ml-9 h-[3px] overflow-hidden rounded-full bg-cream-deep">
                 <div
-                  className={`h-full rounded-full ${i === 0 ? 'bg-cocoa' : 'bg-gold'}`}
+                  className={`h-full rounded-full transition-all duration-300 ${i === 0 ? 'bg-cocoa' : 'bg-gold'}`}
                   style={{ width: `${row.pct * 4}%` }}
                 />
               </div>
@@ -454,7 +515,7 @@ export function InsightsTab() {
       </section>
 
       <div className="grid gap-5 xl:grid-cols-3">
-        <section className="rounded-[22px] border border-line bg-shell p-5">
+        <section className="rounded-[22px] border border-line bg-[#faf6f0] p-5 shadow-xs">
           <h2 className="font-display text-[22px] leading-none text-ink">Demand you missed</h2>
           <p className="mt-1.5 text-[13px] text-ink-soft">People who hit a sold-out flavour</p>
           <p className="mt-4 text-[14px] leading-relaxed text-ink">
@@ -471,12 +532,12 @@ export function InsightsTab() {
               </li>
             ))}
           </ul>
-          <p className="mt-4 rounded-[14px] bg-cream-deep px-4 py-3 text-[12px] leading-relaxed text-ink-soft">
+          <p className="mt-4 rounded-[14px] bg-cream-deep px-4 py-3 text-[12px] leading-relaxed text-ink-soft border border-line-soft">
             Bake more oat and marshmallow before noon — that is where the walkouts are.
           </p>
         </section>
 
-        <section className="rounded-[22px] border border-line bg-shell p-5">
+        <section className="rounded-[22px] border border-line bg-[#faf6f0] p-5 shadow-xs">
           <h2 className="font-display text-[22px] leading-none text-ink">Busiest windows</h2>
           <p className="mt-1.5 text-[13px] text-ink-soft">Where to put staff</p>
           <ul className="mt-5 space-y-3">
@@ -488,19 +549,19 @@ export function InsightsTab() {
                 </div>
                 <div className="mt-2 h-[3px] overflow-hidden rounded-full bg-cream-deep">
                   <div
-                    className="h-full rounded-full bg-cocoa"
+                    className="h-full rounded-full bg-cocoa transition-all duration-300"
                     style={{ width: `${(w.count / 60) * 100}%` }}
                   />
                 </div>
               </li>
             ))}
           </ul>
-          <p className="mt-4 rounded-[14px] bg-cream-deep px-4 py-3 text-[12px] leading-relaxed text-ink-soft">
+          <p className="mt-4 rounded-[14px] bg-cream-deep px-4 py-3 text-[12px] leading-relaxed text-ink-soft border border-line-soft">
             The afternoon does more than the morning. Two people from 2pm, one from 5pm.
           </p>
         </section>
 
-        <section className="rounded-[22px] border border-line bg-shell p-5">
+        <section className="rounded-[22px] border border-line bg-[#faf6f0] p-5 shadow-xs">
           <h2 className="font-display text-[22px] leading-none text-ink">How they pay</h2>
           <p className="mt-1.5 text-[13px] text-ink-soft">Split across the week</p>
           <ul className="mt-5 space-y-3">
@@ -511,12 +572,12 @@ export function InsightsTab() {
                   <span className="text-[13px] text-ink-soft">{p.pct}%</span>
                 </div>
                 <div className="mt-2 h-[3px] overflow-hidden rounded-full bg-cream-deep">
-                  <div className="h-full rounded-full bg-gold" style={{ width: `${p.pct}%` }} />
+                  <div className="h-full rounded-full bg-gold transition-all duration-300" style={{ width: `${p.pct}%` }} />
                 </div>
               </li>
             ))}
           </ul>
-          <p className="mt-4 rounded-[14px] bg-cream-deep px-4 py-3 text-[12px] leading-relaxed text-ink-soft">
+          <p className="mt-4 rounded-[14px] bg-cream-deep px-4 py-3 text-[12px] leading-relaxed text-ink-soft border border-line-soft">
             50% of orders now arrive by transfer, which saves roughly $40 a week in card fees.
           </p>
         </section>
@@ -533,7 +594,7 @@ export function InsightsTab() {
 
 export function CustomersTab() {
   return (
-    <section className="rounded-[22px] border border-line bg-shell p-5">
+    <section className="rounded-[22px] border border-line bg-[#faf6f0] p-5 shadow-xs">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="font-display text-[24px] leading-none text-ink">Customers</h2>
@@ -545,7 +606,7 @@ export function CustomersTab() {
         {CUSTOMERS.map((c) => (
           <li
             key={c.name}
-            className="flex flex-wrap items-center gap-3 rounded-[16px] border border-line-soft px-3.5 py-3"
+            className="flex flex-wrap items-center gap-3 rounded-[16px] border border-line-soft bg-shell px-3.5 py-3 shadow-xs transition-colors hover:border-line"
           >
             <Avatar name={c.name} />
             <div className="min-w-0 flex-1">
@@ -554,7 +615,7 @@ export function CustomersTab() {
                 {c.orders} · {c.window}
               </p>
             </div>
-            <span className="text-[14px] font-semibold text-ink">{money(c.value)}</span>
+            <span className="font-display text-[17px] font-bold text-ink">{money(c.value)}</span>
           </li>
         ))}
       </ul>
@@ -575,13 +636,13 @@ export function MoneyTab({ orders, actions }: { orders: DashboardOrder[]; action
   return (
     <div className="space-y-5">
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Settled" value={money(settled)} sub={`${paidCount} orders`} highlight />
-        <StatCard label="Outstanding" value={money(outstanding)} sub={`${pendingCount} orders`} />
-        <StatCard label="Card fees saved" value="$3" sub="on transfers" />
-        <StatCard label="Average order" value={`$${average.toFixed(2)}`} sub="this week" />
+        <StatCard label="Settled" value={money(settled)} sub={`${paidCount} orders`} highlight icon={DollarSign} />
+        <StatCard label="Outstanding" value={money(outstanding)} sub={`${pendingCount} orders`} icon={Clock} />
+        <StatCard label="Card fees saved" value="$3" sub="on transfers" icon={Sparkles} />
+        <StatCard label="Average order" value={`$${average.toFixed(2)}`} sub="this week" icon={TrendingUp} />
       </section>
 
-      <section className="rounded-[22px] border border-line bg-shell p-5">
+      <section className="rounded-[22px] border border-line bg-[#faf6f0] p-5 shadow-xs">
         <h2 className="font-display text-[22px] leading-none text-ink">Waiting on payment</h2>
         <p className="mt-1.5 text-[13px] text-ink-soft">Transfers that have not landed yet</p>
 
@@ -591,7 +652,7 @@ export function MoneyTab({ orders, actions }: { orders: DashboardOrder[]; action
             .map((o) => (
               <li
                 key={o.id}
-                className="flex flex-wrap items-center gap-3 rounded-[16px] border border-line-soft px-3.5 py-3"
+                className="flex flex-wrap items-center gap-3 rounded-[16px] border border-line-soft bg-shell px-3.5 py-3 shadow-xs transition-colors hover:border-line"
               >
                 <Avatar name={o.customer} />
                 <div className="min-w-0 flex-1">
@@ -600,15 +661,16 @@ export function MoneyTab({ orders, actions }: { orders: DashboardOrder[]; action
                     {o.number} · {o.paymentMethod} · Pickup, {o.windowLabel}
                   </p>
                 </div>
-                <span className="label-caps rounded-full bg-brick/12 px-2.5 py-1 text-[9px] text-brick">
+                <span className="label-caps rounded-full bg-brick/12 px-2.5 py-1 text-[9px] font-bold text-brick">
                   {money(o.total)}
                 </span>
                 <button
                   type="button"
                   onClick={() => actions.markReceived(o.id)}
-                  className="rounded-full border border-ink/20 px-4 py-2 text-[10px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/50"
+                  className="inline-flex items-center gap-1 rounded-full border border-ink/20 bg-shell px-4 py-1.5 text-[10px] font-bold tracking-[0.09em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
                 >
-                  Mark received
+                  <Check className="h-3 w-3 text-leaf" strokeWidth={2.5} />
+                  <span>Mark received</span>
                 </button>
               </li>
             ))}

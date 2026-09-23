@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { BRAND, DEMO_BANNER, TICKER } from '../lib/data'
 import { money } from '../lib/format'
 import { useShop } from '../lib/store'
+import { ArrowRight } from 'lucide-react'
 
 const NAV = [
   { label: 'Build a box', href: '#build' },
@@ -15,7 +16,7 @@ export function Wordmark({ className = '' }: { className?: string }) {
   return (
     <a
       href="#top"
-      className={`inline-flex min-h-11 items-center font-display text-[26px] leading-none tracking-[-0.02em] sm:min-h-0 ${className}`}
+      className={`inline-flex min-h-11 items-center font-['Anton',sans-serif] text-[26px] leading-none tracking-[-0.02em] uppercase sm:min-h-0 ${className}`}
       aria-label={`${BRAND.name} — back to top`}
     >
       <span className="text-ink">{BRAND.wordmark[0]}</span>
@@ -33,7 +34,7 @@ export function AnnouncementBar() {
           href="#pricing"
           className="label-caps shrink-0 text-[10px] text-gold underline decoration-gold/40 underline-offset-4 hover:decoration-gold sm:text-[11px]"
         >
-          $2,500 all in →
+          $29/mo or $750 all in →
         </a>
       </div>
     </div>
@@ -84,7 +85,7 @@ export function Header() {
 
   return (
     <header className="no-print sticky top-0 z-40 border-b border-line bg-cream/92 backdrop-blur-md">
-      <div className="container-page flex items-center gap-4 py-3 sm:py-3.5">
+      <div className="container-page flex items-center gap-4 py-2.5 sm:py-3.5">
         <Wordmark />
 
         <nav aria-label="Shop sections" className="mx-auto hidden items-center gap-7 lg:flex">
@@ -103,17 +104,15 @@ export function Header() {
           <button
             type="button"
             onClick={() => openCheckout(1)}
-            className="flex min-h-11 items-center gap-2.5 rounded-full bg-cocoa px-4 py-2.5 text-cream transition-colors hover:bg-cocoa-soft sm:min-h-0 sm:px-5"
+            className="flex min-h-11 items-center gap-2 rounded-full bg-brick px-5 py-2.5 text-white shadow-sm transition-all hover:bg-brick-dark active:scale-95 sm:min-h-0 sm:px-6"
           >
-            <span className="label-caps text-[11px]">Your order</span>
             <span
               key={bump}
-              className={`grid h-[22px] min-w-[22px] place-items-center rounded-full px-1.5 text-[11px] font-bold ${
-                totalCookies > 0 ? 'count-pop bg-brick text-white' : 'bg-cream/15 text-cream/70'
-              }`}
+              className={`label-caps text-[11px] text-white ${totalCookies > 0 ? 'count-pop' : ''}`}
             >
-              {totalCookies}
+              {totalCookies > 0 ? `Order · ${totalCookies}` : 'Order'}
             </span>
+            <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
           </button>
 
           <button
@@ -206,32 +205,39 @@ export function LiveRegions() {
 }
 
 export function MobileOrderBar() {
-  const { totalCookies, boxes, orderTotal, openReview } = useShop()
+  const { totalCookies, boxes, boxCount, orderTotal, openReview } = useShop()
   if (totalCookies === 0) return null
 
   return (
-    <div className="no-print sheet-enter fixed inset-x-0 bottom-0 z-50 border-t border-line bg-cream/95 px-3 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-md md:hidden">
+    <div className="no-print sheet-enter fixed inset-x-0 bottom-0 z-50 border-t border-line bg-[#faf6f0]/96 px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-md md:hidden shadow-[0_-4px_24px_rgba(43,29,19,0.08)]">
       <div className="flex items-center gap-3">
         <div className="min-w-0 flex-1">
-          <p className="label-caps truncate text-[11px] text-ink">
+          <p className="label-caps truncate text-[11px] font-bold text-ink">
             {totalCookies} {totalCookies === 1 ? 'cookie' : 'cookies'} · {boxes.length}{' '}
             {boxes.length === 1 ? 'box' : 'boxes'} · {money(orderTotal)}
           </p>
-          <div className="mt-1.5 flex gap-1" aria-hidden="true">
-            {boxes.map((b) => (
-              <span
-                key={b.id}
-                className={`h-[3px] w-7 rounded-full ${Object.keys(b.items).length ? 'bg-brick' : 'bg-line'}`}
-              />
-            ))}
+          <div className="mt-1.5 flex gap-1.5" aria-hidden="true">
+            {boxes.map((b) => {
+              const count = boxCount(b)
+              const pct = (count / b.size) * 100
+              return (
+                <div key={b.id} className="h-1.5 flex-1 max-w-[60px] overflow-hidden rounded-full bg-line">
+                  <div
+                    className="h-full rounded-full bg-brick transition-all duration-300"
+                    style={{ width: `${pct}%` }}
+                  />
+                </div>
+              )
+            })}
           </div>
         </div>
         <button
           type="button"
           onClick={openReview}
-          className="min-h-11 shrink-0 rounded-full bg-brick px-6 py-3.5 text-[12px] font-bold tracking-[0.09em] text-white uppercase transition-colors hover:bg-brick-dark"
+          className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-brick px-6 py-3 text-[11.5px] font-bold tracking-[0.09em] text-white uppercase shadow-sm transition-all hover:bg-brick-dark active:scale-95"
         >
-          Review order
+          <span>Review order</span>
+          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
         </button>
       </div>
     </div>

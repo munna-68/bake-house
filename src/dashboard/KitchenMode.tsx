@@ -2,6 +2,7 @@ import { WINDOWS } from '../lib/data'
 import { money } from '../lib/format'
 import type { DashboardOrder } from '../lib/types'
 import { useDialog } from '../lib/useDialog'
+import { Check, CheckCircle2, ChefHat, X } from 'lucide-react'
 
 interface Props {
   open: boolean
@@ -20,18 +21,24 @@ export function KitchenMode({ open, orders, onClose, onReady }: Props) {
   return (
     <div className="fixed inset-0 z-[80] overflow-y-auto bg-cream" ref={ref} role="dialog" aria-modal="true" aria-label="Kitchen mode">
       <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-line bg-cream/95 px-5 py-4 backdrop-blur-md">
-        <div>
-          <h1 className="font-display text-[28px] leading-none text-ink">Kitchen mode</h1>
-          <p className="mt-1 text-[13px] text-ink-soft">
-            {open_.length} orders still to make up
-          </p>
+        <div className="flex items-center gap-3">
+          <span className="grid h-10 w-10 place-items-center rounded-full bg-cocoa text-gold shadow-xs">
+            <ChefHat className="h-5 w-5" />
+          </span>
+          <div>
+            <h1 className="font-display text-[26px] sm:text-[28px] leading-none text-ink">Kitchen mode</h1>
+            <p className="mt-1 text-[13px] text-ink-soft">
+              {open_.length} orders still to make up
+            </p>
+          </div>
         </div>
         <button
           type="button"
           onClick={onClose}
-          className="min-h-11 rounded-full bg-cocoa px-6 py-3 text-[11px] font-bold tracking-[0.09em] text-cream uppercase"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-cocoa px-5 py-2.5 text-[11px] font-bold tracking-[0.09em] text-cream uppercase shadow-xs transition-all hover:bg-cocoa-soft active:scale-95"
         >
-          Close
+          <X className="h-4 w-4" />
+          <span>Close</span>
         </button>
       </div>
 
@@ -42,37 +49,48 @@ export function KitchenMode({ open, orders, onClose, onReady }: Props) {
             if (rows.length === 0) return null
             return (
               <section key={w.key} className="mb-10">
-                <h2 className="font-display text-[34px] leading-none text-ink">{w.label}</h2>
-                <ul className="mt-5 space-y-3">
+                <h2 className="font-display text-[30px] sm:text-[34px] leading-none text-ink">{w.label}</h2>
+                <ul className="mt-5 space-y-3.5">
                   {rows.map((o) => (
                     <li
                       key={o.id}
-                      className={`flex flex-wrap items-center gap-4 rounded-[22px] border px-5 py-4 ${
+                      className={`flex flex-wrap items-center gap-4 rounded-[24px] border p-5 sm:p-6 shadow-xs transition-all ${
                         o.stage === 'collected'
-                          ? 'border-line bg-cream-deep opacity-60'
+                          ? 'border-line bg-cream-deep/60 opacity-60'
                           : o.payment === 'pending'
-                            ? 'border-brick/40 bg-shell'
-                            : 'border-line bg-shell'
+                            ? 'border-brick/40 bg-[#faf6f0]'
+                            : 'border-line bg-[#faf6f0]'
                       }`}
                     >
                       <div className="min-w-0 flex-1">
-                        <p className="font-display text-[26px] leading-none text-ink">{o.customer}</p>
+                        <div className="flex items-baseline gap-3">
+                          <p className="font-display text-[26px] sm:text-[28px] leading-none text-ink">{o.customer}</p>
+                          <span className="label-caps text-[10px] text-ink-soft">{o.number}</span>
+                        </div>
                         <p className="mt-2 text-[15px] text-ink-soft">
-                          {o.boxes} · {o.number} · {o.payment === 'paid' ? 'Paid' : `Unpaid ${money(o.total)}`}
+                          {o.boxes} · {o.payment === 'paid' ? 'Paid' : `Unpaid ${money(o.total)}`}
                         </p>
                         {o.note ? (
-                          <p className="mt-1.5 text-[14px] font-semibold text-brick">{o.note}</p>
+                          <p className="mt-1.5 text-[14px] font-semibold text-brick">⚠️ {o.note}</p>
                         ) : null}
                       </div>
                       {o.stage === 'collected' ? (
-                        <span className="label-caps text-[11px] text-ink-faint">Collected</span>
+                        <span className="inline-flex items-center gap-1.5 label-caps rounded-full bg-cream-deep px-4 py-2 text-[11px] text-ink-faint">
+                          <CheckCircle2 className="h-4 w-4 text-leaf" />
+                          <span>Collected</span>
+                        </span>
                       ) : (
                         <button
                           type="button"
                           onClick={() => onReady(o.id)}
-                          className="rounded-full bg-cocoa px-7 py-4 text-[12px] font-bold tracking-[0.09em] text-cream uppercase"
+                          className={`inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-[11.5px] font-bold tracking-[0.09em] uppercase shadow-xs transition-all active:scale-95 ${
+                            o.stage === 'ready'
+                              ? 'bg-leaf text-white hover:bg-leaf/90'
+                              : 'bg-cocoa text-cream hover:bg-cocoa-soft'
+                          }`}
                         >
-                          {o.stage === 'ready' ? 'Hand over' : 'Mark ready'}
+                          <Check className="h-4 w-4" strokeWidth={2.5} />
+                          <span>{o.stage === 'ready' ? 'Hand over' : 'Mark ready'}</span>
                         </button>
                       )}
                     </li>

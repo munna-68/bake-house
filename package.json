@@ -12,6 +12,7 @@
     "qa": "node qa/run.mjs"
   },
   "dependencies": {
+    "lucide-react": "^1.47.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.0"

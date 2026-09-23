@@ -1,19 +1,32 @@
 import { useState } from 'react'
 import { BASE_BUILD_CHECKLIST, BRAND, EXPLAINER, FAQS, REVIEWS } from '../lib/data'
-import { money } from '../lib/format'
 import { useShop } from '../lib/store'
+import {
+  ArrowRight,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  Clock,
+  ExternalLink,
+  PackageOpen,
+  RotateCcw,
+  Sparkles,
+  Star,
+  Wallet,
+} from 'lucide-react'
 
 export function Reviews() {
   return (
     <section id="reviews" className="scroll-mt-24 border-t border-line bg-cream py-14 sm:py-20">
       <div className="container-page">
-        <header className="max-w-[46ch]">
-          <h2 className="heading-lg text-ink">
+        <header className="max-w-[48ch]">
+          <p className="label-caps text-[11px] tracking-[0.18em] text-ink-soft">Customer feedback</p>
+          <h2 className="heading-lg mt-2 text-ink">
             What people say once
             <br />
             they have eaten one
           </h2>
-          <p className="mt-4 text-[16px] leading-relaxed text-ink-soft sm:text-[17px]">
+          <p className="mt-3.5 text-[15.5px] leading-relaxed text-ink-soft sm:text-[17px]">
             Pulled from Google and from order follow ups. We do not edit them and we do not pay for them.
           </p>
         </header>
@@ -22,18 +35,28 @@ export function Reviews() {
           {REVIEWS.map((r) => (
             <li
               key={r.id}
-              className="w-[85vw] shrink-0 snap-start rounded-[22px] border border-line bg-shell p-5 shadow-card sm:w-[62vw] lg:w-auto"
+              className="group flex flex-col justify-between w-[85vw] shrink-0 snap-start rounded-[24px] border border-line bg-[#faf6f0] p-6 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-ink/25 hover:shadow-sm sm:w-[62vw] lg:w-auto"
             >
-              <blockquote className="text-[15px] leading-relaxed text-ink">{r.quote}</blockquote>
-              <p className="label-caps mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[9px] text-ink-faint">
-                <span>{r.name}</span>
-                <span aria-hidden="true">·</span>
-                <span className="flex items-center gap-1 text-leaf">
-                  <span aria-hidden="true">✓</span> Verified order
+              <div>
+                <div className="flex items-center gap-1 text-gold mb-3.5" aria-label="5 stars">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-gold text-gold" />
+                  ))}
+                </div>
+                <blockquote className="font-display italic text-[16.5px] sm:text-[17.5px] leading-snug text-ink">
+                  &ldquo;{r.quote}&rdquo;
+                </blockquote>
+              </div>
+              <div className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-line-soft pt-3.5">
+                <span className="text-[12.5px] font-semibold text-ink">{r.name}</span>
+                <span className="text-ink-soft/40" aria-hidden="true">·</span>
+                <span className="inline-flex items-center gap-1 rounded-full bg-leaf-soft px-2 py-0.5 text-[10.5px] font-semibold text-leaf">
+                  <CheckCircle2 className="h-3 w-3" strokeWidth={2.5} aria-hidden="true" />
+                  Verified
                 </span>
-                <span aria-hidden="true">·</span>
-                <span>{r.ago}</span>
-              </p>
+                <span className="text-ink-soft/40" aria-hidden="true">·</span>
+                <span className="label-caps text-[10px] text-ink-soft/75">{r.ago}</span>
+              </div>
             </li>
           ))}
         </ul>
@@ -43,29 +66,51 @@ export function Reviews() {
 }
 
 export function Explainer() {
+  const ICONS = [PackageOpen, Clock, Wallet]
+
   return (
     <section id="pickup" className="scroll-mt-24 border-t border-line bg-cream-deep py-14 sm:py-20">
       <div className="container-page">
-        <header className="max-w-[46ch]">
-          <h2 className="heading-lg text-ink">
+        <header className="max-w-[48ch]">
+          <p className="label-caps text-[11px] tracking-[0.18em] text-ink-soft">How it works</p>
+          <h2 className="heading-lg mt-2 text-ink">
             Warm at the counter, or
             <br />
             at your door
           </h2>
-          <p className="mt-4 text-[16px] leading-relaxed text-ink-soft sm:text-[17px]">
+          <p className="mt-3.5 text-[15.5px] leading-relaxed text-ink-soft sm:text-[17px]">
             Pickup is free and you choose a three hour window, so nothing sits under a heat lamp waiting for you.
             Delivery runs across nine postcodes on three runs a day.
           </p>
         </header>
 
         <ol className="mt-8 grid gap-4 sm:grid-cols-3">
-          {EXPLAINER.map((step) => (
-            <li key={step.n} className="rounded-[22px] border border-line bg-shell p-5 shadow-card">
-              <span className="font-display text-[40px] leading-none text-brick">{step.n}</span>
-              <h3 className="mt-3 font-display text-[22px] leading-tight text-ink">{step.title}</h3>
-              <p className="mt-2.5 text-[14px] leading-relaxed text-ink-soft">{step.body}</p>
-            </li>
-          ))}
+          {EXPLAINER.map((step, idx) => {
+            const Icon = ICONS[idx] ?? PackageOpen
+            return (
+              <li
+                key={step.n}
+                className="group relative flex flex-col justify-between rounded-[24px] border border-line bg-[#faf6f0] p-6 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-ink/25 hover:shadow-sm"
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-display italic text-[44px] leading-none text-brick">
+                      0{step.n}
+                    </span>
+                    <span className="grid h-10 w-10 place-items-center rounded-full bg-shell border border-line text-ink shadow-xs transition-transform group-hover:scale-110">
+                      <Icon className="h-5 w-5 text-cocoa" strokeWidth={1.8} />
+                    </span>
+                  </div>
+                  <h3 className="mt-4 font-display text-[22px] leading-tight text-ink sm:text-[24px]">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2.5 text-[14.5px] leading-relaxed text-ink-soft">
+                    {step.body}
+                  </p>
+                </div>
+              </li>
+            )
+          })}
         </ol>
       </div>
     </section>
@@ -78,120 +123,227 @@ export function Faq() {
   return (
     <section id="faq" className="scroll-mt-24 border-t border-line bg-cream py-14 sm:py-20">
       <div className="container-page">
-        <header className="max-w-[46ch]">
-          <h2 className="heading-lg text-ink">
+        <header className="max-w-[48ch]">
+          <p className="label-caps text-[11px] tracking-[0.18em] text-ink-soft">Frequently asked</p>
+          <h2 className="heading-lg mt-2 text-ink">
             Questions people
             <br />
             actually ask
           </h2>
         </header>
 
-        <ul className="mt-8 border-t border-line">
+        <div className="mt-8 space-y-3">
           {FAQS.map((item) => {
             const isOpen = !!open[item.id]
             return (
-              <li key={item.id} className="border-b border-line">
+              <div
+                key={item.id}
+                className={`rounded-[22px] border transition-all duration-200 ${
+                  isOpen
+                    ? 'border-ink/30 bg-[#faf6f0] shadow-xs'
+                    : 'border-line bg-[#faf6f0]/70 hover:border-ink/20 hover:bg-[#faf6f0]'
+                }`}
+              >
                 <h3>
                   <button
                     type="button"
                     aria-expanded={isOpen}
                     aria-controls={`${item.id}-panel`}
                     onClick={() => setOpen((s) => ({ ...s, [item.id]: !s[item.id] }))}
-                    className="flex w-full items-center justify-between gap-6 py-5 text-left"
+                    className="flex w-full items-center justify-between gap-4 p-5 sm:p-6 text-left"
                   >
-                    <span className="font-display text-[19px] leading-tight text-ink sm:text-[22px]">{item.q}</span>
+                    <span className="font-display text-[19px] leading-tight text-ink sm:text-[22px]">
+                      {item.q}
+                    </span>
                     <span
                       aria-hidden="true"
-                      className={`shrink-0 text-[22px] leading-none text-ink transition-transform duration-250 ${
-                        isOpen ? 'rotate-45' : ''
+                      className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line bg-shell text-ink transition-transform duration-250 ${
+                        isOpen ? 'rotate-180 bg-brick text-white border-brick' : ''
                       }`}
                     >
-                      +
+                      <ChevronDown className="h-4 w-4" />
                     </span>
                   </button>
                 </h3>
                 <div id={`${item.id}-panel`} className="accordion-body" data-open={isOpen}>
-                  <div>
-                    <p className="max-w-[62ch] pb-5 text-[15px] leading-relaxed text-ink-soft">{item.a}</p>
+                  <div className="px-5 pb-5 sm:px-6 sm:pb-6">
+                    <p className="max-w-[62ch] text-[15px] leading-relaxed text-ink-soft border-t border-line-soft pt-3.5">
+                      {item.a}
+                    </p>
                   </div>
                 </div>
-              </li>
+              </div>
             )
           })}
-        </ul>
+        </div>
       </div>
     </section>
   )
 }
 
 export function Pricing() {
+  const [billing, setBilling] = useState<'monthly' | 'onetime'>('monthly')
+
   return (
     <section id="pricing" className="scroll-mt-24 border-t border-line bg-cream-deep py-14 sm:py-20">
       <div className="container-page">
-        <header className="max-w-[46ch]">
-          <h2 className="heading-lg text-ink">
+        <header className="max-w-[56ch]">
+          <div className="flex items-center gap-2">
+            <span className="label-caps rounded-full bg-brick px-3 py-1 text-[9.5px] font-bold text-white tracking-widest uppercase">
+              sitekeep.studio
+            </span>
+            <span className="label-caps text-[11px] tracking-[0.16em] text-ink-soft">E-Commerce Solution</span>
+          </div>
+          <h2 className="heading-lg mt-3 text-ink">
             What a shop like this
             <br />
             costs
           </h2>
-          <p className="mt-4 text-[16px] leading-relaxed text-ink-soft sm:text-[17px]">
-            One price for the whole thing, shop and dashboard together. No retainer, no platform fee skimmed off your
-            orders, and you own all of it at the end.
+          <p className="mt-3.5 text-[15.5px] leading-relaxed text-ink-soft sm:text-[17px]">
+            Designed and engineered by <strong className="text-ink font-semibold">sitekeep.studio</strong>.
+            Zero platform fees skimmed off your orders, and you choose between low-commitment monthly hosting or full codebase ownership.
           </p>
         </header>
 
-        <div className="mt-8 grid gap-8 rounded-[26px] bg-cocoa p-6 text-cream sm:p-9 lg:grid-cols-2 lg:gap-12">
-          <div>
-            <p className="font-display text-[52px] leading-none text-gold sm:text-[64px]">{money(2500)}</p>
-            <p className="mt-4 max-w-[38ch] text-[14px] leading-relaxed text-cream/70">
-              One payment. First year of hosting included. No monthly fee, no cut of your orders.
-            </p>
-            <div className="mt-6 flex flex-col gap-2.5 sm:max-w-[320px]">
-              <a
-                href="#build"
-                className="rounded-full bg-brick px-6 py-4 text-center text-[12px] font-bold tracking-[0.09em] text-white uppercase transition-colors hover:bg-brick-dark"
-              >
-                Try the ordering flow
-              </a>
-              <a
-                href="/dashboard/"
-                className="rounded-full bg-cream px-6 py-4 text-center text-[12px] font-bold tracking-[0.09em] text-cocoa uppercase transition-colors hover:bg-white"
-              >
-                See the dashboard
-              </a>
+        {/* Pricing selector */}
+        <div className="mt-8 flex items-center gap-2 rounded-full border border-line bg-shell/80 p-1.5 w-fit shadow-xs">
+          <button
+            type="button"
+            onClick={() => setBilling('monthly')}
+            className={`rounded-full px-5 py-2 text-[11.5px] font-bold tracking-[0.08em] uppercase transition-all active:scale-95 ${
+              billing === 'monthly' ? 'bg-brick text-white shadow-xs' : 'text-ink-soft hover:text-ink'
+            }`}
+          >
+            Monthly · $29/mo
+          </button>
+          <button
+            type="button"
+            onClick={() => setBilling('onetime')}
+            className={`flex items-center gap-1.5 rounded-full px-5 py-2 text-[11.5px] font-bold tracking-[0.08em] uppercase transition-all active:scale-95 ${
+              billing === 'onetime' ? 'bg-brick text-white shadow-xs' : 'text-ink-soft hover:text-ink'
+            }`}
+          >
+            <span>One payment · $750</span>
+            <span className="rounded-full bg-gold/30 px-2 py-0.5 text-[9px] text-ink font-extrabold">Save</span>
+          </button>
+        </div>
+
+        {/* Dual pricing / comparison card */}
+        <div className="mt-6 grid gap-6 lg:grid-cols-[1.05fr_1fr] lg:gap-8">
+          {/* Main pricing showcase card */}
+          <div className="rounded-[26px] bg-cocoa p-6 text-cream sm:p-9 shadow-card flex flex-col justify-between">
+            <div>
+              <div className="flex flex-wrap items-baseline justify-between gap-3">
+                <div>
+                  <span className="label-caps text-[10px] text-gold tracking-widest uppercase">
+                    {billing === 'monthly' ? 'Subscription plan' : 'Complete ownership'}
+                  </span>
+                  <div className="mt-2 flex items-baseline gap-2">
+                    <span className="font-display text-[52px] leading-none text-gold sm:text-[66px]">
+                      {billing === 'monthly' ? '$29' : '$750'}
+                    </span>
+                    <span className="text-[16px] text-cream/75 font-medium">
+                      {billing === 'monthly' ? '/ month' : 'one-time'}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="rounded-[16px] border border-cream/15 bg-white/5 px-3.5 py-2 text-right">
+                  <span className="label-caps text-[9px] text-cream/60 block">Platform cut</span>
+                  <span className="font-display text-[20px] text-cream font-bold leading-tight">0% fee</span>
+                </div>
+              </div>
+
+              <p className="mt-4 max-w-[42ch] text-[14.5px] leading-relaxed text-cream/80">
+                {billing === 'monthly'
+                  ? 'Get your shop live immediately for $29/month. High-speed hosting, automatic stock management, full kitchen dashboard, and ongoing maintenance included. Cancel anytime.'
+                  : 'Pay $750 once and own everything outright. Full source code, complete commercial deployment on your domain, zero ongoing fees, and zero platform cuts forever.'}
+              </p>
+
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                <a
+                  href="#build"
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-brick px-6 py-3.5 text-center text-[11.5px] font-bold tracking-[0.09em] text-white uppercase shadow-xs transition-all hover:bg-brick-dark active:scale-95"
+                >
+                  <span>Try the ordering flow</span>
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+                </a>
+                <a
+                  href="/dashboard/"
+                  className="inline-flex min-h-12 items-center justify-center rounded-full bg-cream px-6 py-3.5 text-center text-[11.5px] font-bold tracking-[0.09em] text-cocoa uppercase shadow-xs transition-all hover:bg-white active:scale-95"
+                >
+                  See kitchen dashboard
+                </a>
+              </div>
+            </div>
+
+            <div className="mt-8 border-t border-cream/15 pt-5 flex items-center justify-between text-[12.5px] text-cream/65">
+              <span>Ready in 48-72 hours</span>
+              <span className="flex items-center gap-1.5 text-gold font-medium">
+                <Sparkles className="h-3.5 w-3.5" />
+                By sitekeep.studio
+              </span>
             </div>
           </div>
 
-          <div>
-            <h3 className="font-display text-[22px] leading-none text-cream">Everything in the base build</h3>
-            <ul className="mt-5">
-              {BASE_BUILD_CHECKLIST.map((item) => (
-                <li
-                  key={item}
-                  className="flex gap-3 border-b border-cream/12 py-3 text-[14px] leading-relaxed text-cream/80 last:border-b-0"
-                >
-                  <span className="mt-[3px] h-1.5 w-1.5 shrink-0 rounded-full bg-gold" aria-hidden="true" />
-                  {item}
-                </li>
-              ))}
-            </ul>
+          {/* Feature checklist card */}
+          <div className="rounded-[26px] border border-line bg-[#faf6f0] p-6 sm:p-9 shadow-xs flex flex-col justify-between">
+            <div>
+              <h3 className="font-display text-[24px] leading-tight text-ink">
+                Everything in the build
+              </h3>
+              <p className="mt-1.5 text-[13.5px] text-ink-soft">
+                Fully functional e-commerce web app engineered for bakeries and artisan food shops.
+              </p>
+
+              <ul className="mt-5 space-y-3">
+                {BASE_BUILD_CHECKLIST.map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-[13.5px] leading-relaxed text-ink">
+                    <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-full bg-leaf-soft text-leaf">
+                      <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="mt-6 border-t border-line pt-4">
+              <a
+                href="https://sitekeep.studio"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-[12px] font-bold tracking-[0.08em] text-brick uppercase transition-colors hover:text-brick-dark"
+              >
+                <span>Learn more at sitekeep.studio</span>
+                <ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            </div>
           </div>
         </div>
 
-        <div className="mt-10 max-w-[62ch] border-t border-line pt-8">
-          <h3 className="font-display text-[28px] leading-tight text-ink sm:text-[34px]">
-            Let us build yours, and make it better than this
-          </h3>
-          <p className="mt-4 text-[15px] leading-relaxed text-ink-soft">
-            This demo is a working shop because that is what we sell. Yours gets built around your kitchen, your
-            flavours and your pickup windows — and you keep the code.
-          </p>
-          <a
-            href="#build"
-            className="mt-6 inline-block rounded-full bg-cocoa px-7 py-4 text-[12px] font-bold tracking-[0.09em] text-cream uppercase transition-colors hover:bg-cocoa-soft"
-          >
-            Start a project
-          </a>
+        {/* Agency callout */}
+        <div className="mt-12 rounded-[24px] border border-line bg-shell p-6 sm:p-8 shadow-xs">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-[54ch]">
+              <span className="label-caps text-[10px] tracking-widest text-brick font-bold uppercase">
+                Custom Engineering
+              </span>
+              <h3 className="mt-1 font-display text-[26px] leading-tight text-ink sm:text-[30px]">
+                Need something customized for your bakery?
+              </h3>
+              <p className="mt-2.5 text-[14.5px] leading-relaxed text-ink-soft">
+                This demo is a live, functional portfolio piece built by <strong className="text-ink">sitekeep.studio</strong>.
+                We can adapt the inventory logic, slot windows, multi-location logistics, and brand styling for your brand.
+              </p>
+            </div>
+            <a
+              href="#build"
+              className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-full bg-cocoa px-8 py-3.5 text-center text-[12px] font-bold tracking-[0.09em] text-cream uppercase transition-all hover:bg-cocoa-soft active:scale-95"
+            >
+              Start a project
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -206,7 +358,7 @@ export function Footer() {
       <div className="container-page">
         <div className="grid gap-10 sm:grid-cols-3">
           <div>
-            <h2 className="label-caps text-[11px] text-cream/50">The counter</h2>
+            <h2 className="label-caps text-[11px] text-cream/50 tracking-wider">The counter</h2>
             <address className="mt-4 space-y-1 text-[14px] leading-relaxed text-cream/80 not-italic">
               <p>{BRAND.address}</p>
               <p>{BRAND.hours}</p>
@@ -219,47 +371,53 @@ export function Footer() {
           </div>
 
           <div>
-            <h2 className="label-caps text-[11px] text-cream/50">Orders</h2>
+            <h2 className="label-caps text-[11px] text-cream/50 tracking-wider">Orders</h2>
             <ul className="mt-4 space-y-2 text-[14px] text-cream/80">
               <li>
-                <a href="#build" className="hover:text-cream">
+                <a href="#build" className="hover:text-cream transition-colors">
                   Build a box
                 </a>
               </li>
               <li>
-                <a href="#pickup" className="hover:text-cream">
+                <a href="#pickup" className="hover:text-cream transition-colors">
                   Pickup and delivery
                 </a>
               </li>
               <li>
-                <a href="#pricing" className="hover:text-cream">
-                  Catering and large orders
+                <a href="#pricing" className="hover:text-cream transition-colors">
+                  Pricing & licensing
                 </a>
               </li>
             </ul>
           </div>
 
           <div>
-            <h2 className="label-caps text-[11px] text-cream/50">Elsewhere</h2>
+            <h2 className="label-caps text-[11px] text-cream/50 tracking-wider">Studio & Links</h2>
             <ul className="mt-4 space-y-2 text-[14px] text-cream/80">
               <li>
-                <a href={BRAND.instagram} className="hover:text-cream">
-                  Instagram
+                <a
+                  href="https://sitekeep.studio"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-gold hover:text-white transition-colors"
+                >
+                  <span>sitekeep.studio</span>
+                  <ExternalLink className="h-3 w-3" />
                 </a>
               </li>
               <li>
-                <a href={BRAND.tiktok} className="hover:text-cream">
-                  TikTok
+                <a href="/dashboard/" className="hover:text-cream transition-colors">
+                  Kitchen dashboard
                 </a>
               </li>
               <li>
-                <a href={BRAND.allergenSheet} className="hover:text-cream">
+                <a href={BRAND.allergenSheet} className="hover:text-cream transition-colors">
                   Allergen sheet
                 </a>
               </li>
               <li>
-                <a href="/dashboard/" className="hover:text-cream">
-                  Kitchen dashboard
+                <a href={BRAND.instagram} className="hover:text-cream transition-colors">
+                  Instagram
                 </a>
               </li>
             </ul>
@@ -267,7 +425,7 @@ export function Footer() {
         </div>
 
         <p
-          className="mt-12 font-display leading-[0.82] tracking-[-0.02em] text-cream"
+          className="mt-12 font-['Anton',sans-serif] leading-[0.82] tracking-[-0.02em] text-cream uppercase"
           style={{ fontSize: 'clamp(3.5rem, 15.5vw, 13rem)' }}
           aria-hidden="true"
         >
@@ -275,9 +433,17 @@ export function Footer() {
           <span className="text-brick">{BRAND.wordmark[1]}</span>
         </p>
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
-          <p className="label-caps text-[10px] text-cream/45">
-            © {new Date().getFullYear()} {BRAND.name} · Demo storefront
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-cream/15 pt-6">
+          <p className="label-caps text-[10px] text-cream/55">
+            © {new Date().getFullYear()} {BRAND.name} · Designed & built by{' '}
+            <a
+              href="https://sitekeep.studio"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gold underline underline-offset-4 hover:text-white"
+            >
+              sitekeep.studio
+            </a>
           </p>
           <button
             type="button"
@@ -285,12 +451,14 @@ export function Footer() {
               hardReset()
               toast('Demo reset. Stock, boxes and menu are back to the start.')
             }}
-            className="label-caps min-h-11 rounded-full border border-cream/20 px-4 py-2 text-[10px] text-cream/55 transition-colors hover:border-cream/45 hover:text-cream"
+            className="label-caps inline-flex min-h-10 items-center gap-1.5 rounded-full border border-cream/20 px-4 py-2 text-[10px] text-cream/65 transition-all hover:border-cream/50 hover:text-cream active:scale-95"
           >
-            Reset this demo
+            <RotateCcw className="h-3 w-3" />
+            <span>Reset this demo</span>
           </button>
         </div>
       </div>
     </footer>
   )
 }
+

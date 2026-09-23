@@ -1,57 +1,66 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { TRUST } from '../lib/data'
 import { useShop } from '../lib/store'
 import { CookieArtSvg, CookieTile } from './Cookie'
+import { ArrowRight, ChevronLeft, ChevronRight, Clock, Leaf, ShieldCheck, Truck, Wheat } from 'lucide-react'
 
 export function Hero() {
   const { cookiesLeftToday } = useShop()
 
   return (
-    <section id="top" className="container-page pt-8 pb-4 sm:pt-12">
-      <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1fr)] lg:gap-14">
+    <section id="top" className="container-page pt-6 pb-4 sm:pt-10">
+      <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,0.88fr)_minmax(0,1.12fr)] lg:gap-14">
+        {/* Left column: Flavour carousel card */}
         <div className="order-2 lg:order-1">
           <FlavourCarousel />
         </div>
 
+        {/* Right column: Hero headline and narrative */}
         <div className="order-1 lg:order-2">
-          <h1 className="heading-xl text-ink">
-            One batch.
+          <p className="label-caps text-[11px] tracking-[0.18em] text-ink-soft">
+            Artisan cookies &nbsp;/&nbsp; Baked fresh daily
+          </p>
+
+          <h1 className="mt-3 font-display text-[44px] leading-[1.02] tracking-[-0.015em] text-ink sm:text-[58px] lg:text-[66px]">
+            Big cookies.
             <br />
-            <span className="text-brick">Nine flavours.</span>
+            <span className="text-brick">Soft middles.</span>
           </h1>
-          <p className="mt-5 max-w-[46ch] text-[17px] leading-relaxed text-ink-soft sm:text-[18px]">
-            We bake once, at seven in the morning, and stop when the rack is empty. Build a box of four, six or
+
+          <p className="mt-5 max-w-[48ch] text-[16px] leading-relaxed text-ink-soft sm:text-[17.5px]">
+            Nine flavours, one batch a morning, and we stop when the rack is empty. Build a box of four, six or
             twelve, then collect it warm from the counter or take an evening delivery slot.
           </p>
 
-          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="mt-7 flex flex-col gap-3.5 sm:flex-row sm:items-center">
             <a
               href="#build"
-              className="min-h-11 rounded-full bg-brick px-7 py-4 text-center text-[12px] font-bold tracking-[0.09em] text-white uppercase transition-colors hover:bg-brick-dark sm:w-auto"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-brick px-8 py-3.5 text-center text-[12px] font-bold tracking-[0.09em] text-white uppercase shadow-sm transition-all hover:bg-brick-dark active:scale-95 sm:w-auto"
             >
-              Build your box
+              <span>Build your box</span>
+              <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
             </a>
             <a
               href="#pickup"
-              className="min-h-11 rounded-full border border-ink/25 px-7 py-4 text-center text-[12px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink hover:bg-shell sm:w-auto"
+              className="inline-flex min-h-12 items-center justify-center rounded-full border border-ink/22 bg-shell/70 px-7 py-3.5 text-center text-[12px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink hover:bg-shell active:scale-95 sm:w-auto"
             >
               How pickup works
             </a>
           </div>
 
-          <div className="mt-7 flex flex-wrap items-center gap-x-7 gap-y-3">
-            <p className="flex items-center gap-2.5 rounded-full border border-line bg-shell px-4 py-2.5">
-              <span className="h-2 w-2 rounded-full bg-gold" aria-hidden="true" />
-              <span className="label-caps text-[11px] text-ink">
+          <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
+            <div className="flex items-center gap-2.5 rounded-full border border-line bg-shell/80 px-4 py-2 shadow-xs">
+              <span className="h-2 w-2 rounded-full bg-brick" aria-hidden="true" />
+              <span className="label-caps text-[10px] text-ink">
                 {cookiesLeftToday} cookies left today
               </span>
-            </p>
-            <p className="flex items-center gap-2">
+            </div>
+            <div className="h-4 w-px bg-line hidden sm:block" aria-hidden="true" />
+            <div className="flex items-center gap-2">
               <span className="text-[13px] tracking-[0.16em] text-gold" aria-hidden="true">
                 ★★★★★
               </span>
-              <span className="label-caps text-[11px] text-ink-soft">4.8 from 1,047 orders</span>
-            </p>
+              <span className="label-caps text-[10.5px] text-ink-soft">4.9 from 1,284 orders</span>
+            </div>
           </div>
         </div>
       </div>
@@ -62,7 +71,6 @@ export function Hero() {
 function FlavourCarousel() {
   const { flavours, add, canAdd, qtyInOrder, available } = useShop()
   const [index, setIndex] = useState(0)
-  /* A missing photo file falls back to the drawn cookie rather than a broken icon. */
   const [brokenSrc, setBrokenSrc] = useState<string | null>(null)
   const liveRef = useRef<HTMLDivElement>(null)
   const total = flavours.length
@@ -120,69 +128,56 @@ function FlavourCarousel() {
   return (
     <div className="relative">
       <div
-        className="relative overflow-hidden rounded-[30px] bg-cocoa px-5 pt-5 pb-6 sm:px-7 sm:pt-6 sm:pb-7"
+        className="group relative overflow-hidden rounded-[26px] border border-line bg-[#faf6f0] p-5 pb-5 sm:p-6 sm:pb-6 shadow-[0_4px_24px_-6px_rgba(43,29,19,0.06)]"
         tabIndex={0}
         role="group"
         aria-roledescription="carousel"
         aria-label="Today's flavours"
         onKeyDown={onKey}
       >
-        <span
-          className="pointer-events-none absolute top-2 left-4 font-display text-[64px] leading-none text-cream/8 select-none sm:text-[80px]"
-          aria-hidden="true"
-        >
-          {String(index + 1).padStart(2, '0')}
-        </span>
-
-        <div className="relative flex flex-col items-end gap-2.5">
-          <div
-            className="grid h-[74px] w-[74px] shrink-0 -rotate-12 place-items-center rounded-full bg-gold text-center"
-            aria-hidden="true"
-          >
-            <span className="label-caps text-[8px] leading-[1.25] text-cocoa">
-              7am
-              <br />
-              out of the oven
-              <br />
-              daily
+        {/* Top bar inside card: index and round fresh badge */}
+        <div className="flex items-start justify-between">
+          <div className="flex items-baseline">
+            <span className="font-display italic text-[36px] leading-none text-ink sm:text-[42px]">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <span className="ml-1 text-[13px] font-medium text-ink-soft/60 tracking-wider">
+              / {String(total).padStart(2, '0')}
             </span>
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="label-caps text-[11px] text-cream/60">
-              {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
-            </span>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => go(-1)}
-                aria-label="Previous flavour"
-                className="grid h-11 w-11 place-items-center rounded-full border border-cream/25 text-cream transition-colors hover:border-cream/60 active:scale-95 sm:h-9 sm:w-9"
-              >
-                <span aria-hidden="true">←</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => go(1)}
-                aria-label="Next flavour"
-                className="grid h-11 w-11 place-items-center rounded-full border border-cream/25 text-cream transition-colors hover:border-cream/60 active:scale-95 sm:h-9 sm:w-9"
-              >
-                <span aria-hidden="true">→</span>
-              </button>
+          {/* Fresh badge */}
+          <div
+            className="grid h-[74px] w-[74px] sm:h-[80px] sm:w-[80px] shrink-0 -rotate-6 place-items-center rounded-full bg-[#f3d489] text-center p-2 shadow-xs transition-transform hover:rotate-0"
+            aria-hidden="true"
+          >
+            <div className="flex flex-col items-center">
+              <span className="label-caps text-[8px] sm:text-[8.5px] font-black leading-tight text-cocoa tracking-wider">
+                Fresh
+                <br />
+                today
+              </span>
+              <span className="label-caps text-[6.5px] leading-tight text-cocoa/75 mt-0.5">
+                Out of the
+                <br />
+                oven daily
+              </span>
+              <Wheat className="h-3 w-3 text-cocoa/75 mt-0.5" strokeWidth={1.8} />
             </div>
           </div>
         </div>
 
-        <div key={flavour.id} className="fade-enter mt-2">
-          <div className="mx-auto aspect-square w-[78%] max-w-[340px]">
+        {/* Center cookie image with gentle hover tilt */}
+        <div key={flavour.id} className="fade-enter mt-1">
+          <div className="mx-auto aspect-square w-[72%] max-w-[270px] sm:max-w-[290px] py-1">
             {flavour.photo && brokenSrc !== flavour.photo ? (
               <img
                 src={flavour.photo}
                 alt={flavour.name}
                 decoding="async"
                 onError={() => setBrokenSrc(flavour.photo ?? null)}
-                className={`h-full w-full object-contain drop-shadow-[0_18px_30px_rgba(0,0,0,0.45)] ${
-                  soldOut ? 'opacity-60 saturate-[0.35]' : ''
+                className={`cookie-spin h-full w-full object-contain drop-shadow-[0_14px_24px_rgba(43,29,19,0.2)] ${
+                  soldOut ? 'opacity-55 saturate-[0.35]' : ''
                 }`}
               />
             ) : (
@@ -190,45 +185,44 @@ function FlavourCarousel() {
                 art={flavour.art}
                 seedKey={flavour.id}
                 title={flavour.name}
-                className={`h-full w-full drop-shadow-[0_18px_30px_rgba(0,0,0,0.45)] ${
-                  soldOut ? 'opacity-60 saturate-[0.35]' : ''
+                className={`cookie-spin h-full w-full drop-shadow-[0_14px_24px_rgba(43,29,19,0.2)] ${
+                  soldOut ? 'opacity-55 saturate-[0.35]' : ''
                 }`}
               />
             )}
           </div>
 
-          {/* Not a heading: this is the current slide's label, and it sits before
-              the page h1 in DOM order. As an h2 it made screen readers announce a
-              flavour name before the page title. */}
-          <p className="mt-4 text-center font-display text-[30px] leading-none text-cream sm:text-[34px]">
+          {/* Cookie title and description */}
+          <p className="mt-3 text-center font-display text-[26px] leading-tight text-ink sm:text-[30px]">
             {flavour.name}
           </p>
-          <p className="mx-auto mt-2.5 max-w-[34ch] text-center text-[14px] leading-relaxed text-cream/70">
+          <p className="mx-auto mt-1.5 max-w-[34ch] text-center text-[13.5px] leading-relaxed text-ink-soft">
             {flavour.desc}
           </p>
 
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
+          {/* Status and CTA inside card */}
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
             {soldOut ? (
               <>
-                <span className="label-caps text-[10px] text-cream/50">Sold out, back at 7am</span>
-                <span className="label-caps rounded-full bg-brick/25 px-3 py-1.5 text-[10px] text-[#f0b4a6]">
-                  Gone for today, back at 7am
+                <span className="label-caps text-[10px] text-ink-faint">Sold out, back at 7am</span>
+                <span className="label-caps rounded-full bg-brick/15 px-3 py-1.5 text-[10px] text-brick font-semibold">
+                  Gone for today
                 </span>
               </>
             ) : (
               <>
                 <span className="flex items-center gap-2">
-                  <span className="h-1.5 w-1.5 rounded-full bg-gold" aria-hidden="true" />
-                  <span className="label-caps text-[10px] text-gold">
+                  <span className="h-2 w-2 rounded-full bg-leaf" aria-hidden="true" />
+                  <span className="label-caps text-[10px] text-ink-soft">
                     {stockLabel}
-                    {left > 0 && inOrder > 0 ? ` · ${inOrder} in your order` : ''}
+                    {left > 0 && inOrder > 0 ? ` · ${inOrder} in order` : ''}
                   </span>
                 </span>
                 <button
                   type="button"
                   onClick={onAdd}
                   disabled={!addable}
-                  className="min-h-11 rounded-full bg-cream px-4 py-2 text-[11px] font-bold tracking-[0.09em] text-cocoa uppercase transition-transform active:scale-95 disabled:cursor-not-allowed disabled:bg-cream/35 disabled:text-cocoa/50 sm:min-h-0"
+                  className="min-h-10 rounded-full bg-brick px-5 py-2 text-[11px] font-bold tracking-[0.09em] text-white uppercase shadow-xs transition-all hover:bg-brick-dark active:scale-95 disabled:cursor-not-allowed disabled:bg-line disabled:text-ink-faint sm:min-h-0"
                 >
                   Add to box
                 </button>
@@ -237,35 +231,56 @@ function FlavourCarousel() {
           </div>
         </div>
 
-        <div className="mt-5 flex flex-wrap justify-center gap-2">
-          {flavours.map((f, i) => {
-            const fLeft = f.stock - qtyInOrder(f.id)
-            const gone = fLeft <= 0 && qtyInOrder(f.id) === 0
-            return (
-              <button
-                key={f.id}
-                type="button"
-                onClick={() => setIndex(i)}
-                aria-pressed={i === index}
-                aria-label={`Show ${f.name}`}
-                title={f.name}
-                className={`h-11 w-11 shrink-0 overflow-hidden rounded-full transition-all sm:h-9 sm:w-9 ${
-                  i === index
-                    ? 'ring-2 ring-gold ring-offset-2 ring-offset-cocoa'
-                    : 'opacity-70 hover:opacity-100'
-                }`}
-              >
-                <CookieTile
-                  art={f.art}
-                  seedKey={f.id}
-                  photo={f.photo}
-                  className="h-full w-full"
-                  inset={4}
-                  dim={gone}
-                />
-              </button>
-            )
-          })}
+        {/* Bottom thumbnail slider with Lucide Chevron controls */}
+        <div className="mt-5 flex items-center justify-center gap-2">
+          <button
+            type="button"
+            onClick={() => go(-1)}
+            aria-label="Previous flavour"
+            className="grid h-8 w-8 place-items-center rounded-full text-ink-soft transition-colors hover:bg-cream-deep active:scale-95"
+          >
+            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+          </button>
+
+          <div className="flex flex-wrap items-center justify-center gap-1.5">
+            {flavours.map((f, i) => {
+              const fLeft = f.stock - qtyInOrder(f.id)
+              const gone = fLeft <= 0 && qtyInOrder(f.id) === 0
+              return (
+                <button
+                  key={f.id}
+                  type="button"
+                  onClick={() => setIndex(i)}
+                  aria-pressed={i === index}
+                  aria-label={`Show ${f.name}`}
+                  title={f.name}
+                  className={`h-9 w-9 sm:h-8 sm:w-8 shrink-0 overflow-hidden rounded-full transition-all ${
+                    i === index
+                      ? 'ring-2 ring-brick ring-offset-2 ring-offset-[#faf6f0] scale-105'
+                      : 'opacity-70 hover:opacity-100'
+                  }`}
+                >
+                  <CookieTile
+                    art={f.art}
+                    seedKey={f.id}
+                    photo={f.photo}
+                    className="h-full w-full"
+                    inset={3}
+                    dim={gone}
+                  />
+                </button>
+              )
+            })}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => go(1)}
+            aria-label="Next flavour"
+            className="grid h-8 w-8 place-items-center rounded-full text-ink-soft transition-colors hover:bg-cream-deep active:scale-95"
+          >
+            <ChevronRight className="h-4 w-4" aria-hidden="true" />
+          </button>
         </div>
 
         <div ref={liveRef} className="sr-only" aria-live="polite" />
@@ -275,20 +290,57 @@ function FlavourCarousel() {
 }
 
 export function TrustStrip() {
+  const TRUST_ITEMS = [
+    {
+      icon: Leaf,
+      value: '4.9',
+      stars: true,
+      label: '1,284 REVIEWS',
+    },
+    {
+      icon: Clock,
+      value: '19 min',
+      label: 'AVERAGE WAIT FOR A PICKUP BOX AT THE COUNTER',
+    },
+    {
+      icon: Truck,
+      value: 'Same day',
+      label: 'DELIVERY ON EVERY ORDER PLACED BEFORE 9AM',
+    },
+    {
+      icon: ShieldCheck,
+      value: 'Licensed',
+      label: 'COMMERCIAL KITCHEN, ALLERGENS ON EVERY FLAVOUR',
+    },
+  ]
+
   return (
-    <section className="container-page py-8 sm:py-12">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {TRUST.map((item) => (
-          <div key={item.value} className="rounded-[22px] bg-cocoa px-5 py-6 text-cream">
-            <p className="font-display text-[30px] leading-none text-cream sm:text-[34px]">{item.value}</p>
-            {item.stars ? (
-              <p className="mt-2 text-[13px] tracking-[0.18em] text-gold" aria-hidden="true">
-                ★★★★★
-              </p>
-            ) : null}
-            <p className="label-caps mt-2 text-[10px] leading-[1.5] text-cream/60">{item.label}</p>
-          </div>
-        ))}
+    <section className="container-page py-6 sm:py-10">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        {TRUST_ITEMS.map((item) => {
+          const Icon = item.icon
+          return (
+            <div
+              key={item.label}
+              className="rounded-[20px] border border-line bg-shell p-4 sm:p-5 text-ink shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-ink/25 hover:shadow-sm flex flex-col justify-between"
+            >
+              <div>
+                <div className="mb-2.5 sm:mb-3">
+                  <Icon className="h-4.5 w-4.5 sm:h-5 sm:w-5 text-leaf" strokeWidth={1.8} />
+                </div>
+                <div className="flex flex-wrap items-baseline gap-1.5 sm:gap-2">
+                  <p className="font-display text-[22px] leading-none text-ink sm:text-[28px] lg:text-[30px]">{item.value}</p>
+                  {item.stars ? (
+                    <span className="text-[10px] sm:text-[12px] tracking-[0.12em] text-gold" aria-hidden="true">
+                      ★★★★★
+                    </span>
+                  ) : null}
+                </div>
+              </div>
+              <p className="label-caps mt-2 text-[8.5px] sm:text-[9.5px] leading-relaxed text-ink-soft">{item.label}</p>
+            </div>
+          )
+        })}
       </div>
     </section>
   )
