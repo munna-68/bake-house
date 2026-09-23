@@ -65,8 +65,7 @@ export function CheckoutModal() {
       >
         <div className="flex shrink-0 items-start justify-between gap-4 px-5 pt-4 pb-3 md:px-6 md:pt-6">
           <div>
-            <p className="label-caps text-[10px] text-ink-soft">Bakehouse checkout</p>
-            <h2 className="font-display text-[26px] leading-none text-ink">
+            <h2 className="font-display text-[28px] sm:text-[32px] leading-none text-ink">
               {checkoutStep === 4 ? 'Order confirmed' : 'Checkout'}
             </h2>
           </div>

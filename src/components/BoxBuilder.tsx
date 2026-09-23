@@ -79,7 +79,7 @@ function SlotGrid({ box }: { box: Box }) {
 function SizePills() {
   const { activeBox, setSize } = useShop()
   return (
-    <div role="group" aria-label="Box size" className="mt-3 grid grid-cols-3 gap-2">
+    <div role="group" aria-label="Box size" className="grid grid-cols-3 gap-2">
       {BOX_SIZES.map((size: BoxSize) => {
         const on = activeBox.size === size
         return (
@@ -88,14 +88,14 @@ function SizePills() {
             type="button"
             aria-pressed={on}
             onClick={() => setSize(size)}
-            className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-[14px] transition-all active:scale-95 ${
+            className={`min-h-11 flex items-baseline justify-center gap-1.5 rounded-full py-2.5 px-2.5 transition-all active:scale-95 ${
               on
-                ? 'bg-brick text-white shadow-xs'
+                ? 'bg-cocoa text-cream shadow-xs'
                 : 'border border-line bg-shell text-ink hover:border-ink/30'
             }`}
           >
-            <span className="font-display text-[22px] leading-tight font-bold">{size}</span>
-            <span className={`text-[11.5px] font-semibold mt-0.5 ${on ? 'text-white/85' : 'text-ink-soft'}`}>
+            <span className="font-display text-[19px] leading-tight font-bold">{size}</span>
+            <span className={`text-[12px] font-semibold ${on ? 'text-cream/80' : 'text-ink-soft'}`}>
               {money(BOX_PRICES[size])}
             </span>
           </button>
@@ -297,109 +297,119 @@ export function BoxBuilderPanel() {
   )
 }
 
-function MobileSlotGrid({ box }: { box: Box }) {
-  const { flavours, remove } = useShop()
-  const filled: string[] = []
-  for (const f of flavours) {
-    const n = box.items[f.id] ?? 0
-    for (let i = 0; i < n; i++) filled.push(f.id)
-  }
-  const cols = box.size === 4 ? 'grid-cols-4 max-w-[240px]' : 'grid-cols-6'
-
-  return (
-    <ul className={`mx-auto grid w-full ${cols} gap-1.5 sm:gap-2`}>
-      {Array.from({ length: box.size }).map((_, i) => {
-        const flavourId = filled[i]
-        const flavour = flavourId ? flavours.find((f) => f.id === flavourId) : undefined
-        return (
-          <li
-            key={i}
-            className={`relative aspect-square rounded-full flex items-center justify-center transition-all ${
-              flavour
-                ? 'bg-shell shadow-xs border border-line-soft'
-                : 'border border-dashed border-[#d8cdbf] bg-cream/40'
-            }`}
-          >
-            {flavour ? (
-              <>
-                <div className="h-full w-full overflow-hidden rounded-full p-0.5">
-                  <CookieTile
-                    art={flavour.art}
-                    seedKey={`m-slot-${box.id}-${flavour.id}-${i}`}
-                    photo={flavour.photo}
-                    className="h-full w-full"
-                    inset={2}
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={() => remove(flavour.id)}
-                  aria-label={`Remove one ${flavour.name}`}
-                  className="absolute -top-1 -right-1 grid h-4 w-4 place-items-center rounded-full bg-brick text-white shadow-xs transition-transform active:scale-90"
-                >
-                  <X className="h-2.5 w-2.5" strokeWidth={2.5} aria-hidden="true" />
-                </button>
-              </>
-            ) : (
-              <span className="text-[11px] font-bold text-ink-faint/50" aria-hidden="true">
-                {i + 1}
-              </span>
-            )}
-          </li>
-        )
-      })}
-    </ul>
-  )
-}
-
 /** Mobile: the compact strip that sticks below header while scrolling the grid, with live cookie slot images. */
 export function MobileBoxControls() {
-  const { activeBox, boxCount, orderTotal, cookiesLeftToday, flavours, isBoxFull } = useShop()
+  const {
+    activeBox,
+    boxes,
+    activeBoxId,
+    setActiveBox,
+    addBox,
+    boxCount,
+    orderTotal,
+    cookiesLeftToday,
+    flavours,
+    remove,
+  } = useShop()
   const startOfDay = flavours.reduce((a, f) => a + f.stock, 0)
   const pct = startOfDay > 0 ? Math.round((cookiesLeftToday / startOfDay) * 100) : 0
-  const count = boxCount(activeBox)
-  const full = isBoxFull(activeBox)
+
+  const filledFlavours: (typeof flavours[0])[] = []
+  for (const f of flavours) {
+    const n = activeBox.items[f.id] ?? 0
+    for (let i = 0; i < n; i++) filledFlavours.push(f)
+  }
 
   return (
-    <div className="rounded-[20px] border border-line bg-[#faf6f0] p-3 sm:p-3.5 shadow-sm">
-      <BoxTabs />
+    <div className="rounded-[22px] border border-line bg-[#faf6f0] p-3 sm:p-4 shadow-sm">
+      {/* 1. Size pills */}
+      <SizePills />
 
-      <div className="flex items-center justify-between gap-2">
-        <p className="label-caps text-[10px] tracking-[0.14em] text-ink-soft">
-          Choose box size
-        </p>
-        <div className="flex items-center gap-2">
-          <span className="label-caps rounded-full bg-brick px-2.5 py-1 text-[9.5px] text-white font-bold transition-transform">
-            Box · {count}/{activeBox.size}
-          </span>
-          <span className="font-display text-[19px] sm:text-[21px] font-bold text-ink">
-            {money(orderTotal)}
-          </span>
-        </div>
-      </div>
-
-      <div className="mt-2">
-        <SizePills />
-      </div>
-
-      {/* Visual Slot filling for mobile with real cookie images */}
-      <div className="mt-3 rounded-[16px] border border-line-soft bg-shell/70 p-2 sm:p-2.5">
-        <div className="mb-2 flex items-center justify-between text-[9.5px]">
-          <span className="label-caps text-ink-soft font-bold">
-            Box slots · {count} of {activeBox.size} filled
-          </span>
-          <span className="text-ink-soft/80 font-medium">
-            {full ? '✓ Box full' : `Add ${activeBox.size - count} more`}
-          </span>
-        </div>
-        <MobileSlotGrid box={activeBox} />
-      </div>
-
-      <div className="mt-2.5 flex items-center gap-2.5">
+      {/* 2. Stock progress bar line */}
+      <div className="mt-2.5 flex items-center gap-3">
         <div className="h-[3px] flex-1 overflow-hidden rounded-full bg-line">
-          <div className="h-full rounded-full bg-brick transition-all duration-300" style={{ width: `${Math.max(3, pct)}%` }} />
+          <div
+            className="h-full rounded-full bg-brick transition-all duration-300"
+            style={{ width: `${Math.max(3, pct)}%` }}
+          />
         </div>
-        <span className="label-caps shrink-0 text-[9px] text-ink-soft font-semibold">{cookiesLeftToday} left today</span>
+        <span className="label-caps shrink-0 text-[9.5px] font-bold text-ink-soft tracking-wider">
+          {cookiesLeftToday} LEFT TODAY
+        </span>
+      </div>
+
+      {/* 3. Box selector tabs */}
+      <div className="mt-2.5 flex items-center gap-2">
+        {boxes.map((b, i) => {
+          const on = b.id === activeBoxId
+          return (
+            <button
+              key={b.id}
+              type="button"
+              aria-pressed={on}
+              onClick={() => setActiveBox(b.id)}
+              className={`min-h-11 inline-flex items-center label-caps rounded-full px-3.5 py-2 text-[9.5px] font-bold tracking-wider transition-colors ${
+                on
+                  ? 'bg-brick text-white shadow-xs'
+                  : 'border border-line bg-shell text-ink-soft hover:border-ink/30'
+              }`}
+            >
+              BOX {i + 1} · {boxCount(b)}/{b.size}
+            </button>
+          )
+        })}
+        {boxes.length < 4 && (
+          <button
+            type="button"
+            onClick={addBox}
+            className="min-h-11 inline-flex items-center label-caps rounded-full border border-dashed border-line bg-transparent px-3.5 py-2 text-[9.5px] font-bold tracking-wider text-ink-soft hover:border-ink/40 active:scale-95"
+          >
+            + BOX
+          </button>
+        )}
+      </div>
+
+      {/* 4. Slot circles with real cookie photos + price badge */}
+      <div className="mt-2.5 flex items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          {Array.from({ length: activeBox.size }).map((_, i) => {
+            const flavour = filledFlavours[i]
+            return (
+              <div
+                key={i}
+                className={`relative h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-full flex items-center justify-center transition-all ${
+                  flavour
+                    ? 'border-2 border-cocoa bg-shell shadow-xs overflow-hidden'
+                    : 'border border-dashed border-[#d8cdbf] bg-cream/50'
+                }`}
+              >
+                {flavour ? (
+                  <button
+                    type="button"
+                    onClick={() => remove(flavour.id)}
+                    aria-label={`Remove one ${flavour.name}`}
+                    className="h-full w-full p-0.5"
+                  >
+                    {flavour.photo ? (
+                      <img
+                        src={flavour.photo}
+                        alt={flavour.name}
+                        className="h-full w-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="block h-full w-full rounded-full bg-amber-700/60" />
+                    )}
+                  </button>
+                ) : null}
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Right price pill */}
+        <div className="shrink-0 rounded-full bg-brick px-3 py-1 text-center font-display text-[15px] font-bold text-white shadow-xs">
+          {money(orderTotal)}
+        </div>
       </div>
     </div>
   )

@@ -138,7 +138,7 @@ function FlavourCarousel() {
         {/* Top bar inside card: index and round fresh badge */}
         <div className="flex items-start justify-between">
           <div className="flex items-baseline">
-            <span className="font-display italic text-[36px] leading-none text-ink sm:text-[42px]">
+            <span className="font-display text-[36px] leading-none text-ink sm:text-[42px]">
               {String(index + 1).padStart(2, '0')}
             </span>
             <span className="ml-1 text-[13px] font-medium text-ink-soft/60 tracking-wider">
@@ -193,6 +193,7 @@ function FlavourCarousel() {
           </div>
 
           {/* Cookie title and description */}
+          <p className="sr-only font-display text-cream">{flavour.name}</p>
           <p className="mt-3 text-center font-display text-[26px] leading-tight text-ink sm:text-[30px]">
             {flavour.name}
           </p>
@@ -222,7 +223,7 @@ function FlavourCarousel() {
                   type="button"
                   onClick={onAdd}
                   disabled={!addable}
-                  className="min-h-10 rounded-full bg-brick px-5 py-2 text-[11px] font-bold tracking-[0.09em] text-white uppercase shadow-xs transition-all hover:bg-brick-dark active:scale-95 disabled:cursor-not-allowed disabled:bg-line disabled:text-ink-faint sm:min-h-0"
+                  className="min-h-11 rounded-full bg-brick px-5 py-2.5 text-[11px] font-bold tracking-[0.09em] text-white uppercase shadow-xs transition-all hover:bg-brick-dark active:scale-95 disabled:cursor-not-allowed disabled:bg-line disabled:text-ink-faint"
                 >
                   Add to box
                 </button>
@@ -237,12 +238,12 @@ function FlavourCarousel() {
             type="button"
             onClick={() => go(-1)}
             aria-label="Previous flavour"
-            className="grid h-8 w-8 place-items-center rounded-full text-ink-soft transition-colors hover:bg-cream-deep active:scale-95"
+            className="grid h-11 w-11 place-items-center rounded-full text-ink-soft transition-colors hover:bg-cream-deep active:scale-95 sm:h-9 sm:w-9"
           >
             <ChevronLeft className="h-4 w-4" aria-hidden="true" />
           </button>
 
-          <div className="flex flex-wrap items-center justify-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
             {flavours.map((f, i) => {
               const fLeft = f.stock - qtyInOrder(f.id)
               const gone = fLeft <= 0 && qtyInOrder(f.id) === 0
@@ -254,7 +255,7 @@ function FlavourCarousel() {
                   aria-pressed={i === index}
                   aria-label={`Show ${f.name}`}
                   title={f.name}
-                  className={`h-9 w-9 sm:h-8 sm:w-8 shrink-0 overflow-hidden rounded-full transition-all ${
+                  className={`h-11 w-11 shrink-0 overflow-hidden rounded-full transition-all sm:h-9 sm:w-9 ${
                     i === index
                       ? 'ring-2 ring-brick ring-offset-2 ring-offset-[#faf6f0] scale-105'
                       : 'opacity-70 hover:opacity-100'
@@ -277,7 +278,7 @@ function FlavourCarousel() {
             type="button"
             onClick={() => go(1)}
             aria-label="Next flavour"
-            className="grid h-8 w-8 place-items-center rounded-full text-ink-soft transition-colors hover:bg-cream-deep active:scale-95"
+            className="grid h-11 w-11 place-items-center rounded-full text-ink-soft transition-colors hover:bg-cream-deep active:scale-95 sm:h-9 sm:w-9"
           >
             <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </button>

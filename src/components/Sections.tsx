@@ -43,7 +43,7 @@ export function Reviews() {
                     <Star key={i} className="h-4 w-4 fill-gold text-gold" />
                   ))}
                 </div>
-                <blockquote className="font-display italic text-[16.5px] sm:text-[17.5px] leading-snug text-ink">
+                <blockquote className="text-[15.5px] sm:text-[16.5px] leading-relaxed text-ink font-medium">
                   &ldquo;{r.quote}&rdquo;
                 </blockquote>
               </div>
@@ -94,7 +94,7 @@ export function Explainer() {
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="font-display italic text-[44px] leading-none text-brick">
+                    <span className="font-display text-[44px] leading-none text-brick">
                       0{step.n}
                     </span>
                     <span className="grid h-10 w-10 place-items-center rounded-full bg-shell border border-line text-ink shadow-xs transition-transform group-hover:scale-110">
@@ -146,6 +146,7 @@ export function Faq() {
               >
                 <h3>
                   <button
+                    id={`${item.id}-button`}
                     type="button"
                     aria-expanded={isOpen}
                     aria-controls={`${item.id}-panel`}
@@ -157,19 +158,29 @@ export function Faq() {
                     </span>
                     <span
                       aria-hidden="true"
-                      className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line bg-shell text-ink transition-transform duration-250 ${
-                        isOpen ? 'rotate-180 bg-brick text-white border-brick' : ''
+                      className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border transition-all duration-200 ${
+                        isOpen
+                          ? 'rotate-180 border-brick bg-brick text-white shadow-xs'
+                          : 'border-line bg-shell text-ink hover:border-ink/35'
                       }`}
                     >
-                      <ChevronDown className="h-4 w-4" />
+                      <ChevronDown className="h-4 w-4" strokeWidth={2.5} />
                     </span>
                   </button>
                 </h3>
-                <div id={`${item.id}-panel`} className="accordion-body" data-open={isOpen}>
-                  <div className="px-5 pb-5 sm:px-6 sm:pb-6">
-                    <p className="max-w-[62ch] text-[15px] leading-relaxed text-ink-soft border-t border-line-soft pt-3.5">
-                      {item.a}
-                    </p>
+                <div
+                  id={`${item.id}-panel`}
+                  role="region"
+                  aria-labelledby={`${item.id}-button`}
+                  className="accordion-body"
+                  data-open={isOpen}
+                >
+                  <div className="min-h-0 overflow-hidden">
+                    <div className="px-5 pb-5 sm:px-6 sm:pb-6">
+                      <p className="max-w-[62ch] border-t border-line-soft pt-3.5 text-[15px] leading-relaxed text-ink-soft">
+                        {item.a}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -313,7 +324,7 @@ export function Pricing() {
                 href="https://sitekeep.studio"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-[12px] font-bold tracking-[0.08em] text-brick uppercase transition-colors hover:text-brick-dark"
+                className="inline-flex min-h-11 items-center gap-2 text-[12px] font-bold tracking-[0.08em] text-brick uppercase transition-colors hover:text-brick-dark"
               >
                 <span>Learn more at sitekeep.studio</span>
                 <ExternalLink className="h-3.5 w-3.5" />
@@ -399,7 +410,7 @@ export function Footer() {
                   href="https://sitekeep.studio"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-1.5 text-gold hover:text-white transition-colors"
+                  className="inline-flex min-h-11 items-center gap-1.5 text-gold hover:text-white transition-colors"
                 >
                   <span>sitekeep.studio</span>
                   <ExternalLink className="h-3 w-3" />
@@ -451,7 +462,7 @@ export function Footer() {
               hardReset()
               toast('Demo reset. Stock, boxes and menu are back to the start.')
             }}
-            className="label-caps inline-flex min-h-10 items-center gap-1.5 rounded-full border border-cream/20 px-4 py-2 text-[10px] text-cream/65 transition-all hover:border-cream/50 hover:text-cream active:scale-95"
+            className="label-caps inline-flex min-h-11 items-center gap-1.5 rounded-full border border-cream/20 px-4 py-2.5 text-[10px] text-cream/65 transition-all hover:border-cream/50 hover:text-cream active:scale-95"
           >
             <RotateCcw className="h-3 w-3" />
             <span>Reset this demo</span>

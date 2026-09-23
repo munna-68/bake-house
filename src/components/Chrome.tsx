@@ -205,36 +205,35 @@ export function LiveRegions() {
 }
 
 export function MobileOrderBar() {
-  const { totalCookies, boxes, boxCount, orderTotal, openReview } = useShop()
+  const { totalCookies, boxes, activeBox, boxCount, orderTotal, openReview } = useShop()
   if (totalCookies === 0) return null
 
+  const count = boxCount(activeBox)
+  const segments = Array.from({ length: activeBox.size })
+
   return (
-    <div className="no-print sheet-enter fixed inset-x-0 bottom-0 z-50 border-t border-line bg-[#faf6f0]/96 px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-md md:hidden shadow-[0_-4px_24px_rgba(43,29,19,0.08)]">
-      <div className="flex items-center gap-3">
+    <div className="no-print sheet-enter fixed inset-x-0 bottom-0 z-50 border-t border-line/15 bg-cocoa text-cream px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-md md:hidden shadow-[0_-8px_32px_rgba(0,0,0,0.35)]">
+      <div className="flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
-          <p className="label-caps truncate text-[11px] font-bold text-ink">
-            {totalCookies} {totalCookies === 1 ? 'cookie' : 'cookies'} · {boxes.length}{' '}
-            {boxes.length === 1 ? 'box' : 'boxes'} · {money(orderTotal)}
+          <p className="label-caps truncate text-[10.5px] font-bold tracking-wider text-cream/95 uppercase">
+            {totalCookies} {totalCookies === 1 ? 'COOKIE' : 'COOKIES'} · {boxes.length}{' '}
+            {boxes.length === 1 ? 'BOX' : 'BOXES'} · {money(orderTotal)}
           </p>
-          <div className="mt-1.5 flex gap-1.5" aria-hidden="true">
-            {boxes.map((b) => {
-              const count = boxCount(b)
-              const pct = (count / b.size) * 100
-              return (
-                <div key={b.id} className="h-1.5 flex-1 max-w-[60px] overflow-hidden rounded-full bg-line">
-                  <div
-                    className="h-full rounded-full bg-brick transition-all duration-300"
-                    style={{ width: `${pct}%` }}
-                  />
-                </div>
-              )
-            })}
+          <div className="mt-1.5 flex gap-1 max-w-[170px]" aria-hidden="true">
+            {segments.map((_, i) => (
+              <div
+                key={i}
+                className={`h-1.5 flex-1 rounded-full transition-colors duration-200 ${
+                  i < count ? 'bg-gold' : 'bg-white/20'
+                }`}
+              />
+            ))}
           </div>
         </div>
         <button
           type="button"
           onClick={openReview}
-          className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-brick px-6 py-3 text-[11.5px] font-bold tracking-[0.09em] text-white uppercase shadow-sm transition-all hover:bg-brick-dark active:scale-95"
+          className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-brick px-5 py-2.5 text-[11px] font-bold tracking-[0.09em] text-white uppercase shadow-sm transition-all hover:bg-brick-dark active:scale-95"
         >
           <span>Review order</span>
           <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />

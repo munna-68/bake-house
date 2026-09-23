@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useShop } from '../lib/store'
 import type { Flavour } from '../lib/types'
 import { BoxBuilderPanel, MobileBoxControls } from './BoxBuilder'
@@ -44,10 +45,12 @@ export function BatchGrid() {
 
 function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
   const { qtyInOrder, available, canAdd, add, remove, vote, activeBox } = useShop()
+  const [brokenSrc, setBrokenSrc] = useState<string | null>(null)
   const qty = qtyInOrder(flavour.id)
   const left = available(flavour.id)
   const soldOut = left === 0 && qty === 0
   const boxFull = !canAdd(flavour.id) && !soldOut && qty === 0
+  const showPhoto = Boolean(flavour.photo) && brokenSrc !== flavour.photo
 
   const stockLine =
     soldOut
@@ -64,9 +67,11 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
 
   return (
     <article
-      className={`group cookie-card-hover relative flex flex-col justify-between rounded-[22px] border border-line bg-shell p-4 sm:p-5 pt-3.5 sm:pt-4 text-left shadow-xs transition-all hover:border-[#dbcbb9] hover:shadow-sm ${
-        soldOut ? 'bg-shell/70' : ''
-      }`}
+      className={`group cookie-card-hover relative flex flex-col justify-between rounded-[22px] border bg-shell p-4 sm:p-5 pt-3.5 sm:pt-4 text-left shadow-xs transition-all duration-200 ${
+        qty > 0
+          ? 'border-brick/75 ring-1 ring-brick/25 shadow-sm'
+          : 'border-line hover:border-[#dbcbb9] hover:shadow-sm'
+      } ${soldOut ? 'bg-shell/70' : ''}`}
     >
       {/* Top row: Index number */}
       <div className="flex items-center justify-between">
@@ -78,11 +83,12 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
       {/* Centered Cookie Image with smooth spin animation on hover */}
       <div className="my-2 flex items-center justify-center">
         <div className="aspect-square w-[68%] max-w-[160px] sm:max-w-[175px]">
-          {flavour.photo ? (
+          {showPhoto ? (
             <img
               src={flavour.photo}
               alt={flavour.name}
               decoding="async"
+              onError={() => setBrokenSrc(flavour.photo ?? null)}
               className={`cookie-spin h-full w-full object-contain drop-shadow-[0_12px_20px_rgba(43,29,19,0.18)] ${
                 soldOut ? 'opacity-55 saturate-[0.35]' : ''
               }`}
@@ -143,22 +149,22 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
           <button
             type="button"
             onClick={() => vote(flavour.id)}
-            aria-label={`${flavour.name} is sold out. Tap to notify us you want more.`}
-            className="min-h-9 shrink-0 rounded-full border border-line bg-cream/50 px-3.5 py-1 text-[10px] font-bold tracking-[0.08em] text-ink-soft uppercase transition-colors hover:border-ink/40 active:scale-95"
+            aria-label={`${flavour.name}, sold out today. Tap to tell us you wanted it.`}
+            className="min-h-11 shrink-0 rounded-full border border-line bg-cream/50 px-4 py-2.5 text-[10px] font-bold tracking-[0.08em] text-ink-soft uppercase transition-colors hover:border-ink/40 active:scale-95"
           >
             Add
           </button>
         ) : qty > 0 ? (
-          <div className="flex shrink-0 items-center gap-1 rounded-full border border-line bg-shell px-1 py-0.5">
+          <div className="flex shrink-0 items-center gap-1 rounded-full border border-line bg-shell px-1.5 py-1">
             <button
               type="button"
               onClick={() => remove(flavour.id)}
               aria-label={`Remove one ${flavour.name}`}
-              className="grid h-8 w-8 place-items-center rounded-full text-ink transition-colors hover:bg-cream-deep active:scale-95"
+              className="grid h-11 w-11 place-items-center rounded-full text-ink transition-colors hover:bg-cream-deep active:scale-95 sm:h-8 sm:w-8"
             >
-              <Minus className="h-3 w-3" aria-hidden="true" />
+              <Minus className="h-3.5 w-3.5" aria-hidden="true" />
             </button>
-            <span className="min-w-[18px] text-center text-[13px] font-bold text-ink" aria-hidden="true">
+            <span className="min-w-[20px] text-center text-[13px] font-bold text-ink" aria-hidden="true">
               {qty}
             </span>
             <button
@@ -166,9 +172,9 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
               onClick={() => add(flavour.id)}
               disabled={!canAdd(flavour.id)}
               aria-label={`Add another ${flavour.name}`}
-              className="grid h-8 w-8 place-items-center rounded-full text-ink transition-colors hover:bg-cream-deep active:scale-95 disabled:cursor-not-allowed disabled:text-ink-faint/50"
+              className="grid h-11 w-11 place-items-center rounded-full text-ink transition-colors hover:bg-cream-deep active:scale-95 disabled:cursor-not-allowed disabled:text-ink-faint/50 sm:h-8 sm:w-8"
             >
-              <Plus className="h-3 w-3" aria-hidden="true" />
+              <Plus className="h-3.5 w-3.5" aria-hidden="true" />
             </button>
           </div>
         ) : (
@@ -177,7 +183,7 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
             onClick={() => add(flavour.id)}
             disabled={boxFull}
             aria-label={`Add ${flavour.name} to your box`}
-            className="min-h-9 shrink-0 rounded-full border border-ink/25 px-4 py-1 text-[10.5px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink hover:bg-cream-deep active:scale-95 disabled:cursor-not-allowed disabled:border-line disabled:text-ink-faint/50"
+            className="min-h-11 shrink-0 rounded-full border border-ink/25 px-5 py-2.5 text-[10.5px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink hover:bg-cream-deep active:scale-95 disabled:cursor-not-allowed disabled:border-line disabled:text-ink-faint/50"
           >
             Add
           </button>

@@ -199,7 +199,7 @@ export function MenuTab() {
               className="inline-flex items-center gap-1.5 rounded-full bg-cocoa px-5 py-2 text-[10.5px] font-bold tracking-[0.09em] text-cream uppercase shadow-xs transition-all hover:bg-cocoa-soft active:scale-95"
             >
               <Check className="h-3.5 w-3.5 text-gold" strokeWidth={2.5} />
-              <span>Save and update shop</span>
+              <span>Save and update the shop</span>
             </button>
           </div>
         </div>
