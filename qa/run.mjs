@@ -289,6 +289,69 @@ async function suiteShop(b) {
   check('capacity is the sum of the boxes', cap > 0, `${cap} slots`)
 }
 
+/* ----------------------------------------------------------------- panel --
+   The desktop box panel is where a customer reviews the box. Everything they
+   put in has to be removable from there, without hunting for the grid.
+   -------------------------------------------------------------------------- */
+async function suitePanel(b) {
+  console.log('\npanel — you can always take a cookie back out')
+
+  await b.goto('/')
+  await b.evaluate(`localStorage.removeItem('bakehouse.v1')`)
+  await b.reload()
+
+  const boxItems = async () => {
+    const s = await b.readState()
+    const box = s.boxes.find((x) => x.id === s.activeBoxId) ?? s.boxes[0]
+    return { count: Object.values(box.items).reduce((a, c) => a + c, 0), items: box.items }
+  }
+  /* Slot buttons live in the square tiles; the row stepper lives in a flex row.
+     Distinguishing them by that keeps the assertions honest about which one ran. */
+  const slotButtons = `[...document.querySelectorAll('li')]
+    .filter(li => li.className.includes('aspect-square'))
+    .flatMap(li => [...li.querySelectorAll('button')])
+    .map(btn => btn.getAttribute('aria-label'))`
+
+  for (let i = 0; i < 3; i++) {
+    await b.click(`button[aria-label="Add Triple chocolate to your box"], button[aria-label="Add another Triple chocolate"]`)
+    await sleep(200)
+  }
+  eq('three cookies are in the box', (await boxItems()).count, 3)
+
+  const slots = await b.evaluate(slotButtons)
+  eq('every filled slot has a remove button', slots.length, 3)
+  check('the remove button is labelled with the flavour', slots.every((l) => l === 'Remove one Triple chocolate'), slots.join(', '))
+  const emptySlots = await b.evaluate(`[...document.querySelectorAll('li')]
+    .filter(li => li.className.includes('aspect-square') && !li.querySelector('button')).length`)
+  eq('empty slots carry no remove button', emptySlots, 3)
+
+  check('a slot cross removes one', await b.click('button[aria-label="Remove one Triple chocolate"]'))
+  await sleep(300)
+  eq('the box is down to two', (await boxItems()).count, 2)
+  eq('the right flavour went', (await boxItems()).items['triple-chocolate'], 2)
+
+  // The row stepper, which is reachable without aiming at a small tile.
+  check('the row stepper can take one out', await b.click('button[aria-label="Remove one Triple chocolate from the box"]'))
+  await sleep(300)
+  eq('stepper minus removes one', (await boxItems()).count, 1)
+  check('the row stepper can put one back', await b.click('button[aria-label="Add another Triple chocolate to the box"]'))
+  await sleep(300)
+  eq('stepper plus adds one', (await boxItems()).count, 2)
+
+  // Emptying the whole box in one action.
+  check('the panel offers "Empty box"', await b.clickByText('Empty box'))
+  await sleep(350)
+  eq('empty box clears everything', (await boxItems()).count, 0)
+  eq('the CTA goes back to its disabled state', await b.evaluate(`!!document.querySelector('button[disabled]')`), true)
+
+  const scroll = await b.evaluate(`(() => {
+    const el = [...document.querySelectorAll('div')].find(d => d.className.includes('overscroll-contain'));
+    return el ? { cls: el.className.includes('panel-scroll'), thumb: getComputedStyle(el).scrollbarWidth } : null;
+  })()`)
+  check('the panel scroll region uses the slim scrollbar', scroll?.cls === true, JSON.stringify(scroll))
+  eq('the scrollbar is thin, not the browser default', scroll?.thumb, 'thin')
+}
+
 /* -------------------------------------------------------------------- a11y --
    The floors the project set: 4.5:1 text, 44px touch targets on mobile,
    overlays that close on Escape, one h1, keyboard-drivable carousel.
@@ -418,6 +481,7 @@ const SUITES = {
   reset: suiteReset,
   photos: suitePhotos,
   shop: suiteShop,
+  panel: suitePanel,
   a11y: suiteA11y,
   loading: suiteLoading,
 }

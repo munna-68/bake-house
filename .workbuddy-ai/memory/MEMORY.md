@@ -36,7 +36,18 @@ Source of truth for what to build is that spec plus the 35 screenshots beside it
   derive an order total or quantity from a render-time memo inside a mutation.
 - **The desktop box panel is height-capped and its CTA is pinned.** It uses
   `lg:max-h-[calc(100dvh-112px)]` + `grid-rows-[minmax(0,1fr)_auto]`. Do not
-  "simplify" this to `flex-col` + `flex-1` — that collapses the panel.
+  "simplify" this to `flex-col` + `flex-1` — that collapses the panel. Its scroll
+  region carries `panel-scroll` (a slim cocoa-toned scrollbar) because a default
+  browser scrollbar inside a dark rounded card reads as a stray page scrollbar.
+- **Anything you can put in the box, you can take out of the box.** The panel's
+  slot grid is not decorative: each filled slot carries a × (`Remove one {name}`)
+  and the item rows carry a −/+ stepper, plus an "Empty box N" action. Do not put
+  `aria-hidden` back on the slot grid — that × is the only way out without
+  scrolling to the grid.
+- **One deliberate a11y exception.** The `$2,500 all in` link in the announcement
+  strip is 15px tall. Giving it a 44px target grows the strip ~15px on mobile,
+  which is a visible design change, so it is allowlisted in the `a11y` suite
+  rather than silently passed. Everything else meets 44px on mobile.
 - **Config knobs are in `src/lib/types.ts`**: `BOX_PRICES`, `DELIVERY_FEE`,
   `DELIVERY_ZIPS`. Change them there, not in components.
 - Prices, windows and day options are hardcoded demo data by design — there is no
@@ -44,21 +55,27 @@ Source of truth for what to build is that spec plus the 35 screenshots beside it
 
 ## Verification
 
-`npm run build` must pass, then drive the real app in a browser. Six suites, all
-plain CDP over WebSocket (no Playwright):
+`npm run build` must pass, then drive the real app in a browser. The harness is
+`qa/` and is plain CDP over WebSocket (no Playwright, no extra deps):
 
 ```bash
-NODE_OPTIONS= node /tmp/qa-bakehouse.mjs                    # happy paths, dev
-QA_MODE=preview NODE_OPTIONS= node /tmp/qa-bakehouse.mjs    # happy paths, prod dist
-NODE_OPTIONS= node /tmp/audit-bakehouse.mjs                 # a11y, focus, kitchen mode, menu save
-NODE_OPTIONS= node /tmp/edge-bakehouse.mjs                  # edge cases, sold-out day, geometry
-NODE_OPTIONS= node /tmp/polish-bakehouse.mjs                # doc structure, print, fonts, photo wiring
-NODE_OPTIONS= node /tmp/loading-bakehouse.mjs               # weight, lazy-loading, CLS (needs dist)
+npm run dev                                                  # in one terminal
+npm run qa                                                   # all suites
+npm run qa -- state reset panel                              # named suites
+npm run build && npm run preview -- --port 5191
+QA_URL=http://127.0.0.1:5191 npm run qa                      # the shipped bundle
 ```
 
-Expect **48 · 48 · 29 · 27 · 17 · 12 = 181 checks** with no console errors before
-calling anything done. Use ports 5188-5204; a leaked dev server will collide —
-check with `lsof -nP -iTCP:<port> -sTCP:LISTEN`.
+Suites: `state` (persisted state vs a newer seed), `reset` (menu reset),
+`photos` (wiring + assets), `shop` (builder mechanics), `panel` (removing from
+the box panel), `a11y` (floors and structure), `loading` (weight, lazy, CLS).
+Expect **90 checks, zero console errors, zero failed requests** on both dev and
+the production build.
+
+These used to live in `/tmp` and were gone by the next session, which meant the
+definition of done could not actually be checked. They live in the repo now —
+keep them there. Use ports 5188-5204; a leaked dev server will collide, so check
+with `lsof -nP -iTCP:<port> -sTCP:LISTEN`.
 
 ## Images
 
