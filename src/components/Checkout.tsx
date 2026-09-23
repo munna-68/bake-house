@@ -53,7 +53,7 @@ export function CheckoutModal() {
         type="button"
         aria-label="Close checkout"
         onClick={closeCheckout}
-        className="fade-enter absolute inset-0 bg-cocoa/45 backdrop-blur-[2px]"
+        className="fade-enter absolute inset-0 bg-cocoa/45 backdrop-blur-sm"
       />
 
       <div

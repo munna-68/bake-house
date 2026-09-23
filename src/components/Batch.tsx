@@ -79,8 +79,8 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
       </span>
 
       <div className="flex flex-1 items-start gap-3 pt-3.5 sm:flex-col sm:items-center sm:gap-2 sm:pt-4">
-        {/* Cookie Image: compact 64px on mobile, centered on desktop */}
-        <div className="h-[64px] w-[64px] shrink-0 sm:my-2 sm:h-auto sm:w-[68%] sm:max-w-[160px] sm:aspect-square flex items-center justify-center">
+        {/* Cookie Image: generous 96px on mobile, centered & larger on desktop */}
+        <div className="h-[96px] w-[96px] shrink-0 sm:my-2 sm:h-auto sm:w-[78%] sm:max-w-[185px] sm:aspect-square flex items-center justify-center">
           {showPhoto ? (
             <img
               src={flavour.photo}

@@ -40,26 +40,27 @@ function SlotGrid({ box }: { box: Box }) {
             key={i}
             className={`relative aspect-square rounded-[14px] flex items-center justify-center transition-all ${
               flavour
-                ? 'bg-shell shadow-xs border border-line-soft'
+                ? 'shadow-xs border border-line-soft'
                 : 'border border-dashed border-[#d8cdbf] bg-cream/40'
             }`}
           >
             {flavour ? (
               <>
-                <div className="h-full w-full overflow-hidden rounded-[14px] p-1">
+                <div className="h-full w-full overflow-hidden rounded-[13px]">
                   <CookieTile
                     art={flavour.art}
                     seedKey={`slot-${box.id}-${flavour.id}-${i}`}
                     photo={flavour.photo}
                     className="h-full w-full"
-                    inset={4}
+                    inset={0}
+                    fit="cover"
                   />
                 </div>
                 <button
                   type="button"
                   onClick={() => remove(flavour.id)}
                   aria-label={`Remove one ${flavour.name}`}
-                  className="absolute -top-1.5 -right-1.5 grid h-5 w-5 place-items-center rounded-full bg-brick text-white shadow-xs transition-transform hover:scale-110 active:scale-95"
+                  className="absolute -top-1.5 -right-1.5 z-10 grid h-5 w-5 place-items-center rounded-full bg-brick text-white shadow-xs transition-transform hover:scale-110 active:scale-95"
                 >
                   <X className="h-3 w-3" strokeWidth={2.5} aria-hidden="true" />
                 </button>
@@ -377,9 +378,9 @@ export function MobileBoxControls() {
             return (
               <div
                 key={i}
-                className={`relative h-7 w-7 sm:h-8 sm:w-8 shrink-0 rounded-full flex items-center justify-center transition-all ${
+                className={`relative h-[34px] w-[34px] sm:h-9 sm:w-9 shrink-0 rounded-full flex items-center justify-center transition-all ${
                   flavour
-                    ? 'border-[1.5px] border-cocoa bg-shell shadow-xs overflow-hidden'
+                    ? 'border-[1.5px] border-cocoa shadow-xs overflow-hidden'
                     : 'border border-dashed border-[#d8cdbf] bg-cream/50'
                 }`}
               >
@@ -388,13 +389,13 @@ export function MobileBoxControls() {
                     type="button"
                     onClick={() => remove(flavour.id)}
                     aria-label={`Remove one ${flavour.name}`}
-                    className="h-full w-full p-0.5"
+                    className="h-full w-full overflow-hidden rounded-full"
                   >
                     {flavour.photo ? (
                       <img
                         src={flavour.photo}
                         alt={flavour.name}
-                        className="h-full w-full rounded-full object-cover"
+                        className="h-full w-full rounded-full object-cover scale-[1.08]"
                       />
                     ) : (
                       <span className="block h-full w-full rounded-full bg-amber-700/60" />

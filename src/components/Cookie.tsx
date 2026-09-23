@@ -191,10 +191,20 @@ interface TileProps {
   dim?: boolean
   /** when set, the real photo wins over the drawn cookie */
   photo?: string
+  fit?: 'contain' | 'cover'
 }
 
 /** The cookie sat on a warm tile, the way the product cards and carousel show it. */
-export function CookieTile({ art, seedKey, className = '', inset = 9, title, dim, photo }: TileProps) {
+export function CookieTile({
+  art,
+  seedKey,
+  className = '',
+  inset = 9,
+  title,
+  dim,
+  photo,
+  fit = 'contain',
+}: TileProps) {
   /* A renamed or missing file falls back to the drawn cookie instead of leaving a
      broken-image icon in the grid. Keyed on the URL so editing the Photo URL in
      the dashboard retries rather than staying stuck on the failed source. */
@@ -213,7 +223,7 @@ export function CookieTile({ art, seedKey, className = '', inset = 9, title, dim
     >
       {/* The same inset wraps both paths so a real photo and a drawn cookie land
           at the same size in the same tile. */}
-      <div className="absolute inset-0" style={{ padding: `${inset}%` }}>
+      <div className="absolute inset-0" style={inset > 0 ? { padding: `${inset}%` } : undefined}>
         {showPhoto ? (
           <img
             src={photo}
@@ -221,7 +231,7 @@ export function CookieTile({ art, seedKey, className = '', inset = 9, title, dim
             loading="lazy"
             decoding="async"
             onError={() => setBrokenSrc(photo ?? null)}
-            className="h-full w-full object-contain"
+            className={`h-full w-full ${fit === 'cover' ? 'object-cover scale-[1.08]' : 'object-contain'}`}
           />
         ) : (
           <CookieArtSvg art={art} seedKey={seedKey} title={title} className="h-full w-full" />

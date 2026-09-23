@@ -24,26 +24,27 @@ function ReviewSlotRow({ box }: { box: Box }) {
             key={i}
             className={`relative aspect-square rounded-full flex items-center justify-center transition-all ${
               flavour
-                ? 'bg-shell shadow-xs border border-line-soft'
+                ? 'shadow-xs border border-line-soft'
                 : 'border border-dashed border-[#d8cdbf] bg-cream/50'
             }`}
           >
             {flavour ? (
               <>
-                <div className="h-full w-full overflow-hidden rounded-full p-0.5">
+                <div className="h-full w-full overflow-hidden rounded-full">
                   <CookieTile
                     art={flavour.art}
                     seedKey={`rev-slot-${box.id}-${flavour.id}-${i}`}
                     photo={flavour.photo}
                     className="h-full w-full"
-                    inset={2}
+                    inset={0}
+                    fit="cover"
                   />
                 </div>
                 <button
                   type="button"
                   onClick={() => remove(flavour.id)}
                   aria-label={`Remove one ${flavour.name}`}
-                  className="absolute -top-1 -right-1 grid h-3.5 w-3.5 place-items-center rounded-full bg-brick text-white shadow-xs transition-transform active:scale-90"
+                  className="absolute -top-1 -right-1 z-10 grid h-3.5 w-3.5 place-items-center rounded-full bg-brick text-white shadow-xs transition-transform active:scale-90"
                 >
                   <X className="h-2 w-2" strokeWidth={3} aria-hidden="true" />
                 </button>
