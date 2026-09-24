@@ -3,6 +3,8 @@
   "rewrites": [
     { "source": "/bake-house/:path*", "destination": "/:path*" },
     { "source": "/bakehouse/:path*", "destination": "/:path*" },
+    { "source": "/backhouse/:path*", "destination": "/:path*" },
+    { "source": "/back-house/:path*", "destination": "/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
