@@ -51,7 +51,7 @@ export function Reviews() {
               ))}
             </div>
             <div className="mt-2.5 flex items-baseline gap-1.5">
-              <span className="font-display text-[52px] leading-none text-ink sm:text-[60px]">4.8</span>
+              <span className="font-display text-[52px] leading-none text-ink sm:text-[60px]">4.9</span>
               <span className="text-[22px] font-normal text-ink-soft/50">/ 5</span>
             </div>
             <p className="mt-2 text-[10.5px] font-bold tracking-[0.14em] text-ink-soft/75 uppercase">
