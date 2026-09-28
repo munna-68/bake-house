@@ -87,10 +87,23 @@ export interface PlacedOrder {
 export type PaymentStatus = 'paid' | 'pending'
 export type OrderStage = 'to-make' | 'ready' | 'collected'
 
+export interface DashboardOrderItem {
+  flavourId: string
+  name: string
+  qty: number
+}
+
+export interface DashboardOrderBox {
+  size: BoxSize
+  items: DashboardOrderItem[]
+}
+
 export interface DashboardOrder {
   id: string
   number: string
   customer: string
+  email?: string
+  phone?: string
   boxes: string
   cookies: number
   window: '11-2' | '2-5' | '5-8'
@@ -101,6 +114,8 @@ export interface DashboardOrder {
   total: number
   stage: OrderStage
   note?: string
+  orderBoxes?: DashboardOrderBox[]
+  discount?: number
 }
 
 export interface Toast {

@@ -322,6 +322,8 @@ export const DASHBOARD_ORDERS: DashboardOrder[] = [
     id: 'o1052',
     number: '#1052',
     customer: 'Emily Carter',
+    email: 'emily.carter@gmail.com',
+    phone: '(555) 412-8831',
     boxes: 'Box of 6',
     cookies: 6,
     window: '11-2',
@@ -331,11 +333,23 @@ export const DASHBOARD_ORDERS: DashboardOrder[] = [
     paymentMethod: 'card',
     total: 30,
     stage: 'to-make',
+    orderBoxes: [
+      {
+        size: 6,
+        items: [
+          { flavourId: 'salted-butter-chip', name: 'Salted butter chip', qty: 2 },
+          { flavourId: 'triple-chocolate', name: 'Triple chocolate', qty: 2 },
+          { flavourId: 'caramel-speculoos', name: 'Caramel speculoos', qty: 2 },
+        ],
+      },
+    ],
   },
   {
     id: 'o1053',
     number: '#1053',
     customer: 'Marcus Obi',
+    email: 'marcus.obi@outlook.com',
+    phone: '(555) 782-9901',
     boxes: 'Box of 12',
     cookies: 12,
     window: '11-2',
@@ -345,11 +359,24 @@ export const DASHBOARD_ORDERS: DashboardOrder[] = [
     paymentMethod: 'card',
     total: 54,
     stage: 'to-make',
+    orderBoxes: [
+      {
+        size: 12,
+        items: [
+          { flavourId: 'salted-butter-chip', name: 'Salted butter chip', qty: 4 },
+          { flavourId: 'triple-chocolate', name: 'Triple chocolate', qty: 4 },
+          { flavourId: 'caramel-speculoos', name: 'Caramel speculoos', qty: 2 },
+          { flavourId: 'peanut-butter-cup', name: 'Peanut butter cup', qty: 2 },
+        ],
+      },
+    ],
   },
   {
     id: 'o1054',
     number: '#1054',
     customer: 'Sarah Mendez',
+    email: 'sarah.mendez@gmail.com',
+    phone: '(555) 234-8901',
     boxes: '2 boxes',
     cookies: 18,
     window: '2-5',
@@ -360,11 +387,32 @@ export const DASHBOARD_ORDERS: DashboardOrder[] = [
     total: 76,
     stage: 'to-make',
     note: 'Nut allergy, please keep separate',
+    discount: 8,
+    orderBoxes: [
+      {
+        size: 12,
+        items: [
+          { flavourId: 'salted-butter-chip', name: 'Salted butter chip', qty: 4 },
+          { flavourId: 'caramel-speculoos', name: 'Caramel speculoos', qty: 3 },
+          { flavourId: 'triple-chocolate', name: 'Triple chocolate', qty: 3 },
+          { flavourId: 'burnt-marshmallow', name: 'Burnt marshmallow', qty: 2 },
+        ],
+      },
+      {
+        size: 6,
+        items: [
+          { flavourId: 'beetroot-red-velvet', name: 'Beetroot red velvet', qty: 3 },
+          { flavourId: 'raspberry-dark', name: 'Raspberry dark', qty: 3 },
+        ],
+      },
+    ],
   },
   {
     id: 'o1055',
     number: '#1055',
     customer: 'Jessica Moore',
+    email: 'jessica.m@icloud.com',
+    phone: '(555) 301-4478',
     boxes: 'Box of 6',
     cookies: 6,
     window: '2-5',
@@ -374,11 +422,23 @@ export const DASHBOARD_ORDERS: DashboardOrder[] = [
     paymentMethod: 'cashapp',
     total: 30,
     stage: 'to-make',
+    orderBoxes: [
+      {
+        size: 6,
+        items: [
+          { flavourId: 'burnt-marshmallow', name: 'Burnt marshmallow', qty: 2 },
+          { flavourId: 'beetroot-red-velvet', name: 'Beetroot red velvet', qty: 2 },
+          { flavourId: 'salted-butter-chip', name: 'Salted butter chip', qty: 2 },
+        ],
+      },
+    ],
   },
   {
     id: 'o1056',
     number: '#1056',
     customer: 'Tom Whelan',
+    email: 'tom.whelan@gmail.com',
+    phone: '(555) 662-1190',
     boxes: 'Box of 4',
     cookies: 4,
     window: '2-5',
@@ -388,11 +448,23 @@ export const DASHBOARD_ORDERS: DashboardOrder[] = [
     paymentMethod: 'venmo',
     total: 22,
     stage: 'to-make',
+    orderBoxes: [
+      {
+        size: 4,
+        items: [
+          { flavourId: 'salted-butter-chip', name: 'Salted butter chip', qty: 2 },
+          { flavourId: 'triple-chocolate', name: 'Triple chocolate', qty: 1 },
+          { flavourId: 'peanut-butter-cup', name: 'Peanut butter cup', qty: 1 },
+        ],
+      },
+    ],
   },
   {
     id: 'o1057',
     number: '#1057',
     customer: 'Priya Shah',
+    email: 'priya.shah@gmail.com',
+    phone: '(555) 903-7722',
     boxes: 'Box of 12',
     cookies: 12,
     window: '5-8',
@@ -402,11 +474,24 @@ export const DASHBOARD_ORDERS: DashboardOrder[] = [
     paymentMethod: 'cashapp',
     total: 54,
     stage: 'to-make',
+    orderBoxes: [
+      {
+        size: 12,
+        items: [
+          { flavourId: 'salted-butter-chip', name: 'Salted butter chip', qty: 3 },
+          { flavourId: 'caramel-speculoos', name: 'Caramel speculoos', qty: 3 },
+          { flavourId: 'raspberry-dark', name: 'Raspberry dark', qty: 3 },
+          { flavourId: 'burnt-marshmallow', name: 'Burnt marshmallow', qty: 3 },
+        ],
+      },
+    ],
   },
   {
     id: 'o1058',
     number: '#1058',
     customer: 'Dan Reyes',
+    email: 'dan.reyes@gmail.com',
+    phone: '(555) 518-3349',
     boxes: 'Box of 6',
     cookies: 6,
     window: '5-8',
@@ -416,6 +501,15 @@ export const DASHBOARD_ORDERS: DashboardOrder[] = [
     paymentMethod: 'card',
     total: 30,
     stage: 'to-make',
+    orderBoxes: [
+      {
+        size: 6,
+        items: [
+          { flavourId: 'triple-chocolate', name: 'Triple chocolate', qty: 3 },
+          { flavourId: 'caramel-speculoos', name: 'Caramel speculoos', qty: 3 },
+        ],
+      },
+    ],
   },
 ]
 

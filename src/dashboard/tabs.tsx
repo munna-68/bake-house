@@ -137,18 +137,29 @@ export function TodayTab({
   orders,
   actions,
   onKitchen,
+  onSelectOrder,
+  onOpenRestock,
+  acknowledgedNotes = new Set(),
 }: {
   orders: DashboardOrder[]
   actions: OrderActions
   onKitchen: () => void
+  onSelectOrder?: (id: string) => void
+  onOpenRestock?: () => void
+  acknowledgedNotes?: Set<string>
 }) {
-  const { restockAll, toast } = useShop()
+  const { flavours, restockAll, toast } = useShop()
   const open = orders.filter((o) => o.stage !== 'collected')
   const next = open[0]
   const taken = orders.filter((o) => o.payment === 'paid').reduce((a, o) => a + o.total, 0)
   const outstanding = orders.filter((o) => o.payment === 'pending').reduce((a, o) => a + o.total, 0)
   const handedOver = orders.filter((o) => o.stage === 'collected').length
   const cookies = orders.reduce((a, o) => a + o.cookies, 0)
+
+  const soldOutFlavours = flavours.filter((f) => f.stock <= 0)
+  const unpaidOrders = orders.filter((o) => o.payment === 'pending')
+  const noteOrders = orders.filter((o) => !!o.note && !acknowledgedNotes.has(o.id))
+  const needsAttentionCount = unpaidOrders.length + noteOrders.length + (soldOutFlavours.length > 0 ? 1 : 0)
 
   return (
     <div className="space-y-5">
@@ -160,7 +171,12 @@ export function TodayTab({
                 <ChefHat className="h-4 w-4 text-gold" />
                 <p className="label-caps text-[10px] text-cream/70">Next out the door</p>
               </div>
-              <h2 className="mt-3 font-display text-[34px] sm:text-[38px] leading-none text-cream">{next.customer}</h2>
+              <h2
+                onClick={() => onSelectOrder?.(next.id)}
+                className="mt-3 font-display text-[34px] sm:text-[38px] leading-none text-cream cursor-pointer hover:underline"
+              >
+                {next.customer}
+              </h2>
               <p className="mt-2 text-[14px] text-cream/75">
                 {next.boxes} · {next.number}
               </p>
@@ -246,8 +262,14 @@ export function TodayTab({
                         className="flex flex-wrap items-center gap-3 rounded-[16px] border border-line-soft bg-shell/80 px-3.5 py-2.5 shadow-xs transition-colors hover:border-line"
                       >
                         <Avatar name={o.customer} />
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-[14px] font-semibold text-ink">{o.customer}</p>
+                        <div
+                          className="min-w-0 flex-1 cursor-pointer group"
+                          onClick={() => onSelectOrder?.(o.id)}
+                          title={`View details for ${o.customer}`}
+                        >
+                          <p className="truncate text-[14px] font-semibold text-ink group-hover:underline">
+                            {o.customer}
+                          </p>
                           <p className="text-[12px] text-ink-soft">
                             {o.boxes} · {o.number}
                           </p>
@@ -268,69 +290,98 @@ export function TodayTab({
           <p className="mt-1.5 text-[13px] text-ink-soft">Only what will not sort itself out</p>
 
           <ul className="mt-5 space-y-3">
-            {orders
-              .filter((o) => o.payment === 'pending')
-              .map((o) => (
-                <li key={o.id} className="rounded-[16px] border-l-[3.5px] border-brick bg-shell p-4 shadow-xs">
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4 text-brick shrink-0" />
-                    <p className="text-[14px] font-semibold text-ink">{o.customer} has not paid</p>
-                  </div>
-                  <p className="mt-1 text-[12px] text-ink-soft pl-6">
-                    {o.number} · {money(o.total)} · Pickup, {o.windowLabel}
+            {unpaidOrders.map((o) => (
+              <li key={o.id} className="rounded-[16px] border-l-[3.5px] border-brick bg-shell p-4 shadow-xs">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="h-4 w-4 text-brick shrink-0" />
+                  <p
+                    onClick={() => onSelectOrder?.(o.id)}
+                    className="text-[14px] font-semibold text-ink cursor-pointer hover:underline"
+                  >
+                    {o.customer} has not paid
                   </p>
-                  <div className="mt-3 pl-6">
+                </div>
+                <p className="mt-1 text-[12px] text-ink-soft pl-6">
+                  {o.number} · {money(o.total)} · Pickup, {o.windowLabel}
+                </p>
+                <div className="mt-3 pl-6 flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => actions.markReceived(o.id)}
+                    className="inline-flex items-center gap-1 rounded-full border border-ink/20 bg-shell px-3.5 py-1.5 text-[10px] font-bold tracking-[0.08em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
+                  >
+                    <Check className="h-3 w-3 text-leaf" strokeWidth={2.5} />
+                    <span>Mark received</span>
+                  </button>
+                  {onSelectOrder && (
                     <button
                       type="button"
-                      onClick={() => actions.markReceived(o.id)}
-                      className="inline-flex items-center gap-1 rounded-full border border-ink/20 bg-shell px-3.5 py-1.5 text-[10px] font-bold tracking-[0.08em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
+                      onClick={() => onSelectOrder(o.id)}
+                      className="rounded-full border border-ink/15 bg-shell px-3 py-1.5 text-[10px] font-bold tracking-[0.08em] text-ink-soft uppercase hover:border-ink/40 active:scale-95"
                     >
-                      <Check className="h-3 w-3 text-leaf" strokeWidth={2.5} />
-                      <span>Mark received</span>
+                      View
                     </button>
-                  </div>
-                </li>
-              ))}
+                  )}
+                </div>
+              </li>
+            ))}
 
-            <li className="rounded-[16px] border-l-[3.5px] border-gold bg-shell p-4 shadow-xs">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-gold shrink-0" />
-                <p className="text-[14px] font-semibold text-ink">Note from Sarah Mendez</p>
-              </div>
-              <p className="mt-1 text-[12px] text-ink-soft pl-6">Nut allergy, please keep separate</p>
-              <div className="mt-3 pl-6">
-                <button
-                  type="button"
-                  onClick={() => toast('Order note opened')}
-                  className="rounded-full border border-ink/20 bg-shell px-3.5 py-1.5 text-[10px] font-bold tracking-[0.08em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
-                >
-                  Open
-                </button>
-              </div>
-            </li>
+            {noteOrders.map((o) => (
+              <li key={`note-${o.id}`} className="rounded-[16px] border-l-[3.5px] border-gold bg-shell p-4 shadow-xs">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-gold shrink-0" />
+                  <p className="text-[14px] font-semibold text-ink">Note from {o.customer}</p>
+                </div>
+                <p className="mt-1 text-[12px] text-ink-soft pl-6">{o.note}</p>
+                <div className="mt-3 pl-6">
+                  <button
+                    type="button"
+                    onClick={() => onSelectOrder?.(o.id)}
+                    className="rounded-full border border-ink/20 bg-shell px-4 py-1.5 text-[10px] font-bold tracking-[0.08em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
+                  >
+                    Open
+                  </button>
+                </div>
+              </li>
+            ))}
 
-            <li className="rounded-[16px] border-l-[3.5px] border-gold bg-shell p-4 shadow-xs">
-              <div className="flex items-center gap-2">
-                <RotateCcw className="h-4 w-4 text-gold shrink-0" />
-                <p className="text-[14px] font-semibold text-ink">2 flavours are sold out</p>
-              </div>
-              <p className="mt-1 text-[12px] text-ink-soft pl-6">
-                Ceremonial matcha, Oat and cinnamon. The shop is still taking the rest.
-              </p>
-              <div className="mt-3 pl-6">
-                <button
-                  type="button"
-                  onClick={() => {
-                    restockAll()
-                    toast('Sold-out flavours restocked')
-                  }}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-ink/20 bg-shell px-3.5 py-1.5 text-[10px] font-bold tracking-[0.08em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
-                >
-                  <RotateCcw className="h-3 w-3 text-ink-soft" />
-                  <span>Restock</span>
-                </button>
-              </div>
-            </li>
+            {soldOutFlavours.length > 0 && (
+              <li className="rounded-[16px] border-l-[3.5px] border-gold bg-shell p-4 shadow-xs">
+                <div className="flex items-center gap-2">
+                  <RotateCcw className="h-4 w-4 text-gold shrink-0" />
+                  <p className="text-[14px] font-semibold text-ink">
+                    {soldOutFlavours.length} {soldOutFlavours.length === 1 ? 'flavour is' : 'flavours are'} sold out
+                  </p>
+                </div>
+                <p className="mt-1 text-[12px] text-ink-soft pl-6">
+                  {soldOutFlavours.map((f) => f.name).join(', ')}. The shop is still taking the rest.
+                </p>
+                <div className="mt-3 pl-6">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onOpenRestock) {
+                        onOpenRestock()
+                      } else {
+                        restockAll()
+                        toast('Sold-out flavours restocked')
+                      }
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-ink/20 bg-shell px-3.5 py-1.5 text-[10px] font-bold tracking-[0.08em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
+                  >
+                    <RotateCcw className="h-3 w-3 text-ink-soft" />
+                    <span>Restock</span>
+                  </button>
+                </div>
+              </li>
+            )}
+
+            {needsAttentionCount === 0 && (
+              <li className="flex items-center gap-3 rounded-[16px] border border-dashed border-leaf/40 bg-leaf-soft/20 p-4 text-[13px] text-ink">
+                <CheckCircle2 className="h-4 w-4 text-leaf shrink-0" />
+                <span>All clear — nothing needs attention right now.</span>
+              </li>
+            )}
           </ul>
         </section>
       </div>
@@ -343,7 +394,15 @@ export function TodayTab({
 const FILTERS = ['All', 'To make up', 'Ready', 'Unpaid', 'Collected'] as const
 type Filter = (typeof FILTERS)[number]
 
-export function OrdersTab({ orders, actions }: { orders: DashboardOrder[]; actions: OrderActions }) {
+export function OrdersTab({
+  orders,
+  actions,
+  onSelectOrder,
+}: {
+  orders: DashboardOrder[]
+  actions: OrderActions
+  onSelectOrder?: (id: string) => void
+}) {
   const [state, setState] = useState<Filter>('All')
 
   const rows = orders.filter((o) => {
@@ -385,8 +444,12 @@ export function OrdersTab({ orders, actions }: { orders: DashboardOrder[]; actio
             className="flex flex-wrap items-center gap-3 rounded-[16px] border border-line-soft bg-shell px-3.5 py-3 shadow-xs transition-colors hover:border-line"
           >
             <Avatar name={o.customer} />
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-[14px] font-semibold text-ink">{o.customer}</p>
+            <div
+              className="min-w-0 flex-1 cursor-pointer group"
+              onClick={() => onSelectOrder?.(o.id)}
+              title={`View order details for ${o.customer}`}
+            >
+              <p className="truncate text-[14px] font-semibold text-ink group-hover:underline">{o.customer}</p>
               <p className="text-[12px] text-ink-soft">
                 {o.boxes} · {o.number} · Pickup {o.windowLabel}
               </p>

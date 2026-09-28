@@ -6,6 +6,8 @@ import { useShop } from '../lib/store'
 import type { DashboardOrder } from '../lib/types'
 import { KitchenMode } from './KitchenMode'
 import { MenuTab } from './MenuTab'
+import { OrderDetailModal } from './OrderDetailModal'
+import { RestockModal } from './RestockModal'
 import { BakeSheetTab, CustomersTab, InsightsTab, MoneyTab, OrdersTab, TodayTab, type OrderActions } from './tabs'
 import {
   ChefHat,
@@ -45,7 +47,12 @@ export function Dashboard() {
   const [orders, setOrders] = useState<DashboardOrder[]>(DASHBOARD_ORDERS)
   const [kitchen, setKitchen] = useState(false)
   const [kitchenCardDismissed, setKitchenCardDismissed] = useState(false)
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+  const [restockOpen, setRestockOpen] = useState(false)
+  const [acknowledgedNotes, setAcknowledgedNotes] = useState<Set<string>>(new Set())
   const { toast } = useShop()
+
+  const selectedOrder = orders.find((o) => o.id === selectedOrderId) ?? null
 
   const actions: OrderActions = useMemo(
     () => ({
@@ -244,8 +251,29 @@ export function Dashboard() {
 
         <main className="flex-1 px-4 py-5 sm:px-6 sm:py-6">
           <Routes>
-            <Route index element={<TodayTab orders={orders} actions={actions} onKitchen={() => setKitchen(true)} />} />
-            <Route path="orders" element={<OrdersTab orders={orders} actions={actions} />} />
+            <Route
+              index
+              element={
+                <TodayTab
+                  orders={orders}
+                  actions={actions}
+                  onKitchen={() => setKitchen(true)}
+                  onSelectOrder={(id) => setSelectedOrderId(id)}
+                  onOpenRestock={() => setRestockOpen(true)}
+                  acknowledgedNotes={acknowledgedNotes}
+                />
+              }
+            />
+            <Route
+              path="orders"
+              element={
+                <OrdersTab
+                  orders={orders}
+                  actions={actions}
+                  onSelectOrder={(id) => setSelectedOrderId(id)}
+                />
+              }
+            />
             <Route path="bake" element={<BakeSheetTab />} />
             <Route path="menu" element={<MenuTab />} />
             <Route path="insights" element={<InsightsTab />} />
@@ -266,6 +294,28 @@ export function Dashboard() {
             ),
           )
         }}
+      />
+
+      <OrderDetailModal
+        open={!!selectedOrder}
+        order={selectedOrder}
+        onClose={() => setSelectedOrderId(null)}
+        actions={actions}
+        onAcknowledgeNote={(id) => {
+          setAcknowledgedNotes((prev) => {
+            const next = new Set(prev)
+            if (next.has(id)) next.delete(id)
+            else next.add(id)
+            return next
+          })
+          toast('Order note acknowledged')
+        }}
+        isNoteAcknowledged={selectedOrderId ? acknowledgedNotes.has(selectedOrderId) : false}
+      />
+
+      <RestockModal
+        open={restockOpen}
+        onClose={() => setRestockOpen(false)}
       />
     </div>
   )
