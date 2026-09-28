@@ -4,7 +4,21 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   base: '/bake-house/',
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    {
+      name: 'cookies-root-rewrite',
+      configureServer(server) {
+        server.middlewares.use((req: any, _res: any, next: any) => {
+          if (req.url && req.url.startsWith('/cookies/')) {
+            req.url = '/bake-house' + req.url
+          }
+          next()
+        })
+      },
+    },
+  ],
   server: {
     port: 5188,
     host: '127.0.0.1',

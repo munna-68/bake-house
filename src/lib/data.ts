@@ -28,6 +28,15 @@ export const TICKER = [
 
 const BASE = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '')
 
+export function resolveCookiePhoto(photo?: string | null): string {
+  if (!photo) return ''
+  // If it's a root-relative /cookies/ path, prepend BASE so it resolves under the app's base path
+  if (photo.startsWith('/cookies/')) {
+    return `${BASE}${photo}`
+  }
+  return photo
+}
+
 export const FLAVOURS: Flavour[] = [
   {
     id: 'salted-butter-chip',

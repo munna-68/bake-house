@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { resolveCookiePhoto } from '../lib/data'
 import { useShop } from '../lib/store'
 import type { Flavour } from '../lib/types'
 import { BoxBuilderPanel, MobileBoxControls } from './BoxBuilder'
@@ -45,12 +46,13 @@ export function BatchGrid() {
 
 function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
   const { qtyInOrder, available, canAdd, add, remove, vote, activeBox } = useShop()
+  const resolvedPhoto = resolveCookiePhoto(flavour.photo)
   const [brokenSrc, setBrokenSrc] = useState<string | null>(null)
   const qty = qtyInOrder(flavour.id)
   const left = available(flavour.id)
   const soldOut = left === 0 && qty === 0
   const boxFull = !canAdd(flavour.id) && !soldOut && qty === 0
-  const showPhoto = Boolean(flavour.photo) && brokenSrc !== flavour.photo
+  const showPhoto = Boolean(resolvedPhoto) && brokenSrc !== resolvedPhoto
 
   const stockLine =
     soldOut
@@ -83,10 +85,10 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
         <div className="h-[96px] w-[96px] shrink-0 sm:my-2 sm:h-auto sm:w-[78%] sm:max-w-[185px] sm:aspect-square flex items-center justify-center">
           {showPhoto ? (
             <img
-              src={flavour.photo}
+              src={resolvedPhoto}
               alt={flavour.name}
               decoding="async"
-              onError={() => setBrokenSrc(flavour.photo ?? null)}
+              onError={() => setBrokenSrc(resolvedPhoto ?? null)}
               className={`cookie-spin h-full w-full object-contain drop-shadow-[0_6px_12px_rgba(43,29,19,0.14)] ${
                 soldOut ? 'opacity-55 saturate-[0.35]' : ''
               }`}

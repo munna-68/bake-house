@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { resolveCookiePhoto } from '../lib/data'
 import { useShop } from '../lib/store'
 import { CookieArtSvg, CookieTile } from './Cookie'
 import { ArrowRight, ChevronLeft, ChevronRight, Clock, Leaf, ShieldCheck, Truck, Wheat } from 'lucide-react'
@@ -75,6 +76,7 @@ function FlavourCarousel() {
   const liveRef = useRef<HTMLDivElement>(null)
   const total = flavours.length
   const flavour = flavours[Math.min(index, total - 1)]
+  const resolvedHeroPhoto = resolveCookiePhoto(flavour.photo)
 
   const inOrder = qtyInOrder(flavour.id)
   const left = available(flavour.id)
@@ -170,12 +172,12 @@ function FlavourCarousel() {
         {/* Center cookie image with gentle hover tilt */}
         <div key={flavour.id} className="fade-enter mt-1">
           <div className="mx-auto aspect-square w-[72%] max-w-[270px] sm:max-w-[290px] py-1">
-            {flavour.photo && brokenSrc !== flavour.photo ? (
+            {resolvedHeroPhoto && brokenSrc !== resolvedHeroPhoto ? (
               <img
-                src={flavour.photo}
+                src={resolvedHeroPhoto}
                 alt={flavour.name}
                 decoding="async"
-                onError={() => setBrokenSrc(flavour.photo ?? null)}
+                onError={() => setBrokenSrc(resolvedHeroPhoto ?? null)}
                 className={`cookie-spin h-full w-full object-contain drop-shadow-[0_14px_24px_rgba(43,29,19,0.2)] ${
                   soldOut ? 'opacity-55 saturate-[0.35]' : ''
                 }`}

@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { FLAVOURS } from './data'
+import { FLAVOURS, resolveCookiePhoto } from './data'
 import { dayOptions, isoDate, makeRef } from './format'
 import {
   BOX_PRICES,
@@ -163,7 +163,18 @@ function mergeSeedFlavours(saved: Flavour[]): Flavour[] {
   return saved.map((f) => {
     const seed = FLAVOURS.find((s) => s.id === f.id)
     if (!seed) return f
-    return { ...seed, ...f }
+    let photo = f.photo
+    if (photo && seed.photo) {
+      const savedSlug = photo.split('/').pop()
+      const seedSlug = seed.photo.split('/').pop()
+      // If the saved photo points to the same file as seed, sync to current base URL
+      if (savedSlug && seedSlug && savedSlug === seedSlug) {
+        photo = seed.photo
+      } else {
+        photo = resolveCookiePhoto(photo)
+      }
+    }
+    return { ...seed, ...f, ...(photo !== undefined ? { photo } : {}) }
   })
 }
 

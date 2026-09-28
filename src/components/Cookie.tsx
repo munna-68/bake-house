@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { resolveCookiePhoto } from '../lib/data'
 import type { CookieArt } from '../lib/types'
 
 function mulberry32(seed: number) {
@@ -208,8 +209,9 @@ export function CookieTile({
   /* A renamed or missing file falls back to the drawn cookie instead of leaving a
      broken-image icon in the grid. Keyed on the URL so editing the Photo URL in
      the dashboard retries rather than staying stuck on the failed source. */
+  const resolvedPhoto = resolveCookiePhoto(photo)
   const [brokenSrc, setBrokenSrc] = useState<string | null>(null)
-  const showPhoto = Boolean(photo) && brokenSrc !== photo
+  const showPhoto = Boolean(resolvedPhoto) && brokenSrc !== resolvedPhoto
 
   return (
     <div
@@ -226,11 +228,11 @@ export function CookieTile({
       <div className="absolute inset-0" style={inset > 0 ? { padding: `${inset}%` } : undefined}>
         {showPhoto ? (
           <img
-            src={photo}
+            src={resolvedPhoto}
             alt={title ?? ''}
             loading="lazy"
             decoding="async"
-            onError={() => setBrokenSrc(photo ?? null)}
+            onError={() => setBrokenSrc(resolvedPhoto ?? null)}
             className={`h-full w-full ${fit === 'cover' ? 'object-cover scale-[1.08]' : 'object-contain'}`}
           />
         ) : (

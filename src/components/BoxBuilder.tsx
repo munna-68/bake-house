@@ -1,4 +1,5 @@
 import { BOX_PRICES, BOX_SIZES, type Box, type BoxSize } from '../lib/types'
+import { resolveCookiePhoto } from '../lib/data'
 import { money } from '../lib/format'
 import { useShop } from '../lib/store'
 import { CookieTile } from './Cookie'
@@ -393,7 +394,7 @@ export function MobileBoxControls() {
                   >
                     {flavour.photo ? (
                       <img
-                        src={flavour.photo}
+                        src={resolveCookiePhoto(flavour.photo)}
                         alt={flavour.name}
                         className="h-full w-full rounded-full object-cover scale-[1.08]"
                       />
