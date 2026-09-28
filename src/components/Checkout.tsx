@@ -630,25 +630,24 @@ function CashAppIcon({ className = 'h-6 w-6' }: { className?: string }) {
   return (
     <svg
       className={className}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      viewBox="0 0 32 32"
+      fill="currentColor"
       aria-hidden="true"
     >
-      <circle cx="12" cy="12" r="9.5" />
-      <path d="M14.5 9.5a2.2 2.2 0 0 0-2.2-1.8h-.6a2 2 0 0 0 0 4h1a2 2 0 0 1 0 4h-.7a2.2 2.2 0 0 1-2.2-1.8" />
-      <line x1="12" x2="12" y1="6" y2="18" />
+      <path d="M31.453 4.625c-0.688-1.891-2.177-3.375-4.068-4.063-1.745-0.563-3.333-0.563-6.557-0.563h-9.682c-3.198 0-4.813 0-6.531 0.531-1.896 0.693-3.385 2.188-4.068 4.083-0.547 1.734-0.547 3.333-0.547 6.531v9.693c0 3.214 0 4.802 0.531 6.536 0.688 1.891 2.177 3.375 4.068 4.063 1.734 0.547 3.333 0.547 6.536 0.547h9.703c3.214 0 4.813 0 6.536-0.531 1.896-0.688 3.391-2.182 4.078-4.078 0.547-1.734 0.547-3.333 0.547-6.536v-9.667c0-3.214 0-4.813-0.547-6.547zM23.229 10.802l-1.245 1.24c-0.25 0.229-0.635 0.234-0.891 0.010-1.203-1.010-2.724-1.568-4.292-1.573-1.297 0-2.589 0.427-2.589 1.615 0 1.198 1.385 1.599 2.984 2.198 2.802 0.938 5.12 2.109 5.12 4.854 0 2.99-2.318 5.042-6.104 5.266l-0.349 1.604c-0.063 0.302-0.328 0.516-0.635 0.516h-2.391l-0.12-0.010c-0.354-0.078-0.578-0.432-0.505-0.786l0.375-1.693c-1.438-0.359-2.76-1.083-3.844-2.094v-0.016c-0.25-0.25-0.25-0.656 0-0.906l1.333-1.292c0.255-0.234 0.646-0.234 0.896 0 1.214 1.146 2.839 1.786 4.521 1.76 1.734 0 2.891-0.734 2.891-1.896s-1.172-1.464-3.385-2.292c-2.349-0.839-4.573-2.026-4.573-4.802 0-3.224 2.677-4.797 5.854-4.943l0.333-1.641c0.063-0.302 0.333-0.516 0.641-0.51h2.37l0.135 0.016c0.344 0.078 0.573 0.411 0.495 0.76l-0.359 1.828c1.198 0.396 2.333 1.026 3.302 1.849l0.031 0.031c0.25 0.266 0.25 0.667 0 0.906z" />
     </svg>
   )
 }
 
 function VenmoIcon({ className = 'h-6 w-6' }: { className?: string }) {
   return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-      <path d="M18.8 3.5c.7 1.3 1 2.7 1 4.2 0 5.2-4.2 11.8-7.7 16.3H6.5L4.8 4.5l4.8-.5c.3 2.6 1.1 5.1 2.1 7.8 1.6-2.7 3.3-5.7 3.6-7.2l4.5-1.1z" />
+    <svg
+      className={className}
+      viewBox="0 0 48 48"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M40.25 4.45a14.26 14.26 0 0 1 2.06 7.8c0 9.72-8.3 22.34-15 31.2H11.91L5.74 6.58l13.47-1.28 3.27 26.24c3.05-5 6.81-12.76 6.81-18.08a14.51 14.51 0 0 0-1.29-6.52Z" />
     </svg>
   )
 }
@@ -783,7 +782,9 @@ function CardTab({ total, onPlace, placing }: { total: number; onPlace: () => vo
 
   return (
     <div>
-      <div className="rounded-[22px] border border-line bg-[#faf6f0] p-4.5 sm:p-5 shadow-xs">
+      <h3 className="font-display text-[22px] leading-none text-ink">Send by Card</h3>
+
+      <div className="mt-3.5 rounded-[22px] border border-line bg-[#faf6f0] p-4.5 sm:p-5 shadow-xs">
         <p className="label-caps mb-3.5 text-[10px] sm:text-[11px] font-bold tracking-wider text-ink-soft">
           CARD DETAILS
         </p>
