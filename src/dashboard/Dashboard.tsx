@@ -71,67 +71,74 @@ export function Dashboard() {
   }, [navigate])
 
   const location = useLocation()
-  const path = location.pathname.replace(/\/$/, '') || '/dashboard'
+  const path = location.pathname.replace(/\/+$/, '') || '/dashboard'
   const title = TITLES[path] ?? 'Today'
 
+  const isTabActive = (tabTo: string, end?: boolean) =>
+    end ? path === tabTo : path.startsWith(tabTo)
+
   return (
-    <div className="min-h-dvh bg-cream text-ink lg:flex">
-      <aside className="no-print hidden w-[256px] shrink-0 border-r border-line bg-cream lg:flex lg:flex-col">
-        <div className="flex items-center gap-3 px-5 py-5 border-b border-line-soft">
-          <span className="grid h-10 w-10 place-items-center rounded-full bg-cocoa shadow-xs">
-            <ChefHat className="h-5 w-5 text-gold" />
-          </span>
-          <div>
-            <span className="block font-display text-[20px] leading-none">
-              <span className="text-ink">Bake</span>
-              <span className="text-brick">House</span>
+    <div className="min-h-dvh bg-cream text-ink lg:flex lg:h-dvh lg:overflow-hidden print:h-auto print:overflow-visible">
+      <aside className="no-print hidden w-[256px] shrink-0 border-r border-line bg-cream lg:flex lg:h-full lg:flex-col lg:justify-between lg:overflow-y-auto">
+        <div>
+          <div className="flex items-center gap-3 px-5 py-5 border-b border-line-soft">
+            <span className="grid h-10 w-10 place-items-center rounded-full bg-cocoa shadow-xs">
+              <ChefHat className="h-5 w-5 text-gold" />
             </span>
-            <span className="mt-1 block text-[11px] text-ink-soft">{BRAND.address}</span>
+            <div>
+              <span className="block font-display text-[20px] leading-none">
+                <span className="text-ink">Bake</span>
+                <span className="text-brick">House</span>
+              </span>
+              <span className="mt-1 block text-[11px] text-ink-soft">{BRAND.address}</span>
+            </div>
           </div>
+
+          <nav aria-label="Dashboard" className="mt-4 px-3">
+            <ul className="space-y-1">
+              {TABS.map((tab) => {
+                const Icon = tab.icon
+                return (
+                  <li key={tab.to}>
+                    <NavLink
+                      to={tab.to}
+                      end={'end' in tab ? tab.end : false}
+                      className={({ isActive }) => {
+                        const active = isActive || isTabActive(tab.to, 'end' in tab ? tab.end : false)
+                        return `flex items-center justify-between gap-3 rounded-full px-4 py-2.5 text-[13.5px] font-medium transition-all ${
+                          active
+                            ? 'bg-cocoa text-cream shadow-xs'
+                            : 'text-ink-soft hover:bg-cream-deep hover:text-ink active:scale-95'
+                        }`
+                      }}
+                    >
+                      {({ isActive }) => {
+                        const active = isActive || isTabActive(tab.to, 'end' in tab ? tab.end : false)
+                        return (
+                          <>
+                            <span className="flex items-center gap-2.5">
+                              <Icon className={`h-4 w-4 ${active ? 'text-gold' : 'text-ink-soft/75'}`} />
+                              <span>{tab.label}</span>
+                            </span>
+                            {'badge' in tab && tab.badge ? (
+                              <span
+                                className="grid h-[20px] min-w-[20px] place-items-center rounded-full bg-brick px-1.5 text-[10.5px] font-bold text-white"
+                              >
+                                {openCount}
+                              </span>
+                            ) : null}
+                          </>
+                        )
+                      }}
+                    </NavLink>
+                  </li>
+                )
+              })}
+            </ul>
+          </nav>
         </div>
 
-        <nav aria-label="Dashboard" className="mt-4 flex-1 px-3">
-          <ul className="space-y-1">
-            {TABS.map((tab) => {
-              const Icon = tab.icon
-              return (
-                <li key={tab.to}>
-                  <NavLink
-                    to={tab.to}
-                    end={'end' in tab ? tab.end : false}
-                    className={({ isActive }) =>
-                      `flex items-center justify-between gap-3 rounded-full px-4 py-2.5 text-[13.5px] font-medium transition-all ${
-                        isActive
-                          ? 'bg-cocoa text-cream shadow-xs'
-                          : 'text-ink-soft hover:bg-cream-deep hover:text-ink active:scale-95'
-                      }`
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        <span className="flex items-center gap-2.5">
-                          <Icon className={`h-4 w-4 ${isActive ? 'text-gold' : 'text-ink-soft/75'}`} />
-                          <span>{tab.label}</span>
-                        </span>
-                        {'badge' in tab && tab.badge ? (
-                          <span
-                            className={`grid h-[20px] min-w-[20px] place-items-center rounded-full px-1.5 text-[10.5px] font-bold ${
-                              isActive ? 'bg-brick text-white' : 'bg-brick text-white'
-                            }`}
-                          >
-                            {openCount}
-                          </span>
-                        ) : null}
-                      </>
-                    )}
-                  </NavLink>
-                </li>
-              )
-            })}
-          </ul>
-        </nav>
-
-        <div className="px-4 pb-5 space-y-3">
+        <div className="px-4 pb-5 pt-4 space-y-3 shrink-0">
           <div className="rounded-[20px] border border-line bg-[#faf6f0] p-4 shadow-xs">
             <div className="flex items-center gap-2">
               <ChefHat className="h-4 w-4 text-brick" />
@@ -158,14 +165,21 @@ export function Dashboard() {
         </div>
       </aside>
 
-      <div className="min-w-0 flex-1">
-        <div className="no-print sticky top-0 z-30 border-b border-line bg-cream/95 backdrop-blur-md">
+      <div className="min-w-0 flex-1 lg:flex lg:h-full lg:flex-col lg:overflow-y-auto print:h-auto print:overflow-visible">
+        <div className="no-print sticky top-0 z-30 border-b border-line bg-cream/95 backdrop-blur-md shrink-0">
           <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3.5 sm:px-6">
             <div>
               <h1 className="font-display text-[26px] leading-none text-ink">{title}</h1>
               <p className="mt-1 text-[12.5px] text-ink-soft">{longDate()}</p>
             </div>
             <div className="flex flex-wrap gap-2.5">
+              <Link
+                to="/"
+                className="inline-flex lg:hidden items-center gap-1.5 rounded-full border border-ink/20 bg-shell px-3 py-2 text-[10.5px] font-bold tracking-[0.08em] text-ink uppercase transition-all hover:border-ink/50 active:scale-95"
+              >
+                <Store className="h-3.5 w-3.5 text-brick" />
+                <span>Shop</span>
+              </Link>
               <button
                 type="button"
                 onClick={onPrint}
@@ -194,13 +208,14 @@ export function Dashboard() {
                     <NavLink
                       to={tab.to}
                       end={'end' in tab ? tab.end : false}
-                      className={({ isActive }) =>
-                        `inline-flex items-center gap-1.5 label-caps rounded-full px-3.5 py-2 text-[10px] whitespace-nowrap transition-all active:scale-95 ${
-                          isActive
+                      className={({ isActive }) => {
+                        const active = isActive || isTabActive(tab.to, 'end' in tab ? tab.end : false)
+                        return `inline-flex items-center gap-1.5 label-caps rounded-full px-3.5 py-2 text-[10px] whitespace-nowrap transition-all active:scale-95 ${
+                          active
                             ? 'bg-cocoa text-cream shadow-xs'
                             : 'border border-line bg-[#faf6f0] text-ink-soft'
                         }`
-                      }
+                      }}
                     >
                       <Icon className="h-3.5 w-3.5" />
                       <span>{tab.label}</span>
@@ -213,7 +228,7 @@ export function Dashboard() {
           </nav>
         </div>
 
-        <main className="px-4 py-5 sm:px-6 sm:py-6">
+        <main className="flex-1 px-4 py-5 sm:px-6 sm:py-6">
           <Routes>
             <Route index element={<TodayTab orders={orders} actions={actions} onKitchen={() => setKitchen(true)} />} />
             <Route path="orders" element={<OrdersTab orders={orders} actions={actions} />} />

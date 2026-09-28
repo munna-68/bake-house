@@ -281,7 +281,7 @@ export function Pricing() {
                   <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </a>
                 <Link
-                  to="/dashboard/"
+                  to="/dashboard"
                   className="inline-flex min-h-12 items-center justify-center rounded-full bg-cream px-6 py-3.5 text-center text-[11.5px] font-bold tracking-[0.09em] text-cocoa uppercase shadow-xs transition-all hover:bg-white active:scale-95"
                 >
                   See kitchen dashboard
@@ -418,7 +418,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <Link to="/dashboard/" className="hover:text-cream transition-colors">
+                <Link to="/dashboard" className="hover:text-cream transition-colors">
                   Kitchen dashboard
                 </Link>
               </li>
