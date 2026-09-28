@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { FLAVOURS, resolveCookiePhoto } from './data'
+import { FLAVOURS } from './data'
 import { dayOptions, isoDate, makeRef } from './format'
 import {
   BOX_PRICES,
@@ -159,21 +159,27 @@ const NEW_FLAVOUR_ART: CookieArt[] = [
  * saves as `''`, which is a key that exists, so an intentional blank survives.
  * Only a genuinely missing key is treated as "never set".
  */
+function normaliseSeedPhoto(savedPhoto: string | undefined, seed: Flavour): string | undefined {
+  // No saved photo – let the seed fill it in
+  if (savedPhoto === undefined) return undefined
+  // Intentionally cleared in the dashboard (blank string beats the seed)
+  if (savedPhoto === '') return ''
+  // Not a /cookies/ style path (e.g. base64 upload or external URL) – keep as-is
+  if (!savedPhoto.includes('/cookies/')) return savedPhoto
+  // If the filename slug matches the seed, use the seed's canonical /cookies/... path.
+  // This repairs any stale /bake-house/cookies/... paths saved from older versions.
+  const savedSlug = savedPhoto.split('/').pop()
+  const seedSlug = seed.photo?.split('/').pop()
+  if (savedSlug && seedSlug && savedSlug === seedSlug) return seed.photo
+  // Different /cookies/ file – normalise away any leading base prefix
+  return savedPhoto.replace(/^.*\/cookies\//, '/cookies/')
+}
+
 function mergeSeedFlavours(saved: Flavour[]): Flavour[] {
   return saved.map((f) => {
     const seed = FLAVOURS.find((s) => s.id === f.id)
     if (!seed) return f
-    let photo = f.photo
-    if (photo && seed.photo) {
-      const savedSlug = photo.split('/').pop()
-      const seedSlug = seed.photo.split('/').pop()
-      // If the saved photo points to the same file as seed, sync to current base URL
-      if (savedSlug && seedSlug && savedSlug === seedSlug) {
-        photo = seed.photo
-      } else {
-        photo = resolveCookiePhoto(photo)
-      }
-    }
+    const photo = normaliseSeedPhoto(f.photo, seed)
     return { ...seed, ...f, ...(photo !== undefined ? { photo } : {}) }
   })
 }
