@@ -310,7 +310,7 @@ export const PAY_LABELS: Record<'card' | 'cashapp' | 'venmo' | 'bank', { title: 
   card: { title: 'Card', sub: 'Instant' },
   cashapp: { title: 'Cash App', sub: 'Demo handle' },
   venmo: { title: 'Venmo', sub: '@bakehouse' },
-  bank: { title: 'Bank', sub: 'Transfer' },
+  bank: { title: 'Bank Transfer', sub: 'Transfer' },
 }
 
 /* -------------------------------------------------------------------------- */

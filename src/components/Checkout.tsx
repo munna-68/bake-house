@@ -4,7 +4,7 @@ import { copyText, dayLabel, money } from '../lib/format'
 import { useShop, type CheckoutStep } from '../lib/store'
 import { BOX_PRICES, DELIVERY_FEE, DELIVERY_ZIPS, type PaymentMethod } from '../lib/types'
 import { useDialog } from '../lib/useDialog'
-import { Check, Copy, X } from 'lucide-react'
+import { Check, Copy, Landmark, X } from 'lucide-react'
 
 const PICKUP_WINDOWS = ['11.00 – 2.00pm', '2.00 – 5.00pm', '5.00 – 8.00pm']
 const DELIVERY_WINDOWS = [
@@ -22,8 +22,6 @@ const WINDOW_STARTS: Record<string, string> = {
   '12.30 – 2.30pm': '12.30pm',
   '3.00 – 5.00pm': '3.00pm',
 }
-
-const PAY_ORDER: PaymentMethod[] = ['card', 'cashapp', 'venmo', 'bank']
 
 export function CheckoutModal() {
   const { checkoutOpen, checkoutStep, closeCheckout, setCheckoutStep, ensureRef } = useShop()
@@ -607,6 +605,89 @@ function StepTwo({ onNext, onBack }: { onNext: () => void; onBack: () => void })
 /*  Step 3                                                                    */
 /* -------------------------------------------------------------------------- */
 
+
+function CreditCardIcon({ className = 'h-6 w-6' }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <rect width="20" height="14" x="2" y="5" rx="2" />
+      <line x1="2" x2="22" y1="10" y2="10" />
+      <line x1="6" x2="7" y1="15" y2="15" />
+      <line x1="9.5" x2="10.5" y1="15" y2="15" />
+    </svg>
+  )
+}
+
+function CashAppIcon({ className = 'h-6 w-6' }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="9.5" />
+      <path d="M14.5 9.5a2.2 2.2 0 0 0-2.2-1.8h-.6a2 2 0 0 0 0 4h1a2 2 0 0 1 0 4h-.7a2.2 2.2 0 0 1-2.2-1.8" />
+      <line x1="12" x2="12" y1="6" y2="18" />
+    </svg>
+  )
+}
+
+function VenmoIcon({ className = 'h-6 w-6' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M18.8 3.5c.7 1.3 1 2.7 1 4.2 0 5.2-4.2 11.8-7.7 16.3H6.5L4.8 4.5l4.8-.5c.3 2.6 1.1 5.1 2.1 7.8 1.6-2.7 3.3-5.7 3.6-7.2l4.5-1.1z" />
+    </svg>
+  )
+}
+
+function BankIcon({ className = 'h-6 w-6' }: { className?: string }) {
+  return <Landmark className={className} strokeWidth={1.8} aria-hidden="true" />
+}
+
+function VisaLogo({ className = 'h-3 w-auto' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 36 12" fill="currentColor" aria-label="Visa">
+      <path d="M14.07 0.3L9.2 11.7H6.01L3.66 2.52C3.52 1.97 3.4 1.77 2.97 1.54C2.26 1.16 1.06 0.8 0 0.57L0.06 0.3H5.16C5.82 0.3 6.41 0.74 6.55 1.52L7.79 8.08L10.96 0.3H14.07ZM26.4 7.91C26.42 4.89 22.21 4.73 22.24 3.38C22.25 2.97 22.64 2.53 23.53 2.41C23.97 2.35 25.18 2.3 26.44 2.88L26.96 0.45C26.25 0.19 25.33 0 24.18 0C21.24 0 19.18 1.56 19.16 3.79C19.14 5.44 20.64 6.36 21.76 6.91C22.92 7.47 23.31 7.84 23.3 8.35C23.29 9.13 22.35 9.48 21.48 9.48C19.98 9.48 19.11 9.06 18.42 8.74L17.88 11.26C18.66 11.62 20.1 11.93 21.58 11.95C24.68 11.95 26.68 10.42 26.7 8.13L26.4 7.91ZM34.24 11.7H36.96L34.64 0.3H32.12C31.54 0.3 31.05 0.64 30.83 1.17L26.35 11.7H29.62L30.27 9.91H34.27L34.61 11.7H34.24ZM31.17 7.45L32.48 3.84L33.24 7.45H31.17ZM18.43 0.3L15.91 11.7H12.79L15.31 0.3H18.43Z" />
+    </svg>
+  )
+}
+
+function MastercardLogo({ className = 'h-3.5 w-auto' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 28 17" fill="none" aria-label="Mastercard">
+      <circle cx="8.5" cy="8.5" r="8.5" fill="currentColor" />
+      <path
+        d="M17 0a8.5 8.5 0 0 0-3.23.64A8.47 8.47 0 0 1 17 8.5a8.47 8.47 0 0 1-3.23 7.86A8.5 8.5 0 1 0 17 0z"
+        fill="currentColor"
+      />
+    </svg>
+  )
+}
+
+const PAYMENT_METHODS: Array<{
+  id: PaymentMethod
+  title: string
+  Icon: (props: { className?: string }) => JSX.Element
+}> = [
+  { id: 'card', title: 'Card', Icon: CreditCardIcon },
+  { id: 'cashapp', title: 'Cash App', Icon: CashAppIcon },
+  { id: 'venmo', title: 'Venmo', Icon: VenmoIcon },
+  { id: 'bank', title: 'Bank Transfer', Icon: BankIcon },
+]
+
 function StepThree({ onBack, onDone }: { onBack: () => void; onDone: () => void }) {
   const { paymentMethod, setPaymentMethod, orderTotal, ref, ensureRef, placeOrder, fulfilment } = useShop()
   const [placing, setPlacing] = useState(false)
@@ -632,24 +713,23 @@ function StepThree({ onBack, onDone }: { onBack: () => void; onDone: () => void 
       </div>
 
       <GroupLabel>How do you want to pay</GroupLabel>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4" role="group" aria-label="Payment method">
-        {PAY_ORDER.map((m) => {
-          const on = paymentMethod === m
-          const meta = PAY_LABELS[m]
+      <div className="grid grid-cols-4 gap-2 sm:gap-2.5" role="group" aria-label="Payment method">
+        {PAYMENT_METHODS.map(({ id, title, Icon }) => {
+          const on = paymentMethod === id
           return (
             <button
-              key={m}
+              key={id}
               type="button"
               aria-pressed={on}
-              onClick={() => setPaymentMethod(m)}
-              className={`min-h-11 rounded-[16px] border px-3 py-3 text-left transition-colors ${
-                on ? 'border-ink bg-ink text-cream' : 'border-line bg-shell text-ink hover:border-ink/35'
+              onClick={() => setPaymentMethod(id)}
+              className={`flex h-[88px] sm:h-[94px] flex-col items-start justify-between rounded-[18px] sm:rounded-[20px] p-3 sm:p-3.5 text-left transition-all ${
+                on
+                  ? 'border-ink bg-ink text-white shadow-sm'
+                  : 'border border-line bg-[#faf6f0] text-ink hover:border-ink/40 active:scale-[0.98]'
               }`}
             >
-              <span className="block text-[14px] font-bold">{meta.title}</span>
-              <span className={`label-caps mt-1 block text-[8px] ${on ? 'text-cream/60' : 'text-ink-soft'}`}>
-                {meta.sub}
-              </span>
+              <Icon className="h-6 w-6 shrink-0" />
+              <span className="text-[12px] sm:text-[13.5px] font-semibold leading-tight">{title}</span>
             </button>
           )
         })}
@@ -677,52 +757,107 @@ function StepThree({ onBack, onDone }: { onBack: () => void; onDone: () => void 
 }
 
 function CardTab({ total, onPlace, placing }: { total: number; onPlace: () => void; placing: boolean }) {
+  const [cardNumber, setCardNumber] = useState('')
+  const [expiry, setExpiry] = useState('')
+  const [cvc, setCvc] = useState('')
+  const [nameOnCard, setNameOnCard] = useState('')
+
+  const handleCardNumberChange = (raw: string) => {
+    const digits = raw.replace(/\D/g, '').slice(0, 16)
+    const formatted = digits.match(/.{1,4}/g)?.join(' ') ?? digits
+    setCardNumber(formatted)
+  }
+
+  const handleExpiryChange = (raw: string) => {
+    const digits = raw.replace(/\D/g, '').slice(0, 4)
+    if (digits.length >= 3) {
+      setExpiry(`${digits.slice(0, 2)} / ${digits.slice(2)}`)
+    } else {
+      setExpiry(digits)
+    }
+  }
+
+  const handleCvcChange = (raw: string) => {
+    setCvc(raw.replace(/\D/g, '').slice(0, 4))
+  }
+
   return (
     <div>
-      <p className="rounded-[16px] bg-cream-deep px-4 py-3 text-[12px] leading-relaxed text-ink-soft">
-        Card entry is switched off in this demo. On a live shop these are Stripe fields and take a real payment.
-      </p>
+      <div className="rounded-[22px] border border-line bg-[#faf6f0] p-4.5 sm:p-5 shadow-xs">
+        <p className="label-caps mb-3.5 text-[10px] sm:text-[11px] font-bold tracking-wider text-ink-soft">
+          CARD DETAILS
+        </p>
 
-      <div className="mt-4 space-y-3" aria-hidden="true">
         <div>
-          <p className="label-caps mb-2 text-[10px] text-ink-soft">Card number</p>
+          <label htmlFor="card-number-input" className="mb-1.5 block text-[13px] font-medium text-ink">
+            Card number
+          </label>
+          <div className="relative flex items-center">
+            <input
+              id="card-number-input"
+              type="text"
+              inputMode="numeric"
+              autoComplete="cc-number"
+              value={cardNumber}
+              onChange={(e) => handleCardNumberChange(e.target.value)}
+              placeholder="1234 5678 9012 3456"
+              className="w-full rounded-[14px] border border-line bg-[#faf7f2] py-3 pl-4 pr-24 text-[14px] text-ink placeholder:text-ink-faint/60 focus:border-ink/50 focus:outline-none transition-colors"
+            />
+            <div className="pointer-events-none absolute right-3.5 flex items-center gap-2 text-ink-soft/70">
+              <VisaLogo className="h-3 w-auto opacity-75" />
+              <MastercardLogo className="h-3.5 w-auto opacity-75" />
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3.5 grid grid-cols-2 gap-3">
+          <div>
+            <label htmlFor="expiry-input" className="mb-1.5 block text-[13px] font-medium text-ink">
+              Expiry date
+            </label>
+            <input
+              id="expiry-input"
+              type="text"
+              inputMode="numeric"
+              autoComplete="cc-exp"
+              value={expiry}
+              onChange={(e) => handleExpiryChange(e.target.value)}
+              placeholder="MM / YY"
+              className="w-full rounded-[14px] border border-line bg-[#faf7f2] px-4 py-3 text-[14px] text-ink placeholder:text-ink-faint/60 focus:border-ink/50 focus:outline-none transition-colors"
+            />
+          </div>
+          <div>
+            <label htmlFor="cvc-input" className="mb-1.5 block text-[13px] font-medium text-ink">
+              CVC
+            </label>
+            <input
+              id="cvc-input"
+              type="text"
+              inputMode="numeric"
+              autoComplete="cc-csc"
+              value={cvc}
+              onChange={(e) => handleCvcChange(e.target.value)}
+              placeholder="123"
+              className="w-full rounded-[14px] border border-line bg-[#faf7f2] px-4 py-3 text-[14px] text-ink placeholder:text-ink-faint/60 focus:border-ink/50 focus:outline-none transition-colors"
+            />
+          </div>
+        </div>
+
+        <div className="mt-3.5">
+          <label htmlFor="name-input" className="mb-1.5 block text-[13px] font-medium text-ink">
+            Name on card
+          </label>
           <input
-            disabled
-            value="4242 4242 4242 4242"
-            readOnly
-            tabIndex={-1}
-            className="w-full rounded-[16px] border border-dashed border-line bg-cream-deep px-4 py-3.5 text-[15px] text-ink-faint"
+            id="name-input"
+            type="text"
+            autoComplete="cc-name"
+            value={nameOnCard}
+            onChange={(e) => setNameOnCard(e.target.value)}
+            placeholder="John Doe"
+            className="w-full rounded-[14px] border border-line bg-[#faf7f2] px-4 py-3 text-[14px] text-ink placeholder:text-ink-faint/60 focus:border-ink/50 focus:outline-none transition-colors"
           />
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <p className="label-caps mb-2 text-[10px] text-ink-soft">Expiry</p>
-            <input
-              disabled
-              value="04 / 28"
-              readOnly
-              tabIndex={-1}
-              className="w-full rounded-[16px] border border-dashed border-line bg-cream-deep px-4 py-3.5 text-[15px] text-ink-faint"
-            />
-          </div>
-          <div>
-            <p className="label-caps mb-2 text-[10px] text-ink-soft">CVC</p>
-            <input
-              disabled
-              value="123"
-              readOnly
-              tabIndex={-1}
-              className="w-full rounded-[16px] border border-dashed border-line bg-cream-deep px-4 py-3.5 text-[15px] text-ink-faint"
-            />
-          </div>
-        </div>
       </div>
-
-      <p className="mt-3 text-[12px] leading-relaxed text-ink-soft">
-        Nothing is charged and no card details are collected or stored. Card details go straight to Stripe and never
-        touch this site. Nothing is charged until the box is made up, and you can cancel free up to two hours before
-        your window.
-      </p>
 
       <div className="mt-5">
         <PrimaryButton onClick={onPlace} disabled={placing}>
@@ -747,13 +882,13 @@ function TransferTab({
   placing: boolean
 }) {
   const handle = PAY_HANDLES[method]
-  const sendBy = method === 'cashapp' ? 'Cash App' : method === 'venmo' ? 'Venmo' : 'bank transfer'
+  const sendBy = method === 'cashapp' ? 'Cash App' : method === 'venmo' ? 'Venmo' : 'Bank Transfer'
 
   return (
     <div>
       <h3 className="font-display text-[22px] leading-none text-ink">Send by {sendBy}</h3>
 
-      <div className="mt-3.5 rounded-[22px] border border-line bg-shell px-4">
+      <div className="mt-3.5 rounded-[22px] border border-line bg-[#faf6f0] px-4 shadow-xs">
         <CopyRow label="Send to" value={handle} />
         <CopyRow label="Amount" value={money(total)} />
         <CopyRow label="Reference" value={reference} />
