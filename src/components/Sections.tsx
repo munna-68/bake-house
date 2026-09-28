@@ -350,7 +350,9 @@ export function Pricing() {
               </p>
             </div>
             <a
-              href="#build"
+              href="https://sitekeep.studio"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex min-h-12 shrink-0 items-center justify-center rounded-full bg-cocoa px-8 py-3.5 text-center text-[12px] font-bold tracking-[0.09em] text-cream uppercase transition-all hover:bg-cocoa-soft active:scale-95"
             >
               Start a project

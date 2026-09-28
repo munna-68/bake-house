@@ -9,13 +9,27 @@ function useCta() {
   const { totalCookies, capacity, boxes, isBoxFull, orderTotal } = useShop()
   const allFull = boxes.every(isBoxFull)
   if (totalCookies === 0) {
-    return { label: 'Fill the box to continue', disabled: true, tone: 'muted' as const }
+    return {
+      title: 'Fill the box to continue',
+      subtitle: null,
+      label: 'Fill the box to continue',
+      disabled: true,
+      tone: 'muted' as const,
+    }
   }
   if (allFull) {
-    return { label: `Checkout · ${money(orderTotal)}`, disabled: false, tone: 'primary' as const }
+    return {
+      title: `Checkout · ${money(orderTotal)}`,
+      subtitle: null,
+      label: `Checkout · ${money(orderTotal)}`,
+      disabled: false,
+      tone: 'primary' as const,
+    }
   }
   const more = Math.max(0, capacity - totalCookies)
   return {
+    title: `Checkout with ${totalCookies}`,
+    subtitle: `(add ${more} more free)`,
     label: `Checkout with ${totalCookies} (add ${more} more free)`,
     disabled: false,
     tone: 'primary' as const,
@@ -152,14 +166,26 @@ function CtaButton({ full = false }: { full?: boolean }) {
       type="button"
       onClick={() => openCheckout(1)}
       disabled={cta.disabled || totalCookies === 0}
-      className={`inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-[12px] font-bold tracking-[0.09em] uppercase transition-all shadow-xs ${
+      className={`group relative inline-flex min-h-[54px] w-full items-center justify-center rounded-full px-10 py-3 transition-all shadow-xs ${
         cta.tone === 'muted'
           ? 'bg-line text-ink-faint/70 cursor-not-allowed'
-          : 'bg-brick text-white hover:bg-brick-dark active:scale-95'
+          : 'bg-brick text-white hover:bg-brick-dark active:scale-[0.98]'
       } ${full ? '' : 'mt-1'}`}
     >
-      <span>{cta.label}</span>
-      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+      <div className="flex flex-col items-center justify-center text-center">
+        <span className="text-[12px] font-bold tracking-[0.09em] uppercase leading-tight">
+          {cta.title}
+        </span>
+        {cta.subtitle ? (
+          <span className="mt-1 text-[10.5px] font-semibold tracking-[0.08em] uppercase text-white/85 leading-tight">
+            {cta.subtitle}
+          </span>
+        ) : null}
+      </div>
+      <ArrowRight
+        className="absolute right-5 sm:right-6 top-1/2 -translate-y-1/2 h-4 w-4 shrink-0 transition-transform duration-150 group-hover:translate-x-0.5"
+        aria-hidden="true"
+      />
     </button>
   )
 }
