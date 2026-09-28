@@ -97,7 +97,7 @@ interface ShopValue {
     id: string,
     patch: Partial<Pick<Flavour, 'name' | 'desc' | 'allergens' | 'stock' | 'photo'>>,
   ) => void
-  addFlavour: () => void
+  addFlavour: (custom?: Partial<Omit<Flavour, 'id'>>) => string
   removeFlavour: (id: string) => void
   resetFlavours: () => void
   restockAll: () => void
@@ -615,26 +615,29 @@ export function ShopProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const addFlavour = useCallback(() => {
+  const addFlavour = useCallback((custom?: Partial<Omit<Flavour, 'id'>>) => {
+    const id = `new-flavour-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`
     setState((s) => {
       const n = s.flavours.length + 1
-      const palette = NEW_FLAVOUR_ART[(n - 1) % NEW_FLAVOUR_ART.length]
-      const id = `new-flavour-${Date.now().toString(36)}`
+      const palette = custom?.art ?? NEW_FLAVOUR_ART[(n - 1) % NEW_FLAVOUR_ART.length]
+      const newFlavour: Flavour = {
+        id,
+        name: custom?.name?.trim() || `New flavour ${n}`,
+        desc: custom?.desc?.trim() ?? 'Describe it the way you would to a customer at the counter.',
+        allergens: custom?.allergens ?? ['Wheat', 'Milk'],
+        stock:
+          typeof custom?.stock === 'number' && Number.isFinite(custom.stock)
+            ? Math.max(0, Math.round(custom.stock))
+            : 12,
+        art: palette,
+        photo: custom?.photo?.trim() || undefined,
+      }
       return {
         ...s,
-        flavours: [
-          ...s.flavours,
-          {
-            id,
-            name: `New flavour ${n}`,
-            desc: 'Describe it the way you would to a customer at the counter.',
-            allergens: ['Wheat', 'Milk'],
-            stock: 12,
-            art: palette,
-          },
-        ],
+        flavours: [...s.flavours, newFlavour],
       }
     })
+    return id
   }, [])
 
   const removeFlavour = useCallback((id: string) => {

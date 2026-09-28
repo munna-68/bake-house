@@ -202,7 +202,7 @@ export function RestockModal({ open, onClose }: Props) {
                             step={6}
                             value={qty}
                             onChange={(e) => setAmount(f.id, Number(e.target.value))}
-                            className="w-[54px] rounded-[10px] border border-line bg-shell px-1 py-1 text-center text-[14px] font-bold text-ink focus:border-ink/40 focus:outline-none"
+                            className="h-8 w-[50px] rounded-[10px] border border-line bg-shell p-0 text-center text-[14px] font-bold tabular-nums text-ink leading-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:border-ink/40 focus:outline-none"
                           />
                           <button
                             type="button"
@@ -317,7 +317,7 @@ export function RestockModal({ open, onClose }: Props) {
                           min={0}
                           value={qty}
                           onChange={(e) => setAmount(f.id, Number(e.target.value))}
-                          className="w-[48px] rounded-[8px] border border-line bg-shell px-1 py-0.5 text-center text-[13px] font-bold text-ink focus:outline-none"
+                          className="h-7 w-[46px] rounded-[8px] border border-line bg-shell p-0 text-center text-[13px] font-bold tabular-nums text-ink leading-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:outline-none"
                         />
                         <button
                           type="button"

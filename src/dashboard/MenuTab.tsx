@@ -1,7 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 import { CookieTile } from '../components/Cookie'
+import { readFileAsImage, resizeImage } from '../lib/imageUtils'
 import { useShop } from '../lib/store'
-import { Check, Minus, Plus, RotateCcw, Trash2 } from 'lucide-react'
+import type { CookieArt } from '../lib/types'
+import { AddFlavourModal } from './AddFlavourModal'
+import { ConfirmDeleteFlavourModal } from './ConfirmDeleteFlavourModal'
+import { Check, Minus, Plus, RotateCcw, Trash2, Upload } from 'lucide-react'
 
 interface Draft {
   id: string
@@ -10,6 +14,15 @@ interface Draft {
   allergens: string
   stock: number
   photo: string
+}
+
+interface FlavourToDelete {
+  id: string
+  name: string
+  desc: string
+  photo?: string
+  art?: CookieArt
+  stock: number
 }
 
 function toDraft(flavours: ReturnType<typeof useShop>['flavours']): Draft[] {
@@ -24,9 +37,14 @@ function toDraft(flavours: ReturnType<typeof useShop>['flavours']): Draft[] {
 }
 
 export function MenuTab() {
-  const { flavours, updateFlavour, addFlavour, removeFlavour, resetFlavours, toast } = useShop()
+  const { flavours, updateFlavour, removeFlavour, resetFlavours, toast } = useShop()
   const [draft, setDraft] = useState<Draft[]>(() => toDraft(flavours))
   const [dirty, setDirty] = useState(false)
+  const [addModalOpen, setAddModalOpen] = useState(false)
+  const [flavourToDelete, setFlavourToDelete] = useState<FlavourToDelete | null>(null)
+
+  // Card-specific file upload ref map
+  const cardFileInputRefs = useRef<Record<string, HTMLInputElement | null>>({})
 
   useEffect(() => {
     setDraft(toDraft(flavours))
@@ -36,6 +54,21 @@ export function MenuTab() {
   const patch = (id: string, next: Partial<Draft>) => {
     setDraft((list) => list.map((d) => (d.id === id ? { ...d, ...next } : d)))
     setDirty(true)
+  }
+
+  const handleCardPhotoUpload = async (id: string, file: File) => {
+    if (!file.type.startsWith('image/')) {
+      toast('Please upload an image file (PNG, WebP, or JPG)', 'full')
+      return
+    }
+    try {
+      const img = await readFileAsImage(file)
+      const compressed = resizeImage(img, 600)
+      patch(id, { photo: compressed })
+      toast('Cookie photo updated')
+    } catch {
+      toast('Failed to load image', 'full')
+    }
   }
 
   const save = () => {
@@ -54,6 +87,14 @@ export function MenuTab() {
     toast('Menu saved. The shop is updated.')
   }
 
+  const handleConfirmDelete = () => {
+    if (!flavourToDelete) return
+    removeFlavour(flavourToDelete.id)
+    setDraft((list) => list.filter((d) => d.id !== flavourToDelete.id))
+    toast(`Removed "${flavourToDelete.name}" from the menu`)
+    setFlavourToDelete(null)
+  }
+
   return (
     <div className="pb-24">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -63,7 +104,7 @@ export function MenuTab() {
         </div>
         <button
           type="button"
-          onClick={addFlavour}
+          onClick={() => setAddModalOpen(true)}
           className="inline-flex items-center gap-1.5 rounded-full border border-ink/20 bg-shell px-5 py-2.5 text-[10px] font-bold tracking-[0.09em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
         >
           <Plus className="h-3.5 w-3.5" />
@@ -107,7 +148,7 @@ export function MenuTab() {
                         const n = Number(e.target.value)
                         patch(d.id, { stock: Number.isFinite(n) ? Math.max(0, Math.round(n)) : 0 })
                       }}
-                      className="w-[58px] rounded-[12px] border border-line bg-shell px-2 py-1.5 text-center text-[15px] font-bold text-ink focus:border-ink/40 focus:outline-none"
+                      className="h-9 w-[54px] rounded-[12px] border border-line bg-shell p-0 text-center text-[15px] font-bold tabular-nums text-ink leading-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:border-ink/40 focus:outline-none"
                     />
                     <button
                       type="button"
@@ -152,21 +193,55 @@ export function MenuTab() {
                 />
               </label>
 
-              <label className="mt-3.5 block">
-                <span className="label-caps mb-2 block text-[9.5px] text-ink-soft">Photo URL</span>
+              <div className="mt-3.5">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="label-caps block text-[9.5px] text-ink-soft">Photo URL or Upload</span>
+                  <button
+                    type="button"
+                    onClick={() => cardFileInputRefs.current[d.id]?.click()}
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold text-ink-soft hover:text-ink active:scale-95"
+                  >
+                    <Upload className="h-3 w-3 text-brick" />
+                    <span>Upload image</span>
+                  </button>
+                </div>
+
+                <input
+                  type="file"
+                  accept="image/png,image/webp,image/jpeg,image/jpg"
+                  className="hidden"
+                  ref={(el) => {
+                    cardFileInputRefs.current[d.id] = el
+                  }}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    if (e.target.files && e.target.files[0]) {
+                      handleCardPhotoUpload(d.id, e.target.files[0])
+                    }
+                  }}
+                />
+
                 <input
                   value={d.photo}
-                  placeholder="Leave blank to use the drawn cookie"
+                  placeholder="Leave blank to use drawn cookie or paste URL"
                   onChange={(e) => patch(d.id, { photo: e.target.value })}
                   className="w-full rounded-[14px] border border-line bg-shell px-3.5 py-2 text-[13.5px] text-ink placeholder:text-ink-faint focus:border-ink/40 focus:outline-none"
                 />
-              </label>
+              </div>
 
               <div className="mt-4 flex items-center justify-between gap-3 border-t border-line-soft pt-3">
                 <span className="label-caps text-[9px] text-ink-faint font-semibold">Flavour {i + 1}</span>
                 <button
                   type="button"
-                  onClick={() => removeFlavour(d.id)}
+                  onClick={() =>
+                    setFlavourToDelete({
+                      id: d.id,
+                      name: d.name,
+                      desc: d.desc,
+                      photo: d.photo,
+                      art: source?.art,
+                      stock: d.stock,
+                    })
+                  }
                   disabled={draft.length <= 1}
                   className="inline-flex items-center gap-1 rounded-full border border-ink/20 bg-shell px-3.5 py-1 text-[9.5px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink/40 active:scale-95 disabled:opacity-40"
                 >
@@ -204,6 +279,19 @@ export function MenuTab() {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <AddFlavourModal
+        open={addModalOpen}
+        onClose={() => setAddModalOpen(false)}
+      />
+
+      <ConfirmDeleteFlavourModal
+        open={!!flavourToDelete}
+        flavour={flavourToDelete}
+        onClose={() => setFlavourToDelete(null)}
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   )
 }
