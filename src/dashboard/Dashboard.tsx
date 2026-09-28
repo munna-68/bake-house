@@ -17,6 +17,7 @@ import {
   TrendingUp,
   Users,
   UtensilsCrossed,
+  X,
 } from 'lucide-react'
 
 const TABS = [
@@ -43,6 +44,7 @@ export function Dashboard() {
   const navigate = useNavigate()
   const [orders, setOrders] = useState<DashboardOrder[]>(DASHBOARD_ORDERS)
   const [kitchen, setKitchen] = useState(false)
+  const [kitchenCardDismissed, setKitchenCardDismissed] = useState(false)
   const { toast } = useShop()
 
   const actions: OrderActions = useMemo(
@@ -139,10 +141,21 @@ export function Dashboard() {
         </div>
 
         <div className="px-4 pb-5 pt-4 space-y-3 shrink-0">
+          {!kitchenCardDismissed && (
           <div className="rounded-[20px] border border-line bg-[#faf6f0] p-4 shadow-xs">
-            <div className="flex items-center gap-2">
-              <ChefHat className="h-4 w-4 text-brick" />
-              <p className="text-[13.5px] font-bold text-ink">Kitchen mode</p>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <ChefHat className="h-4 w-4 text-brick" />
+                <p className="text-[13.5px] font-bold text-ink">Kitchen mode</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setKitchenCardDismissed(true)}
+                aria-label="Dismiss kitchen mode card"
+                className="grid h-6 w-6 place-items-center rounded-full text-ink-soft transition-all hover:bg-cream-deep hover:text-ink active:scale-95"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
             </div>
             <p className="mt-1.5 text-[12px] leading-relaxed text-ink-soft">
               Put today&rsquo;s orders on a tablet in big type, for the bench.
@@ -155,6 +168,7 @@ export function Dashboard() {
               <span>Open bench mode</span>
             </button>
           </div>
+          )}
           <Link
             to="/"
             className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-line bg-shell px-4 py-2.5 text-[12px] font-medium text-ink transition-all hover:border-ink/40 active:scale-95"
