@@ -45,20 +45,22 @@ function StatCard({
   sub,
   highlight,
   icon: Icon,
+  className,
 }: {
   label: string
   value: string
   sub?: string
   highlight?: boolean
   icon?: React.ComponentType<{ className?: string }>
+  className?: string
 }) {
   return (
     <div
-      className={`rounded-[22px] border p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm ${
+      className={`flex flex-col justify-between rounded-[22px] border p-5 shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:shadow-sm ${
         highlight
           ? 'border-brick/30 bg-[#faf6f0] ring-1 ring-brick/20'
           : 'border-line bg-[#faf6f0]'
-      }`}
+      } ${className ?? ''}`}
     >
       <div className="flex items-center justify-between">
         <p className="label-caps text-[10px] text-ink-soft">{label}</p>
@@ -164,65 +166,101 @@ export function TodayTab({
   return (
     <div className="space-y-5">
       {next ? (
-        <section className="rounded-[26px] bg-cocoa p-6 text-cream shadow-card">
-          <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="grid gap-5 xl:grid-cols-2 items-stretch">
+          <section className="flex flex-col justify-between rounded-[26px] bg-cocoa p-6 text-cream shadow-card">
             <div>
-              <div className="flex items-center gap-2">
-                <ChefHat className="h-4 w-4 text-gold" />
-                <p className="label-caps text-[10px] text-cream/70">Next out the door</p>
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <ChefHat className="h-4 w-4 text-gold" />
+                    <p className="label-caps text-[10px] text-cream/70">Next out the door</p>
+                  </div>
+                  <h2
+                    onClick={() => onSelectOrder?.(next.id)}
+                    className="mt-3 font-display text-[34px] sm:text-[38px] leading-none text-cream cursor-pointer hover:underline"
+                  >
+                    {next.customer}
+                  </h2>
+                  <p className="mt-2 text-[14px] text-cream/75">
+                    {next.boxes} · {next.number}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <span className="label-caps rounded-full bg-cream/12 px-3 py-1.5 text-[9px] text-cream/85">
+                      Pickup, {next.windowLabel}
+                    </span>
+                    <span className="label-caps rounded-full bg-cream/12 px-3 py-1.5 text-[9px] text-cream/85">
+                      {next.source}
+                    </span>
+                    <span className="label-caps rounded-full bg-cream/12 px-3 py-1.5 text-[9px] text-cream/85">
+                      {next.payment === 'paid' ? `Paid ${money(next.total)}` : `Unpaid ${money(next.total)}`}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="font-display text-[44px] leading-none text-gold">{open.length}</p>
+                  <p className="label-caps mt-1 text-[9px] text-cream/60">Still open</p>
+                </div>
               </div>
-              <h2
-                onClick={() => onSelectOrder?.(next.id)}
-                className="mt-3 font-display text-[34px] sm:text-[38px] leading-none text-cream cursor-pointer hover:underline"
+            </div>
+
+            <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
+              <ReadyButton order={next} actions={actions} onDark />
+              <button
+                type="button"
+                onClick={onKitchen}
+                className="inline-flex items-center justify-center gap-1.5 rounded-full border border-cream/25 px-4 py-2 text-[10.5px] font-bold tracking-[0.09em] text-cream uppercase transition-all hover:border-cream/60 active:scale-95"
               >
-                {next.customer}
-              </h2>
-              <p className="mt-2 text-[14px] text-cream/75">
-                {next.boxes} · {next.number}
-              </p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                <span className="label-caps rounded-full bg-cream/12 px-3 py-1.5 text-[9px] text-cream/85">
-                  Pickup, {next.windowLabel}
-                </span>
-                <span className="label-caps rounded-full bg-cream/12 px-3 py-1.5 text-[9px] text-cream/85">
-                  {next.source}
-                </span>
-                <span className="label-caps rounded-full bg-cream/12 px-3 py-1.5 text-[9px] text-cream/85">
-                  {next.payment === 'paid' ? `Paid ${money(next.total)}` : `Unpaid ${money(next.total)}`}
-                </span>
-              </div>
+                <ChefHat className="h-3.5 w-3.5 text-gold" />
+                <span>Kitchen mode</span>
+              </button>
             </div>
-            <div className="text-right">
-              <p className="font-display text-[44px] leading-none text-gold">{open.length}</p>
-              <p className="label-caps mt-1 text-[9px] text-cream/60">Still open</p>
-            </div>
-          </div>
+          </section>
 
-          <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
-            <ReadyButton order={next} actions={actions} onDark />
-            <button
-              type="button"
-              onClick={onKitchen}
-              className="inline-flex items-center justify-center gap-1.5 rounded-full border border-cream/25 px-4 py-2 text-[10.5px] font-bold tracking-[0.09em] text-cream uppercase transition-all hover:border-cream/60 active:scale-95"
-            >
-              <ChefHat className="h-3.5 w-3.5 text-gold" />
-              <span>Kitchen mode</span>
-            </button>
-          </div>
+          <section className="grid gap-4 sm:grid-cols-2">
+            <StatCard
+              label="Taken today"
+              value={money(taken)}
+              sub={`${orders.length} orders`}
+              highlight
+              icon={DollarSign}
+              className="order-1 xl:order-1"
+            />
+            <StatCard
+              label="Cookies to bake"
+              value={String(cookies)}
+              sub="9 flavours on"
+              icon={UtensilsCrossed}
+              className="order-2 xl:order-4"
+            />
+            <StatCard
+              label="Handed over"
+              value={`${handedOver} of ${orders.length}`}
+              sub={`${orders.length - handedOver} still to make up`}
+              icon={CheckCircle2}
+              className="order-3 xl:order-3"
+            />
+            <StatCard
+              label="Waiting on payment"
+              value={money(outstanding)}
+              sub="Chase these"
+              icon={Clock}
+              className="order-4 xl:order-2"
+            />
+          </section>
+        </div>
+      ) : (
+        <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatCard label="Taken today" value={money(taken)} sub={`${orders.length} orders`} highlight icon={DollarSign} />
+          <StatCard label="Cookies to bake" value={String(cookies)} sub="9 flavours on" icon={UtensilsCrossed} />
+          <StatCard
+            label="Handed over"
+            value={`${handedOver} of ${orders.length}`}
+            sub={`${orders.length - handedOver} still to make up`}
+            icon={CheckCircle2}
+          />
+          <StatCard label="Waiting on payment" value={money(outstanding)} sub="Chase these" icon={Clock} />
         </section>
-      ) : null}
-
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCard label="Taken today" value={money(taken)} sub={`${orders.length} orders`} highlight icon={DollarSign} />
-        <StatCard label="Cookies to bake" value={String(cookies)} sub="9 flavours on" icon={UtensilsCrossed} />
-        <StatCard
-          label="Handed over"
-          value={`${handedOver} of ${orders.length}`}
-          sub={`${orders.length - handedOver} still to make up`}
-          icon={CheckCircle2}
-        />
-        <StatCard label="Waiting on payment" value={money(outstanding)} sub="Chase these" icon={Clock} />
-      </section>
+      )}
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
         <section className="rounded-[22px] border border-line bg-[#faf6f0] p-5 shadow-xs">
