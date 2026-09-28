@@ -171,6 +171,7 @@ export interface Review {
   quote: string
   name: string
   ago: string
+  verified?: boolean
 }
 
 export const REVIEWS: Review[] = [
@@ -180,6 +181,7 @@ export const REVIEWS: Review[] = [
       'Ordered a box of twelve for the studio and had to hide two before anyone saw the lid open. The speculoos one is a problem.',
     name: 'Danielle R.',
     ago: '3 days ago',
+    verified: true,
   },
   {
     id: 'r2',
@@ -187,6 +189,7 @@ export const REVIEWS: Review[] = [
       'Picked up at 5.30 and it was still warm. That has never once happened with a cookie I ordered online.',
     name: 'Marcus O.',
     ago: '1 week ago',
+    verified: true,
   },
   {
     id: 'r3',
@@ -194,6 +197,7 @@ export const REVIEWS: Review[] = [
       'Paid by transfer with the reference and the text confirmation came through before I had put my phone down.',
     name: 'Priya S.',
     ago: '2 weeks ago',
+    verified: false,
   },
   {
     id: 'r4',
@@ -201,6 +205,7 @@ export const REVIEWS: Review[] = [
       'The salted butter chip is the whole reason I walk past two other bakeries to get here. Worth the detour.',
     name: 'Tom W.',
     ago: '3 weeks ago',
+    verified: false,
   },
   {
     id: 'r5',
@@ -208,6 +213,7 @@ export const REVIEWS: Review[] = [
       'We put a box of twelve out at 9am and it was gone by 9.20. The bake sheet in the back office is genuinely useful.',
     name: 'Jessica M.',
     ago: '1 month ago',
+    verified: true,
   },
   {
     id: 'r6',
@@ -215,6 +221,7 @@ export const REVIEWS: Review[] = [
       'Delivery arrived inside the window with a text two stops out. Small thing, but it is the reason I reorder.',
     name: 'Sarah M.',
     ago: '1 month ago',
+    verified: true,
   },
 ]
 

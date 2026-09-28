@@ -16,47 +16,93 @@ import {
   Wallet,
 } from 'lucide-react'
 
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+}
+
 export function Reviews() {
   return (
     <section id="reviews" className="scroll-mt-24 border-t border-line bg-cream py-14 sm:py-20">
       <div className="container-page">
-        <header className="max-w-[48ch]">
-          <p className="label-caps text-[11px] tracking-[0.18em] text-ink-soft">Customer feedback</p>
-          <h2 className="heading-lg mt-2 text-ink">
-            What people say once
-            <br />
-            they have eaten one
-          </h2>
-          <p className="mt-3.5 text-[15.5px] leading-relaxed text-ink-soft sm:text-[17px]">
-            Pulled from Google and from order follow ups. We do not edit them and we do not pay for them.
-          </p>
+        {/* Header with two columns on md+ screens */}
+        <header className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-[48ch]">
+            <p className="label-caps text-[11px] tracking-[0.18em] text-ink-soft">Customer feedback</p>
+            <h2 className="heading-lg mt-2 text-ink">
+              What people say once
+              <br />
+              they have eaten one
+            </h2>
+            <p className="mt-3.5 text-[15.5px] leading-relaxed text-ink-soft sm:text-[17px]">
+              Pulled from Google and from order follow ups. We do not edit them and we do not pay for them.
+            </p>
+          </div>
+
+          {/* Rating scorecard with vertical divider */}
+          <div className="flex flex-col justify-center border-l border-line/90 pl-6 sm:pl-8 lg:pl-10 shrink-0">
+            <div className="flex items-center gap-1 text-[#eb5e28]" aria-label="5 out of 5 stars">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Star key={i} className="h-4 w-4 fill-[#eb5e28] text-[#eb5e28]" />
+              ))}
+            </div>
+            <div className="mt-2.5 flex items-baseline gap-1.5">
+              <span className="font-display text-[52px] leading-none text-ink sm:text-[60px]">4.8</span>
+              <span className="text-[22px] font-normal text-ink-soft/50">/ 5</span>
+            </div>
+            <p className="mt-2 text-[10.5px] font-bold tracking-[0.14em] text-ink-soft/75 uppercase">
+              Based on 147+ real reviews
+            </p>
+          </div>
         </header>
 
-        <ul className="no-scrollbar mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 lg:grid lg:grid-cols-3 lg:overflow-visible">
+        {/* 3-column review card grid */}
+        <ul className="mt-10 sm:mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
           {REVIEWS.map((r) => (
             <li
               key={r.id}
-              className="group flex flex-col justify-between w-[85vw] shrink-0 snap-start rounded-[24px] border border-line bg-[#faf6f0] p-6 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-ink/25 hover:shadow-sm sm:w-[62vw] lg:w-auto"
+              className="flex flex-col justify-between rounded-[20px] bg-[#efe8db] p-6 sm:p-7 border border-[#e4dcce]/60 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:shadow-sm"
             >
               <div>
-                <div className="flex items-center gap-1 text-gold mb-3.5" aria-label="5 stars">
+                <div className="flex items-center gap-1 text-[#eb5e28]" aria-label="5 stars">
                   {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-gold text-gold" />
+                    <Star key={i} className="h-4 w-4 fill-[#eb5e28] text-[#eb5e28]" />
                   ))}
                 </div>
-                <blockquote className="text-[15.5px] sm:text-[16.5px] leading-relaxed text-ink font-medium">
+                <blockquote className="mt-4 text-[15px] sm:text-[16px] leading-[1.65] text-ink font-normal">
                   &ldquo;{r.quote}&rdquo;
                 </blockquote>
               </div>
-              <div className="mt-6 flex flex-wrap items-center gap-x-2 gap-y-1 border-t border-line-soft pt-3.5">
-                <span className="text-[12.5px] font-semibold text-ink">{r.name}</span>
-                <span className="text-ink-soft/40" aria-hidden="true">·</span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-leaf-soft px-2 py-0.5 text-[10.5px] font-semibold text-leaf">
-                  <CheckCircle2 className="h-3 w-3" strokeWidth={2.5} aria-hidden="true" />
-                  Verified
+
+              <div className="mt-6 flex items-center gap-3">
+                <span
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#4a574d] text-[10px] font-bold tracking-wider text-white select-none"
+                  aria-hidden="true"
+                >
+                  {getInitials(r.name)}
                 </span>
-                <span className="text-ink-soft/40" aria-hidden="true">·</span>
-                <span className="label-caps text-[10px] text-ink-soft/75">{r.ago}</span>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span className="text-[11.5px] font-bold tracking-[0.08em] uppercase text-ink">
+                    {r.name}
+                  </span>
+                  {r.verified && (
+                    <>
+                      <span className="text-ink-soft/40" aria-hidden="true">·</span>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-leaf-soft px-2 py-0.5 text-[10px] font-semibold text-leaf">
+                        <CheckCircle2 className="h-3 w-3" strokeWidth={2.5} aria-hidden="true" />
+                        Verified
+                      </span>
+                    </>
+                  )}
+                  <span className="text-ink-soft/40" aria-hidden="true">·</span>
+                  <span className="text-[10px] font-semibold tracking-wider uppercase text-ink-soft/70">
+                    {r.ago}
+                  </span>
+                </div>
               </div>
             </li>
           ))}
