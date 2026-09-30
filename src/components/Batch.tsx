@@ -4,6 +4,7 @@ import { useShop } from '../lib/store'
 import type { Flavour } from '../lib/types'
 import { BoxBuilderPanel, MobileBoxControls } from './BoxBuilder'
 import { CookieArtSvg } from './Cookie'
+import { SmoothCollapse } from './SmoothCollapse'
 import { Minus, Plus } from 'lucide-react'
 
 export function BatchGrid() {
@@ -87,6 +88,7 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
             <img
               src={resolvedPhoto}
               alt={flavour.name}
+              loading="lazy"
               decoding="async"
               onError={() => setBrokenSrc(resolvedPhoto ?? null)}
               className={`cookie-spin h-full w-full object-contain drop-shadow-[0_6px_12px_rgba(43,29,19,0.14)] ${
@@ -150,7 +152,7 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
             type="button"
             onClick={() => vote(flavour.id)}
             aria-label={`${flavour.name}, sold out today. Tap to tell us you wanted it.`}
-            className="min-h-11 shrink-0 rounded-full border border-line bg-cream/50 px-3.5 py-1.5 text-[9.5px] font-bold tracking-[0.08em] text-ink-soft uppercase transition-colors hover:border-ink/40 active:scale-95"
+            className="min-h-11 press-apple shrink-0 rounded-full border border-line bg-cream/50 px-3.5 py-1.5 text-[9.5px] font-bold tracking-[0.08em] text-ink-soft uppercase transition-colors hover:border-ink/40 active:scale-95"
           >
             Tell us
           </button>
@@ -160,11 +162,11 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
               type="button"
               onClick={() => remove(flavour.id)}
               aria-label={`Remove one ${flavour.name}`}
-              className="grid h-11 w-11 place-items-center rounded-full text-ink transition-colors hover:bg-cream-deep active:scale-95 sm:h-8 sm:w-8"
+              className="grid h-11 w-11 place-items-center rounded-full text-ink transition-colors hover:bg-cream-deep active:scale-90 sm:h-8 sm:w-8"
             >
               <Minus className="h-3.5 w-3.5" aria-hidden="true" />
             </button>
-            <span className="min-w-[20px] text-center text-[13px] font-bold text-ink" aria-hidden="true">
+            <span key={qty} className="min-w-[20px] count-pop text-center text-[13px] font-bold text-ink" aria-hidden="true">
               {qty}
             </span>
             <button
@@ -172,7 +174,7 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
               onClick={() => add(flavour.id)}
               disabled={!canAdd(flavour.id)}
               aria-label={`Add another ${flavour.name}`}
-              className="grid h-11 w-11 place-items-center rounded-full text-ink transition-colors hover:bg-cream-deep active:scale-95 disabled:cursor-not-allowed disabled:text-ink-faint/50 sm:h-8 sm:w-8"
+              className="grid h-11 w-11 place-items-center rounded-full text-ink transition-colors hover:bg-cream-deep active:scale-90 disabled:cursor-not-allowed disabled:text-ink-faint/50 sm:h-8 sm:w-8"
             >
               <Plus className="h-3.5 w-3.5" aria-hidden="true" />
             </button>
@@ -183,18 +185,18 @@ function ProductCard({ flavour, index }: { flavour: Flavour; index: number }) {
             onClick={() => add(flavour.id)}
             disabled={boxFull}
             aria-label={`Add ${flavour.name} to your box`}
-            className="min-h-11 shrink-0 rounded-full border border-ink/25 px-5 py-2.5 text-[10.5px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink hover:bg-cream-deep active:scale-95 disabled:cursor-not-allowed disabled:border-line disabled:text-ink-faint/50"
+            className="min-h-11 press-apple shrink-0 rounded-full border border-ink/25 px-5 py-2.5 text-[10.5px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink hover:bg-cream-deep active:scale-95 disabled:cursor-not-allowed disabled:border-line disabled:text-ink-faint/50"
           >
             Add
           </button>
         )}
       </div>
 
-      {boxFull && !soldOut ? (
-        <p className="label-caps mt-2 text-[8.5px] text-ink-faint">
+      <SmoothCollapse open={boxFull && !soldOut}>
+        <p className="label-caps pt-2 text-[8.5px] text-ink-faint">
           Box {activeBox.size} is full — remove one to swap
         </p>
-      ) : null}
+      </SmoothCollapse>
     </article>
   )
 }

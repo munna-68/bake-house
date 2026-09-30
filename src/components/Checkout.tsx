@@ -4,6 +4,8 @@ import { copyText, dayLabel, money } from '../lib/format'
 import { useShop, type CheckoutStep } from '../lib/store'
 import { BOX_PRICES, DELIVERY_FEE, DELIVERY_ZIPS, type PaymentMethod } from '../lib/types'
 import { useDialog } from '../lib/useDialog'
+import { usePresence } from '../lib/usePresence'
+import { SmoothCollapse } from './SmoothCollapse'
 import { Check, Copy, Landmark, X } from 'lucide-react'
 
 const PICKUP_WINDOWS = ['11.00 – 2.00pm', '2.00 – 5.00pm', '5.00 – 8.00pm']
@@ -26,6 +28,7 @@ const WINDOW_STARTS: Record<string, string> = {
 export function CheckoutModal() {
   const { checkoutOpen, checkoutStep, closeCheckout, setCheckoutStep, ensureRef } = useShop()
   const { ref } = useDialog(checkoutOpen, closeCheckout)
+  const { mounted, isClosing } = usePresence(checkoutOpen, 240)
   const [dir, setDir] = useState<'forward' | 'back'>('forward')
   const prev = useRef<CheckoutStep>(checkoutStep)
 
@@ -43,15 +46,21 @@ export function CheckoutModal() {
     setCheckoutStep(step)
   }
 
-  if (!checkoutOpen) return null
+  if (!mounted) return null
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-end justify-center md:items-center md:p-6">
+    <div
+      className={`fixed inset-0 z-[70] flex items-end justify-center md:items-center md:p-6 ${
+        isClosing ? 'pointer-events-none' : ''
+      }`}
+    >
       <button
         type="button"
         aria-label="Close checkout"
         onClick={closeCheckout}
-        className="fade-enter absolute inset-0 bg-cocoa/45 backdrop-blur-sm"
+        className={`${
+          isClosing ? 'fade-exit' : 'fade-enter'
+        } absolute inset-0 bg-cocoa/45 backdrop-blur-sm`}
       />
 
       <div
@@ -59,7 +68,9 @@ export function CheckoutModal() {
         role="dialog"
         aria-modal="true"
         aria-label="Checkout"
-        className="modal-enter relative flex h-[calc(100dvh-24px)] w-full flex-col overflow-hidden rounded-t-[30px] bg-cream shadow-lift md:h-auto md:max-h-[88dvh] md:w-[460px] md:rounded-[30px]"
+        className={`${
+          isClosing ? 'modal-exit' : 'modal-enter'
+        } relative flex h-[calc(100dvh-24px)] w-full flex-col overflow-hidden rounded-t-[30px] bg-cream shadow-lift md:h-auto md:max-h-[88dvh] md:w-[460px] md:rounded-[30px]`}
       >
         <div className="flex shrink-0 items-start justify-between gap-4 px-5 pt-4 pb-3 md:px-6 md:pt-6">
           <div>
@@ -183,11 +194,11 @@ function Field({
           {hint}
         </p>
       ) : null}
-      {error ? (
-        <p id={`${id}-err`} className="mt-2 text-[12px] font-semibold text-brick">
+      <SmoothCollapse open={Boolean(error)}>
+        <p id={`${id}-err`} className="pt-2 text-[12px] font-semibold text-brick">
           {error}
         </p>
-      ) : null}
+      </SmoothCollapse>
     </div>
   )
 }
@@ -208,7 +219,7 @@ function PrimaryButton({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-brick px-6 py-4 text-[12px] font-bold tracking-[0.09em] text-white uppercase shadow-sm transition-all hover:bg-brick-dark active:scale-95 disabled:cursor-not-allowed disabled:bg-line disabled:text-ink-faint"
+      className="inline-flex w-full press-apple items-center justify-center gap-2 rounded-full bg-brick px-6 py-4 text-[12px] font-bold tracking-[0.09em] text-white uppercase shadow-sm transition-all hover:bg-brick-dark active:scale-[0.97] disabled:cursor-not-allowed disabled:bg-line disabled:text-ink-faint"
     >
       {children}
     </button>
@@ -220,7 +231,7 @@ function GhostButton({ children, onClick }: { children: React.ReactNode; onClick
     <button
       type="button"
       onClick={onClick}
-      className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-full border border-line bg-shell px-6 py-3.5 text-[11px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink/45 active:scale-95"
+      className="inline-flex min-h-11 press-apple w-full items-center justify-center gap-2 rounded-full border border-line bg-shell px-6 py-3.5 text-[11px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink/45 active:scale-[0.97]"
     >
       {children}
     </button>
@@ -341,18 +352,18 @@ function SummaryCard({ showRef }: { showRef?: boolean }) {
             ? `Pickup ${dayLabel(shown.day)}, ${shown.window ?? 'window to choose'}`
             : `Delivery ${dayLabel(shown.day)}, ${shown.window ?? 'window to choose'} · ${shown.address || 'address to confirm'}`}
         </p>
-        {shown.mode === 'delivery' ? (
-          <p className="mt-1 flex items-baseline justify-between gap-3 text-[13px] text-ink-soft">
+        <SmoothCollapse open={shown.mode === 'delivery'}>
+          <p className="pt-1 flex items-baseline justify-between gap-3 text-[13px] text-ink-soft">
             <span>Delivery fee</span>
             <span>{money(DELIVERY_FEE)}</span>
           </p>
-        ) : null}
+        </SmoothCollapse>
         {paymentLabel ? <p className="mt-1 text-[13px] text-ink-soft">{paymentLabel} · {money(orderTotal)}</p> : null}
       </div>
 
       <div className="mt-3.5 flex items-baseline justify-between gap-3 border-t border-line-soft pt-3.5">
         <span className="label-caps text-[10px] text-ink-soft">Total</span>
-        <span className="font-display text-[30px] leading-none text-ink">
+        <span key={lastOrder?.payment.total ?? orderTotal} className="count-pop font-display text-[30px] leading-none text-ink">
           {money(lastOrder?.payment.total ?? orderTotal)}
         </span>
       </div>
@@ -406,8 +417,8 @@ function StepOne({ onNext }: { onNext: () => void }) {
         />
       </div>
 
-      {delivery ? (
-        <div className="mt-5">
+      <SmoothCollapse open={delivery}>
+        <div className="pt-4">
           <Field
             label="Your postcode"
             value={fulfilment.zip}
@@ -429,7 +440,7 @@ function StepOne({ onNext }: { onNext: () => void }) {
             placeholder="Leave at the side door"
           />
         </div>
-      ) : null}
+      </SmoothCollapse>
 
       <GroupLabel>Choose a day</GroupLabel>
       <div className="grid grid-cols-4 gap-2" role="group" aria-label="Choose a day">
@@ -439,15 +450,15 @@ function StepOne({ onNext }: { onNext: () => void }) {
             type="button"
             aria-pressed={fulfilment.day === d.iso}
             onClick={() => patchFulfilment({ day: d.iso, window: null })}
-            className={`min-h-11 rounded-[16px] border px-1 py-2.5 transition-colors ${
+            className={`min-h-11 press-apple rounded-[16px] border px-1 py-2.5 transition-all duration-200 ${
               fulfilment.day === d.iso
-                ? 'border-ink bg-ink text-cream'
+                ? 'border-ink bg-ink text-cream shadow-xs'
                 : 'border-line bg-shell text-ink hover:border-ink/35'
             }`}
           >
             <span className="block font-display text-[19px] leading-none">{d.num}</span>
             <span
-              className={`label-caps mt-1.5 block text-[8px] ${
+              className={`label-caps mt-1.5 block text-[8px] transition-colors duration-200 ${
                 fulfilment.day === d.iso ? 'text-cream/70' : 'text-ink-soft'
               }`}
             >
@@ -471,11 +482,11 @@ function StepOne({ onNext }: { onNext: () => void }) {
                 patchFulfilment({ window: w.label })
                 setError(null)
               }}
-              className={`min-h-11 rounded-full border px-3 py-3 text-[12px] font-semibold transition-colors ${
+              className={`min-h-11 press-apple rounded-full border px-3 py-3 text-[12px] font-semibold transition-all duration-200 ${
                 w.full
                   ? 'cursor-not-allowed border-line bg-cream-deep text-ink-faint line-through'
                   : pressed
-                    ? 'border-ink bg-ink text-cream'
+                    ? 'border-ink bg-ink text-cream shadow-xs'
                     : 'border-line bg-shell text-ink hover:border-ink/35'
               }`}
             >
@@ -485,17 +496,17 @@ function StepOne({ onNext }: { onNext: () => void }) {
         })}
       </div>
 
-      <p className="mt-3 text-[12px] leading-relaxed text-ink-soft">
+      <p className="mt-3 text-[12px] leading-relaxed text-ink-soft transition-opacity duration-200">
         {delivery
           ? 'Three runs a day between 10am and 5pm. A driver texts you when they are two stops away.'
           : 'Grey windows are already full. Boxes are made up at the start of your window, so the earlier you come the warmer they are.'}
       </p>
 
-      {error ? (
-        <p role="alert" className="mt-3 text-[12px] font-semibold text-brick">
+      <SmoothCollapse open={Boolean(error)}>
+        <p role="alert" className="pt-3 text-[12px] font-semibold text-brick">
           {error}
         </p>
-      ) : null}
+      </SmoothCollapse>
 
       <div className="mt-5">
         <PrimaryButton onClick={submit}>Continue to your details</PrimaryButton>
@@ -520,12 +531,12 @@ function ModeCard({
       type="button"
       aria-pressed={pressed}
       onClick={onClick}
-      className={`min-h-11 rounded-[18px] border px-4 py-3.5 text-left transition-colors ${
-        pressed ? 'border-ink bg-ink text-cream' : 'border-line bg-shell text-ink hover:border-ink/35'
+      className={`min-h-11 press-apple rounded-[18px] border px-4 py-3.5 text-left transition-all duration-200 ${
+        pressed ? 'border-ink bg-ink text-cream shadow-xs' : 'border-line bg-shell text-ink hover:border-ink/35'
       }`}
     >
       <span className="block font-display text-[20px] leading-none">{title}</span>
-      <span className={`label-caps mt-1.5 block text-[9px] ${pressed ? 'text-cream/65' : 'text-ink-soft'}`}>
+      <span className={`label-caps mt-1.5 block text-[9px] transition-colors duration-200 ${pressed ? 'text-cream/65' : 'text-ink-soft'}`}>
         {sub}
       </span>
     </button>
@@ -721,10 +732,10 @@ function StepThree({ onBack, onDone }: { onBack: () => void; onDone: () => void 
               type="button"
               aria-pressed={on}
               onClick={() => setPaymentMethod(id)}
-              className={`flex h-[88px] sm:h-[94px] flex-col items-start justify-between rounded-[18px] sm:rounded-[20px] p-3 sm:p-3.5 text-left transition-all ${
+              className={`press-apple flex h-[88px] sm:h-[94px] flex-col items-start justify-between rounded-[18px] sm:rounded-[20px] p-3 sm:p-3.5 text-left transition-all ${
                 on
                   ? 'border-ink bg-ink text-white shadow-sm'
-                  : 'border border-line bg-[#faf6f0] text-ink hover:border-ink/40 active:scale-[0.98]'
+                  : 'border border-line bg-[#faf6f0] text-ink hover:border-ink/40'
               }`}
             >
               <Icon className="h-6 w-6 shrink-0" />
@@ -735,11 +746,13 @@ function StepThree({ onBack, onDone }: { onBack: () => void; onDone: () => void 
       </div>
 
       <div className="mt-5">
-        {paymentMethod === 'card' ? (
-          <CardTab total={orderTotal} onPlace={place} placing={placing} />
-        ) : (
-          <TransferTab method={paymentMethod} total={orderTotal} reference={reference} onPlace={place} placing={placing} />
-        )}
+        <div key={paymentMethod} className="tab-fade-enter">
+          {paymentMethod === 'card' ? (
+            <CardTab total={orderTotal} onPlace={place} placing={placing} />
+          ) : (
+            <TransferTab method={paymentMethod} total={orderTotal} reference={reference} onPlace={place} placing={placing} />
+          )}
+        </div>
       </div>
 
       <div className="mt-3">

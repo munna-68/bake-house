@@ -2,6 +2,7 @@ import { WINDOWS } from '../lib/data'
 import { money } from '../lib/format'
 import type { DashboardOrder } from '../lib/types'
 import { useDialog } from '../lib/useDialog'
+import { usePresence } from '../lib/usePresence'
 import { Check, CheckCircle2, ChefHat, X } from 'lucide-react'
 
 interface Props {
@@ -14,12 +15,21 @@ interface Props {
 /** Bench view: big type, one window at a time, for the tablet on the pass. */
 export function KitchenMode({ open, orders, onClose, onReady }: Props) {
   const { ref } = useDialog(open, onClose)
-  if (!open) return null
+  const { mounted, isClosing } = usePresence(open, 240)
+  if (!mounted) return null
 
   const open_ = orders.filter((o) => o.stage !== 'collected')
 
   return (
-    <div className="fixed inset-0 z-[80] overflow-y-auto bg-cream" ref={ref} role="dialog" aria-modal="true" aria-label="Kitchen mode">
+    <div
+      className={`fixed inset-0 z-[80] overflow-y-auto bg-cream ${
+        isClosing ? 'fade-exit pointer-events-none' : 'fade-enter'
+      }`}
+      ref={ref}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Kitchen mode"
+    >
       <div className="sticky top-0 z-10 flex items-center justify-between gap-4 border-b border-line bg-cream/95 px-5 py-4 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <span className="grid h-10 w-10 place-items-center rounded-full bg-cocoa text-gold shadow-xs">
@@ -35,7 +45,7 @@ export function KitchenMode({ open, orders, onClose, onReady }: Props) {
         <button
           type="button"
           onClick={onClose}
-          className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-cocoa px-5 py-2.5 text-[11px] font-bold tracking-[0.09em] text-cream uppercase shadow-xs transition-all hover:bg-cocoa-soft active:scale-95"
+          className="press-apple inline-flex min-h-11 items-center gap-1.5 rounded-full bg-cocoa px-5 py-2.5 text-[11px] font-bold tracking-[0.09em] text-cream uppercase shadow-xs transition-all hover:bg-cocoa-soft active:scale-95"
         >
           <X className="h-4 w-4" />
           <span>Close</span>
@@ -83,7 +93,7 @@ export function KitchenMode({ open, orders, onClose, onReady }: Props) {
                         <button
                           type="button"
                           onClick={() => onReady(o.id)}
-                          className={`inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-[11.5px] font-bold tracking-[0.09em] uppercase shadow-xs transition-all active:scale-95 ${
+                          className={`press-apple inline-flex items-center gap-2 rounded-full px-6 py-3.5 text-[11.5px] font-bold tracking-[0.09em] uppercase shadow-xs transition-all active:scale-95 ${
                             o.stage === 'ready'
                               ? 'bg-leaf text-white hover:bg-leaf/90'
                               : 'bg-cocoa text-cream hover:bg-cocoa-soft'

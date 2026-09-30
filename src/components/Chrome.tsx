@@ -105,7 +105,7 @@ export function Header() {
             type="button"
             onClick={() => openCheckout(1)}
             aria-label={`Your order: ${totalCookies} ${totalCookies === 1 ? 'cookie' : 'cookies'}`}
-            className="flex min-h-11 items-center gap-2 rounded-full bg-cocoa px-4 py-2 text-cream shadow-sm transition-all hover:bg-cocoa-soft active:scale-95 sm:min-h-0 sm:px-5 sm:py-2.5"
+            className="flex min-h-11 press-apple items-center gap-2 rounded-full bg-cocoa px-4 py-2 text-cream shadow-sm transition-all hover:bg-cocoa-soft active:scale-95 sm:min-h-0 sm:px-5 sm:py-2.5"
           >
             <span className="label-caps text-[11px] text-cream">Your order</span>
             <span
@@ -144,12 +144,17 @@ export function Header() {
 
       <div
         id="mobile-nav"
-        className={`overflow-hidden border-t border-line bg-cream transition-[grid-template-rows] duration-250 lg:hidden ${
+        className={`overflow-hidden border-t border-line bg-cream transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] lg:hidden ${
           navOpen ? 'grid grid-rows-[1fr]' : 'grid grid-rows-[0fr] border-t-0'
         }`}
       >
-        <div className="overflow-hidden">
-          <nav aria-label="Shop sections" className="flex flex-col px-4 py-2 sm:px-8">
+        <div className="min-h-0 overflow-hidden">
+          <nav
+            aria-label="Shop sections"
+            className={`flex flex-col px-4 py-2 sm:px-8 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+              navOpen ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
+            }`}
+          >
             {NAV.map((item) => (
               <a
                 key={item.href}
@@ -209,13 +214,17 @@ export function LiveRegions() {
 
 export function MobileOrderBar() {
   const { totalCookies, boxes, activeBox, boxCount, orderTotal, openReview } = useShop()
-  if (totalCookies === 0) return null
-
+  const isVisible = totalCookies > 0
   const count = boxCount(activeBox)
   const segments = Array.from({ length: activeBox.size })
 
   return (
-    <div className="no-print sheet-enter fixed inset-x-0 bottom-0 z-50 border-t border-line/15 bg-cocoa text-cream px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-md md:hidden shadow-[0_-8px_32px_rgba(0,0,0,0.35)]">
+    <div
+      className={`no-print fixed inset-x-0 bottom-0 z-50 border-t border-line/15 bg-cocoa text-cream px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-md md:hidden shadow-[0_-8px_32px_rgba(0,0,0,0.35)] transition-transform duration-350 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        isVisible ? 'translate-y-0' : 'translate-y-full pointer-events-none'
+      }`}
+      aria-hidden={!isVisible}
+    >
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0 flex-1">
           <p className="label-caps truncate text-[10.5px] font-bold tracking-wider text-cream/95 uppercase">
@@ -226,7 +235,7 @@ export function MobileOrderBar() {
             {segments.map((_, i) => (
               <div
                 key={i}
-                className={`h-1.5 flex-1 rounded-full transition-colors duration-200 ${
+                className={`h-1.5 flex-1 rounded-full transition-colors duration-250 ${
                   i < count ? 'bg-gold' : 'bg-white/20'
                 }`}
               />
@@ -236,7 +245,7 @@ export function MobileOrderBar() {
         <button
           type="button"
           onClick={openReview}
-          className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-full bg-brick px-5 py-2.5 text-[11px] font-bold tracking-[0.09em] text-white uppercase shadow-sm transition-all hover:bg-brick-dark active:scale-95"
+          className="inline-flex min-h-11 press-apple shrink-0 items-center justify-center gap-1.5 rounded-full bg-brick px-5 py-2.5 text-[11px] font-bold tracking-[0.09em] text-white uppercase shadow-sm transition-all hover:bg-brick-dark active:scale-95"
         >
           <span>Review order</span>
           <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />

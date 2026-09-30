@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import { CookieTile } from '../components/Cookie'
 import { useShop } from '../lib/store'
 import { useDialog } from '../lib/useDialog'
+import { usePresence } from '../lib/usePresence'
+import { SmoothCollapse } from '../components/SmoothCollapse'
 import { Check, ChevronDown, ChevronUp, Minus, Plus, RotateCcw, UtensilsCrossed, X } from 'lucide-react'
 
 interface Props {
@@ -29,7 +31,8 @@ export function RestockModal({ open, onClose }: Props) {
     setRestockAmounts(initial)
   }, [open, flavours])
 
-  if (!open) return null
+  const { mounted, isClosing } = usePresence(open, 240)
+  if (!mounted) return null
 
   const soldOutFlavours = flavours.filter((f) => f.stock <= 0)
   const otherFlavours = flavours.filter((f) => f.stock > 0)
@@ -83,12 +86,18 @@ export function RestockModal({ open, onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-end justify-center md:items-center md:p-6">
+    <div
+      className={`fixed inset-0 z-[70] flex items-end justify-center md:items-center md:p-6 ${
+        isClosing ? 'pointer-events-none' : ''
+      }`}
+    >
       <button
         type="button"
         aria-label="Close restock modal"
         onClick={onClose}
-        className="fade-enter absolute inset-0 bg-cocoa/45 backdrop-blur-sm"
+        className={`${
+          isClosing ? 'fade-exit' : 'fade-enter'
+        } absolute inset-0 bg-cocoa/45 backdrop-blur-sm`}
       />
 
       <div
@@ -96,7 +105,9 @@ export function RestockModal({ open, onClose }: Props) {
         role="dialog"
         aria-modal="true"
         aria-label="Restock rack"
-        className="modal-enter relative flex h-[calc(100dvh-20px)] w-full flex-col overflow-hidden rounded-t-[30px] bg-cream shadow-lift md:h-auto md:max-h-[88dvh] md:w-[560px] md:rounded-[30px]"
+        className={`${
+          isClosing ? 'modal-exit' : 'modal-enter'
+        } relative flex h-[calc(100dvh-20px)] w-full flex-col overflow-hidden rounded-t-[30px] bg-cream shadow-lift md:h-auto md:max-h-[88dvh] md:w-[560px] md:rounded-[30px]`}
       >
         {/* Header */}
         <div className="flex shrink-0 items-start justify-between gap-4 border-b border-line bg-cream px-5 pt-5 pb-4 md:px-6">
@@ -277,8 +288,8 @@ export function RestockModal({ open, onClose }: Props) {
               )}
             </button>
 
-            {showAllFlavours && (
-              <ul className="mt-3 space-y-2.5">
+            <SmoothCollapse open={showAllFlavours}>
+              <ul className="pt-3 space-y-2.5">
                 {otherFlavours.map((f) => {
                   const qty = restockAmounts[f.id] ?? 0
                   return (
@@ -331,7 +342,7 @@ export function RestockModal({ open, onClose }: Props) {
                   )
                 })}
               </ul>
-            )}
+            </SmoothCollapse>
           </div>
         </div>
 

@@ -10,6 +10,8 @@ import {
 import { useShop } from '../lib/store'
 import type { CookieArt } from '../lib/types'
 import { useDialog } from '../lib/useDialog'
+import { usePresence } from '../lib/usePresence'
+import { SmoothCollapse } from '../components/SmoothCollapse'
 import {
   AlertCircle,
   Check,
@@ -115,7 +117,8 @@ export function AddFlavourModal({ open, onClose, onCreated }: Props) {
     setErrorMsg(null)
   }, [open])
 
-  if (!open) return null
+  const { mounted, isClosing } = usePresence(open, 240)
+  if (!mounted) return null
 
   const activePhoto = isCutoutActive ? processedPhoto : originalPhoto
   const activeArt = PALETTE_OPTIONS[selectedPaletteIdx].art
@@ -231,13 +234,19 @@ export function AddFlavourModal({ open, onClose, onCreated }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-end justify-center md:items-center md:p-6">
+    <div
+      className={`fixed inset-0 z-[70] flex items-end justify-center md:items-center md:p-6 ${
+        isClosing ? 'pointer-events-none' : ''
+      }`}
+    >
       {/* Backdrop */}
       <button
         type="button"
         aria-label="Close modal"
         onClick={onClose}
-        className="fade-enter absolute inset-0 bg-cocoa/45 backdrop-blur-sm"
+        className={`${
+          isClosing ? 'fade-exit' : 'fade-enter'
+        } absolute inset-0 bg-cocoa/45 backdrop-blur-sm`}
       />
 
       {/* Modal Dialog */}
@@ -246,7 +255,9 @@ export function AddFlavourModal({ open, onClose, onCreated }: Props) {
         role="dialog"
         aria-modal="true"
         aria-label="Add new flavour"
-        className="modal-enter relative flex h-[calc(100dvh-20px)] w-full flex-col overflow-hidden rounded-t-[30px] bg-cream shadow-lift md:h-auto md:max-h-[92dvh] md:w-[680px] md:rounded-[30px]"
+        className={`${
+          isClosing ? 'modal-exit' : 'modal-enter'
+        } relative flex h-[calc(100dvh-20px)] w-full flex-col overflow-hidden rounded-t-[30px] bg-cream shadow-lift md:h-auto md:max-h-[92dvh] md:w-[680px] md:rounded-[30px]`}
       >
         {/* Mobile drag handle indicator */}
         <div className="pt-2.5 pb-1 flex justify-center md:hidden">
@@ -281,12 +292,12 @@ export function AddFlavourModal({ open, onClose, onCreated }: Props) {
 
         {/* Scrollable Form Body */}
         <form id="add-flavour-form" onSubmit={handleSubmit} className="min-h-0 flex-1 overflow-y-auto px-5 py-5 sm:px-7 space-y-6">
-          {errorMsg && (
+          <SmoothCollapse open={Boolean(errorMsg)}>
             <div className="flex items-center gap-2.5 rounded-[14px] border border-brick/30 bg-brick/10 p-3 text-[13px] text-brick font-medium">
               <AlertCircle className="h-4 w-4 shrink-0" />
               <span>{errorMsg}</span>
             </div>
-          )}
+          </SmoothCollapse>
 
           {/* Section 1: Flavour Basics */}
           <div className="space-y-4">
@@ -440,7 +451,7 @@ export function AddFlavourModal({ open, onClose, onCreated }: Props) {
             </div>
 
             {/* Guidelines Card */}
-            {showGuidelines && (
+            <SmoothCollapse open={showGuidelines}>
               <div className="rounded-[18px] border border-line bg-[#faf6f0] p-4 text-[12.5px] leading-relaxed text-ink-soft shadow-xs">
                 <div className="flex items-start gap-2.5">
                   <div className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-gold/30 text-ink">
@@ -467,7 +478,7 @@ export function AddFlavourModal({ open, onClose, onCreated }: Props) {
                   </div>
                 </div>
               </div>
-            )}
+            </SmoothCollapse>
 
             {/* Dual Preview & Image Upload Area */}
             <div className="rounded-[22px] border border-line bg-shell p-4 sm:p-5">
@@ -678,8 +689,8 @@ export function AddFlavourModal({ open, onClose, onCreated }: Props) {
                     </div>
                   </div>
 
-                  {showUrlInput && (
-                    <div className="mt-2 flex gap-2">
+                  <SmoothCollapse open={showUrlInput}>
+                    <div className="pt-2 flex gap-2">
                       <input
                         type="url"
                         value={urlInput}
@@ -695,7 +706,7 @@ export function AddFlavourModal({ open, onClose, onCreated }: Props) {
                         Load
                       </button>
                     </div>
-                  )}
+                  </SmoothCollapse>
                 </div>
               </div>
             </div>

@@ -1,10 +1,11 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { CookieTile } from '../components/Cookie'
 import { BRAND, PAY_LABELS } from '../lib/data'
 import { money } from '../lib/format'
 import { useShop } from '../lib/store'
 import type { DashboardOrder } from '../lib/types'
 import { useDialog } from '../lib/useDialog'
+import { usePresence } from '../lib/usePresence'
 import type { OrderActions } from './tabs'
 import {
   AlertTriangle,
@@ -27,13 +28,22 @@ interface Props {
 }
 
 export function OrderDetailModal({
-  order,
+  order: initialOrder,
   open,
   onClose,
   actions,
   onAcknowledgeNote,
   isNoteAcknowledged,
 }: Props) {
+  const { mounted, isClosing } = usePresence(open && !!initialOrder, 240)
+  const [cachedOrder, setCachedOrder] = useState<DashboardOrder | null>(initialOrder)
+
+  useEffect(() => {
+    if (initialOrder) setCachedOrder(initialOrder)
+  }, [initialOrder])
+
+  const order = initialOrder ?? cachedOrder
+
   const { ref } = useDialog(open, onClose)
   const { flavours } = useShop()
 
@@ -41,7 +51,7 @@ export function OrderDetailModal({
     return new Map(flavours.map((f) => [f.id, f]))
   }, [flavours])
 
-  if (!open || !order) return null
+  if (!mounted || !order) return null
 
   const isPaid = order.payment === 'paid'
   const isCollected = order.stage === 'collected'
@@ -50,12 +60,18 @@ export function OrderDetailModal({
   const payLabel = PAY_LABELS[order.paymentMethod]?.title ?? order.paymentMethod
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-end justify-center md:items-center md:p-6">
+    <div
+      className={`fixed inset-0 z-[70] flex items-end justify-center md:items-center md:p-6 ${
+        isClosing ? 'pointer-events-none' : ''
+      }`}
+    >
       <button
         type="button"
         aria-label="Close order details"
         onClick={onClose}
-        className="fade-enter absolute inset-0 bg-cocoa/45 backdrop-blur-sm"
+        className={`${
+          isClosing ? 'fade-exit' : 'fade-enter'
+        } absolute inset-0 bg-cocoa/45 backdrop-blur-sm`}
       />
 
       <div
@@ -63,7 +79,9 @@ export function OrderDetailModal({
         role="dialog"
         aria-modal="true"
         aria-label={`Order details for ${order.customer} ${order.number}`}
-        className="modal-enter relative flex h-[calc(100dvh-20px)] w-full flex-col overflow-hidden rounded-t-[30px] bg-cream shadow-lift md:h-auto md:max-h-[90dvh] md:w-[560px] md:rounded-[30px]"
+        className={`${
+          isClosing ? 'modal-exit' : 'modal-enter'
+        } relative flex h-[calc(100dvh-20px)] w-full flex-col overflow-hidden rounded-t-[30px] bg-cream shadow-lift md:h-auto md:max-h-[90dvh] md:w-[560px] md:rounded-[30px]`}
       >
         {/* Header */}
         <div className="flex shrink-0 items-start justify-between gap-4 border-b border-line bg-cream px-5 pt-5 pb-4 md:px-6">
@@ -280,7 +298,7 @@ export function OrderDetailModal({
                   onClick={() => {
                     actions.markReceived(order.id)
                   }}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-ink/20 bg-shell px-3.5 py-1.5 text-[10px] font-bold tracking-[0.08em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
+                  className="press-apple inline-flex items-center gap-1.5 rounded-full border border-ink/20 bg-shell px-3.5 py-1.5 text-[10px] font-bold tracking-[0.08em] text-ink uppercase shadow-xs transition-all hover:border-ink/50"
                 >
                   <Check className="h-3 w-3 text-leaf" strokeWidth={2.5} />
                   <span>Mark received</span>
@@ -321,7 +339,7 @@ export function OrderDetailModal({
                     actions.markReady(order.id)
                   }
                 }}
-                className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[10.5px] font-bold tracking-[0.09em] uppercase shadow-xs transition-all active:scale-95 ${
+                className={`press-apple inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[10.5px] font-bold tracking-[0.09em] uppercase shadow-xs transition-all ${
                   isReady
                     ? 'bg-leaf text-white hover:bg-leaf/90'
                     : 'bg-cocoa text-cream hover:bg-cocoa-soft'
@@ -334,7 +352,7 @@ export function OrderDetailModal({
             <button
               type="button"
               onClick={onClose}
-              className="rounded-full border border-ink/20 bg-shell px-4 py-2 text-[10.5px] font-bold tracking-[0.09em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
+              className="press-apple rounded-full border border-ink/20 bg-shell px-4 py-2 text-[10.5px] font-bold tracking-[0.09em] text-ink uppercase shadow-xs transition-all hover:border-ink/50"
             >
               Close
             </button>

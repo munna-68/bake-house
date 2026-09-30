@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { resolveCookiePhoto } from '../lib/data'
 import { useShop } from '../lib/store'
+import { useScrollReveal } from '../lib/useScrollReveal'
 import { CookieArtSvg, CookieTile } from './Cookie'
 import { ArrowRight, ChevronLeft, ChevronRight, Clock, Leaf, ShieldCheck, Truck, Wheat } from 'lucide-react'
 
@@ -35,14 +36,14 @@ export function Hero() {
           <div className="mt-7 flex flex-col gap-3.5 sm:flex-row sm:items-center">
             <a
               href="#build"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-brick px-8 py-3.5 text-center text-[12px] font-bold tracking-[0.09em] text-white uppercase shadow-sm transition-all hover:bg-brick-dark active:scale-95 sm:w-auto"
+              className="inline-flex min-h-12 press-apple items-center justify-center gap-2 rounded-full bg-brick px-8 py-3.5 text-center text-[12px] font-bold tracking-[0.09em] text-white uppercase shadow-sm transition-all hover:bg-brick-dark active:scale-95 sm:w-auto"
             >
               <span>Build your box</span>
               <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
             </a>
             <a
               href="#pickup"
-              className="inline-flex min-h-12 items-center justify-center rounded-full border border-ink/22 bg-shell/70 px-7 py-3.5 text-center text-[12px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink hover:bg-shell active:scale-95 sm:w-auto"
+              className="inline-flex min-h-12 press-apple items-center justify-center rounded-full border border-ink/22 bg-shell/70 px-7 py-3.5 text-center text-[12px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink hover:bg-shell active:scale-95 sm:w-auto"
             >
               How pickup works
             </a>
@@ -225,7 +226,7 @@ function FlavourCarousel() {
                   type="button"
                   onClick={onAdd}
                   disabled={!addable}
-                  className="min-h-11 rounded-full bg-brick px-5 py-2.5 text-[11px] font-bold tracking-[0.09em] text-white uppercase shadow-xs transition-all hover:bg-brick-dark active:scale-95 disabled:cursor-not-allowed disabled:bg-line disabled:text-ink-faint"
+                  className="min-h-11 press-apple rounded-full bg-brick px-5 py-2.5 text-[11px] font-bold tracking-[0.09em] text-white uppercase shadow-xs transition-all hover:bg-brick-dark active:scale-95 disabled:cursor-not-allowed disabled:bg-line disabled:text-ink-faint"
                 >
                   Add to box
                 </button>
@@ -240,7 +241,7 @@ function FlavourCarousel() {
             type="button"
             onClick={() => go(-1)}
             aria-label="Previous flavour"
-            className="grid h-11 w-11 place-items-center rounded-full text-ink-soft transition-colors hover:bg-cream-deep active:scale-95 sm:h-9 sm:w-9"
+            className="grid h-11 w-11 press-apple place-items-center rounded-full text-ink-soft transition-colors hover:bg-cream-deep active:scale-95 sm:h-9 sm:w-9"
           >
             <ChevronLeft className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -257,10 +258,10 @@ function FlavourCarousel() {
                   aria-pressed={i === index}
                   aria-label={`Show ${f.name}`}
                   title={f.name}
-                  className={`h-11 w-11 shrink-0 overflow-hidden rounded-full transition-all sm:h-9 sm:w-9 ${
+                  className={`h-11 w-11 shrink-0 overflow-hidden rounded-full transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] sm:h-9 sm:w-9 ${
                     i === index
                       ? 'ring-2 ring-brick ring-offset-2 ring-offset-[#faf6f0] scale-105'
-                      : 'opacity-70 hover:opacity-100'
+                      : 'opacity-70 hover:opacity-100 hover:scale-105'
                   }`}
                 >
                   <CookieTile
@@ -280,7 +281,7 @@ function FlavourCarousel() {
             type="button"
             onClick={() => go(1)}
             aria-label="Next flavour"
-            className="grid h-11 w-11 place-items-center rounded-full text-ink-soft transition-colors hover:bg-cream-deep active:scale-95 sm:h-9 sm:w-9"
+            className="grid h-11 w-11 press-apple place-items-center rounded-full text-ink-soft transition-colors hover:bg-cream-deep active:scale-95 sm:h-9 sm:w-9"
           >
             <ChevronRight className="h-4 w-4" aria-hidden="true" />
           </button>
@@ -293,6 +294,7 @@ function FlavourCarousel() {
 }
 
 export function TrustStrip() {
+  const revealRef = useScrollReveal<HTMLElement>()
   const TRUST_ITEMS = [
     {
       icon: Leaf,
@@ -318,7 +320,7 @@ export function TrustStrip() {
   ]
 
   return (
-    <section className="container-page py-6 sm:py-10">
+    <section ref={revealRef} className="container-page py-6 sm:py-10">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {TRUST_ITEMS.map((item) => {
           const Icon = item.icon

@@ -61,7 +61,7 @@ function SlotGrid({ box }: { box: Box }) {
           >
             {flavour ? (
               <>
-                <div className="h-full w-full overflow-hidden rounded-[13px]">
+                <div className="h-full w-full overflow-hidden rounded-[13px] slot-pop">
                   <CookieTile
                     art={flavour.art}
                     seedKey={`slot-${box.id}-${flavour.id}-${i}`}
@@ -104,14 +104,14 @@ function SizePills() {
             type="button"
             aria-pressed={on}
             onClick={() => setSize(size)}
-            className={`min-h-11 flex items-center justify-center gap-1.5 rounded-full py-1.5 px-2 transition-all active:scale-95 ${
+            className={`min-h-11 press-apple flex items-center justify-center gap-1.5 rounded-full py-1.5 px-2 transition-all duration-200 active:scale-95 ${
               on
                 ? 'bg-cocoa text-cream shadow-xs'
                 : 'border border-line bg-shell text-ink hover:border-ink/30'
             }`}
           >
             <span className="font-display text-[18px] leading-tight font-bold">{size}</span>
-            <span className={`text-[11.5px] font-semibold ${on ? 'text-cream/80' : 'text-ink-soft'}`}>
+            <span className={`text-[11.5px] font-semibold transition-colors duration-200 ${on ? 'text-cream/80' : 'text-ink-soft'}`}>
               {money(BOX_PRICES[size])}
             </span>
           </button>
@@ -166,7 +166,7 @@ function CtaButton({ full = false }: { full?: boolean }) {
       type="button"
       onClick={() => openCheckout(1)}
       disabled={cta.disabled || totalCookies === 0}
-      className={`group relative inline-flex min-h-[54px] w-full items-center justify-center rounded-full px-10 py-3 transition-all shadow-xs ${
+      className={`group relative inline-flex min-h-[54px] w-full press-apple items-center justify-center rounded-full px-10 py-3 transition-all shadow-xs ${
         cta.tone === 'muted'
           ? 'bg-line text-ink-faint/70 cursor-not-allowed'
           : 'bg-brick text-white hover:bg-brick-dark active:scale-[0.98]'
@@ -252,17 +252,17 @@ export function BoxBuilderPanel() {
                         type="button"
                         onClick={() => remove(f.id)}
                         aria-label={`Remove one ${f.name} from the box`}
-                        className="grid h-6 w-6 place-items-center rounded-full border border-line bg-shell text-ink transition-colors hover:border-ink/40"
+                        className="grid h-6 w-6 place-items-center rounded-full border border-line bg-shell text-ink transition-colors hover:border-ink/40 active:scale-90"
                       >
                         <Minus className="h-3 w-3" aria-hidden="true" />
                       </button>
-                      <span className="w-4 text-center font-bold text-ink">{activeBox.items[f.id]}</span>
+                      <span key={activeBox.items[f.id]} className="w-4 count-pop text-center font-bold text-ink">{activeBox.items[f.id]}</span>
                       <button
                         type="button"
                         onClick={() => add(f.id)}
                         disabled={!canAdd(f.id)}
                         aria-label={`Add another ${f.name} to the box`}
-                        className="grid h-6 w-6 place-items-center rounded-full border border-line bg-shell text-ink transition-colors hover:border-ink/40 disabled:cursor-not-allowed disabled:opacity-35"
+                        className="grid h-6 w-6 place-items-center rounded-full border border-line bg-shell text-ink transition-colors hover:border-ink/40 active:scale-90 disabled:cursor-not-allowed disabled:opacity-35"
                       >
                         <Plus className="h-3 w-3" aria-hidden="true" />
                       </button>
@@ -288,7 +288,7 @@ export function BoxBuilderPanel() {
       <div className="border-t border-line pt-4 mt-2">
         <div className="flex items-baseline justify-between gap-3">
           <span className="label-caps text-[11px] text-ink-soft tracking-wider">Total</span>
-          <span className="font-display text-[32px] sm:text-[34px] leading-none font-bold text-ink">
+          <span key={orderTotal} className="count-pop font-display text-[32px] sm:text-[34px] leading-none font-bold text-ink">
             {money(orderTotal)}
           </span>
         </div>
@@ -305,7 +305,7 @@ export function BoxBuilderPanel() {
           <button
             type="button"
             onClick={addBox}
-            className="mt-3 min-h-10 w-full rounded-full border border-line bg-shell py-2.5 px-4 text-[10.5px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/40 active:scale-95"
+            className="press-apple mt-3 min-h-10 w-full rounded-full border border-line bg-shell py-2.5 px-4 text-[10.5px] font-bold tracking-[0.09em] text-ink uppercase transition-colors hover:border-ink/40 active:scale-95"
           >
             + Add another box
           </button>
@@ -416,7 +416,7 @@ export function MobileBoxControls() {
                     type="button"
                     onClick={() => remove(flavour.id)}
                     aria-label={`Remove one ${flavour.name}`}
-                    className="h-full w-full overflow-hidden rounded-full"
+                    className="h-full w-full overflow-hidden rounded-full slot-pop active:scale-95"
                   >
                     {flavour.photo ? (
                       <img
@@ -435,7 +435,7 @@ export function MobileBoxControls() {
         </div>
 
         {/* Right price pill */}
-        <div className="shrink-0 rounded-full bg-brick px-3 py-1 text-center font-display text-[15px] font-bold text-white shadow-xs">
+        <div key={orderTotal} className="count-pop shrink-0 rounded-full bg-brick px-3 py-1 text-center font-display text-[15px] font-bold text-white shadow-xs">
           {money(orderTotal)}
         </div>
       </div>

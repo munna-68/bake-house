@@ -2,6 +2,7 @@ import { BOX_PRICES, type Box } from '../lib/types'
 import { money } from '../lib/format'
 import { useShop } from '../lib/store'
 import { useDialog } from '../lib/useDialog'
+import { usePresence } from '../lib/usePresence'
 import { CookieTile } from './Cookie'
 import { ArrowRight, Minus, Plus, X } from 'lucide-react'
 
@@ -30,7 +31,7 @@ function ReviewSlotRow({ box }: { box: Box }) {
           >
             {flavour ? (
               <>
-                <div className="h-full w-full overflow-hidden rounded-full">
+                <div className="h-full w-full overflow-hidden rounded-full slot-pop">
                   <CookieTile
                     art={flavour.art}
                     seedKey={`rev-slot-${box.id}-${flavour.id}-${i}`}
@@ -77,16 +78,23 @@ export function ReviewSheet() {
     canAdd,
   } = useShop()
   const { ref } = useDialog(reviewOpen, closeReview)
+  const { mounted, isClosing } = usePresence(reviewOpen, 240)
 
-  if (!reviewOpen) return null
+  if (!mounted) return null
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-end justify-center md:items-center">
+    <div
+      className={`fixed inset-0 z-[70] flex items-end justify-center md:items-center ${
+        isClosing ? 'pointer-events-none' : ''
+      }`}
+    >
       <button
         type="button"
         aria-label="Close your order"
         onClick={closeReview}
-        className="fade-enter absolute inset-0 bg-cocoa/45 backdrop-blur-[2px]"
+        className={`${
+          isClosing ? 'fade-exit' : 'fade-enter'
+        } absolute inset-0 bg-cocoa/45 backdrop-blur-[2px]`}
       />
 
       <div
@@ -94,7 +102,9 @@ export function ReviewSheet() {
         role="dialog"
         aria-modal="true"
         aria-label="Your order"
-        className="sheet-enter relative max-h-[88dvh] w-full overflow-y-auto rounded-t-[30px] bg-cream px-5 pt-4 pb-[max(20px,env(safe-area-inset-bottom))] shadow-lift md:max-w-[460px] md:rounded-[30px] md:pb-6"
+        className={`${
+          isClosing ? 'sheet-exit' : 'sheet-enter'
+        } relative max-h-[88dvh] w-full overflow-y-auto rounded-t-[30px] bg-cream px-5 pt-4 pb-[max(20px,env(safe-area-inset-bottom))] shadow-lift md:max-w-[460px] md:rounded-[30px] md:pb-6`}
       >
         <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-ink/15 md:hidden" aria-hidden="true" />
 
@@ -166,11 +176,11 @@ export function ReviewSheet() {
                             type="button"
                             onClick={() => remove(f.id)}
                             aria-label={`Remove one ${f.name}`}
-                            className="grid h-7 w-7 place-items-center rounded-full border border-line bg-shell text-ink transition-colors hover:border-ink/40 active:scale-95"
+                            className="press-apple grid h-7 w-7 place-items-center rounded-full border border-line bg-shell text-ink transition-colors hover:border-ink/40 active:scale-95"
                           >
                             <Minus className="h-3 w-3" aria-hidden="true" />
                           </button>
-                          <span className="w-5 text-center text-[13px] font-bold text-ink">
+                          <span key={b.items[f.id]} className="w-5 count-pop text-center text-[13px] font-bold text-ink">
                             {b.items[f.id]}
                           </span>
                           <button
@@ -178,7 +188,7 @@ export function ReviewSheet() {
                             onClick={() => add(f.id)}
                             disabled={!canAdd(f.id)}
                             aria-label={`Add one ${f.name}`}
-                            className="grid h-7 w-7 place-items-center rounded-full border border-line bg-shell text-ink transition-colors hover:border-ink/40 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
+                            className="press-apple grid h-7 w-7 place-items-center rounded-full border border-line bg-shell text-ink transition-colors hover:border-ink/40 active:scale-95 disabled:opacity-30 disabled:cursor-not-allowed"
                           >
                             <Plus className="h-3 w-3" aria-hidden="true" />
                           </button>
@@ -201,7 +211,7 @@ export function ReviewSheet() {
           <button
             type="button"
             onClick={addBox}
-            className="mt-4 w-full rounded-full border border-line bg-shell py-3 text-[11px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink/40 active:scale-95"
+            className="press-apple mt-4 w-full rounded-full border border-line bg-shell py-3 text-[11px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink/40 active:scale-95"
           >
             + Add another box
           </button>
@@ -209,7 +219,7 @@ export function ReviewSheet() {
 
         <div className="mt-5 flex items-baseline justify-between gap-3 border-t border-line pt-4">
           <span className="label-caps text-[11px] text-ink-soft">Total</span>
-          <span className="font-display text-[32px] sm:text-[36px] font-bold leading-none text-ink">
+          <span key={orderTotal} className="count-pop font-display text-[32px] sm:text-[36px] font-bold leading-none text-ink">
             {money(orderTotal)}
           </span>
         </div>
@@ -221,7 +231,7 @@ export function ReviewSheet() {
             openCheckout(1)
           }}
           disabled={totalCookies === 0}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brick px-6 py-4 text-[12px] font-bold tracking-[0.09em] text-white uppercase shadow-sm transition-all hover:bg-brick-dark active:scale-95 disabled:cursor-not-allowed disabled:bg-line disabled:text-ink-faint"
+          className="press-apple mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-brick px-6 py-4 text-[12px] font-bold tracking-[0.09em] text-white uppercase shadow-sm transition-all hover:bg-brick-dark active:scale-95 disabled:cursor-not-allowed disabled:bg-line disabled:text-ink-faint"
         >
           <span>Checkout · {money(orderTotal)}</span>
           <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />

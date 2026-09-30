@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react'
 import { CookieTile } from '../components/Cookie'
 import type { CookieArt } from '../lib/types'
 import { useDialog } from '../lib/useDialog'
+import { usePresence } from '../lib/usePresence'
 import { AlertTriangle, Trash2, X } from 'lucide-react'
 
 interface Props {
@@ -10,19 +12,34 @@ interface Props {
   onConfirm: () => void
 }
 
-export function ConfirmDeleteFlavourModal({ open, flavour, onClose, onConfirm }: Props) {
+export function ConfirmDeleteFlavourModal({ open, flavour: initialFlavour, onClose, onConfirm }: Props) {
+  const { mounted, isClosing } = usePresence(open && !!initialFlavour, 240)
+  const [cachedFlavour, setCachedFlavour] = useState(initialFlavour)
+
+  useEffect(() => {
+    if (initialFlavour) setCachedFlavour(initialFlavour)
+  }, [initialFlavour])
+
+  const flavour = initialFlavour ?? cachedFlavour
+
   const { ref } = useDialog(open, onClose)
 
-  if (!open || !flavour) return null
+  if (!mounted || !flavour) return null
 
   return (
-    <div className="fixed inset-0 z-[75] flex items-end justify-center md:items-center md:p-6">
+    <div
+      className={`fixed inset-0 z-[75] flex items-end justify-center md:items-center md:p-6 ${
+        isClosing ? 'pointer-events-none' : ''
+      }`}
+    >
       {/* Backdrop */}
       <button
         type="button"
         aria-label="Close confirmation"
         onClick={onClose}
-        className="fade-enter absolute inset-0 bg-cocoa/45 backdrop-blur-sm"
+        className={`${
+          isClosing ? 'fade-exit' : 'fade-enter'
+        } absolute inset-0 bg-cocoa/45 backdrop-blur-sm`}
       />
 
       {/* Modal Dialog */}
@@ -32,7 +49,9 @@ export function ConfirmDeleteFlavourModal({ open, flavour, onClose, onConfirm }:
         aria-modal="true"
         aria-labelledby="confirm-delete-title"
         aria-describedby="confirm-delete-desc"
-        className="modal-enter relative flex w-full flex-col overflow-hidden rounded-t-[28px] bg-cream shadow-lift md:w-[480px] md:rounded-[28px]"
+        className={`${
+          isClosing ? 'modal-exit' : 'modal-enter'
+        } relative flex w-full flex-col overflow-hidden rounded-t-[28px] bg-cream shadow-lift md:w-[480px] md:rounded-[28px]`}
       >
         {/* Mobile drag handle indicator */}
         <div className="pt-2.5 pb-1 flex justify-center md:hidden">
@@ -104,7 +123,7 @@ export function ConfirmDeleteFlavourModal({ open, flavour, onClose, onConfirm }:
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-ink/20 bg-shell px-4 py-2.5 text-[11px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink/50 active:scale-95"
+            className="press-apple rounded-full border border-ink/20 bg-shell px-4 py-2.5 text-[11px] font-bold tracking-[0.09em] text-ink uppercase transition-all hover:border-ink/50"
           >
             Keep flavour
           </button>
@@ -114,7 +133,7 @@ export function ConfirmDeleteFlavourModal({ open, flavour, onClose, onConfirm }:
               onConfirm()
               onClose()
             }}
-            className="inline-flex items-center gap-1.5 rounded-full bg-brick px-5 py-2.5 text-[11px] font-bold tracking-[0.09em] text-white uppercase shadow-xs transition-all hover:bg-brick-dark active:scale-95"
+            className="press-apple inline-flex items-center gap-1.5 rounded-full bg-brick px-5 py-2.5 text-[11px] font-bold tracking-[0.09em] text-white uppercase shadow-xs transition-all hover:bg-brick-dark"
           >
             <Trash2 className="h-3.5 w-3.5" />
             <span>Remove flavour</span>

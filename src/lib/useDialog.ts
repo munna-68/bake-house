@@ -24,7 +24,9 @@ export function useDialog(open: boolean, onClose: () => void): { ref: RefObject<
     document.body.dataset.locked = 'true'
 
     const node = ref.current
-    const first = node?.querySelector<HTMLElement>(FOCUSABLE)
+    const first = Array.from<HTMLElement>(node?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? []).find(
+      (el) => el.offsetParent !== null && !el.closest('[inert]') && !el.closest('[aria-hidden="true"]'),
+    )
     ;(first ?? node)?.focus({ preventScroll: true })
 
     const onKey = (e: KeyboardEvent) => {
@@ -38,7 +40,7 @@ export function useDialog(open: boolean, onClose: () => void): { ref: RefObject<
       const host = ref.current
       if (!host) return
       const items = Array.from(host.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
-        (el) => el.offsetParent !== null,
+        (el) => el.offsetParent !== null && !el.closest('[inert]') && !el.closest('[aria-hidden="true"]'),
       )
       if (items.length === 0) return
 

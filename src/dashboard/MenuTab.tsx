@@ -5,6 +5,7 @@ import { useShop } from '../lib/store'
 import type { CookieArt } from '../lib/types'
 import { AddFlavourModal } from './AddFlavourModal'
 import { ConfirmDeleteFlavourModal } from './ConfirmDeleteFlavourModal'
+import { SmoothCollapse } from '../components/SmoothCollapse'
 import { Check, Minus, Plus, RotateCcw, Trash2, Upload } from 'lucide-react'
 
 interface Draft {
@@ -105,7 +106,7 @@ export function MenuTab() {
         <button
           type="button"
           onClick={() => setAddModalOpen(true)}
-          className="inline-flex items-center gap-1.5 rounded-full border border-ink/20 bg-shell px-5 py-2.5 text-[10px] font-bold tracking-[0.09em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
+          className="press-apple inline-flex items-center gap-1.5 rounded-full border border-ink/20 bg-shell px-5 py-2.5 text-[10px] font-bold tracking-[0.09em] text-ink uppercase shadow-xs transition-all hover:border-ink/50 active:scale-95"
         >
           <Plus className="h-3.5 w-3.5" />
           <span>Add a flavour</span>
@@ -135,7 +136,7 @@ export function MenuTab() {
                       type="button"
                       aria-label={`Remove one ${d.name}`}
                       onClick={() => patch(d.id, { stock: Math.max(0, d.stock - 1) })}
-                      className="grid h-9 w-9 place-items-center rounded-full border border-line bg-shell text-ink transition-colors hover:border-ink/40 active:scale-95"
+                      className="press-apple grid h-9 w-9 place-items-center rounded-full border border-line bg-shell text-ink transition-colors hover:border-ink/40 active:scale-95"
                     >
                       <Minus className="h-3 w-3" />
                     </button>
@@ -154,14 +155,14 @@ export function MenuTab() {
                       type="button"
                       aria-label={`Add one ${d.name}`}
                       onClick={() => patch(d.id, { stock: d.stock + 1 })}
-                      className="grid h-9 w-9 place-items-center rounded-full border border-line bg-shell text-ink transition-colors hover:border-ink/40 active:scale-95"
+                      className="press-apple grid h-9 w-9 place-items-center rounded-full border border-line bg-shell text-ink transition-colors hover:border-ink/40 active:scale-95"
                     >
                       <Plus className="h-3 w-3" />
                     </button>
                   </div>
-                  {soldOut ? (
-                    <p className="label-caps mt-2 text-[9px] font-bold text-brick">Sold out on the shop</p>
-                  ) : null}
+                  <SmoothCollapse open={soldOut}>
+                    <p className="label-caps pt-2 text-[9px] font-bold text-brick">Sold out on the shop</p>
+                  </SmoothCollapse>
                 </div>
               </div>
 
@@ -263,7 +264,7 @@ export function MenuTab() {
             <button
               type="button"
               onClick={resetFlavours}
-              className="inline-flex items-center gap-1.5 rounded-full border border-ink/20 bg-shell px-4 py-2 text-[10.5px] font-bold tracking-[0.09em] text-ink uppercase shadow-xs transition-all hover:border-ink/40 active:scale-95"
+              className="press-apple inline-flex items-center gap-1.5 rounded-full border border-ink/20 bg-shell px-4 py-2 text-[10.5px] font-bold tracking-[0.09em] text-ink uppercase shadow-xs transition-all hover:border-ink/40 active:scale-95"
             >
               <RotateCcw className="h-3 w-3" />
               <span>Reset</span>
@@ -271,7 +272,7 @@ export function MenuTab() {
             <button
               type="button"
               onClick={save}
-              className="inline-flex items-center gap-1.5 rounded-full bg-cocoa px-5 py-2 text-[10.5px] font-bold tracking-[0.09em] text-cream uppercase shadow-xs transition-all hover:bg-cocoa-soft active:scale-95"
+              className="press-apple inline-flex items-center gap-1.5 rounded-full bg-cocoa px-5 py-2 text-[10.5px] font-bold tracking-[0.09em] text-cream uppercase shadow-xs transition-all hover:bg-cocoa-soft active:scale-95"
             >
               <Check className="h-3.5 w-3.5 text-gold" strokeWidth={2.5} />
               <span>Save and update the shop</span>

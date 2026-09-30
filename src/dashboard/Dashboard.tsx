@@ -8,6 +8,7 @@ import { KitchenMode } from './KitchenMode'
 import { MenuTab } from './MenuTab'
 import { OrderDetailModal } from './OrderDetailModal'
 import { RestockModal } from './RestockModal'
+import { SmoothCollapse } from '../components/SmoothCollapse'
 import { BakeSheetTab, CustomersTab, InsightsTab, MoneyTab, OrdersTab, TodayTab, type OrderActions } from './tabs'
 import {
   ChefHat,
@@ -148,37 +149,37 @@ export function Dashboard() {
         </div>
 
         <div className="px-4 pb-5 pt-4 space-y-3 shrink-0">
-          {!kitchenCardDismissed && (
-          <div className="rounded-[20px] border border-line bg-[#faf6f0] p-4 shadow-xs">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <ChefHat className="h-4 w-4 text-brick" />
-                <p className="text-[13.5px] font-bold text-ink">Kitchen mode</p>
+          <SmoothCollapse open={!kitchenCardDismissed}>
+            <div className="rounded-[20px] border border-line bg-[#faf6f0] p-4 shadow-xs">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <ChefHat className="h-4 w-4 text-brick" />
+                  <p className="text-[13.5px] font-bold text-ink">Kitchen mode</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setKitchenCardDismissed(true)}
+                  aria-label="Dismiss kitchen mode card"
+                  className="press-apple grid h-6 w-6 place-items-center rounded-full text-ink-soft transition-all hover:bg-cream-deep hover:text-ink active:scale-95"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
               </div>
+              <p className="mt-1.5 text-[12px] leading-relaxed text-ink-soft">
+                Put today&rsquo;s orders on a tablet in big type, for the bench.
+              </p>
               <button
                 type="button"
-                onClick={() => setKitchenCardDismissed(true)}
-                aria-label="Dismiss kitchen mode card"
-                className="grid h-6 w-6 place-items-center rounded-full text-ink-soft transition-all hover:bg-cream-deep hover:text-ink active:scale-95"
+                onClick={() => setKitchen(true)}
+                className="press-apple mt-3.5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-cocoa px-4 py-2.5 text-[11px] font-bold tracking-[0.09em] text-cream uppercase shadow-xs transition-all hover:bg-cocoa-soft active:scale-95"
               >
-                <X className="h-3.5 w-3.5" />
+                <span>Open bench mode</span>
               </button>
             </div>
-            <p className="mt-1.5 text-[12px] leading-relaxed text-ink-soft">
-              Put today&rsquo;s orders on a tablet in big type, for the bench.
-            </p>
-            <button
-              type="button"
-              onClick={() => setKitchen(true)}
-              className="mt-3.5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-cocoa px-4 py-2.5 text-[11px] font-bold tracking-[0.09em] text-cream uppercase shadow-xs transition-all hover:bg-cocoa-soft active:scale-95"
-            >
-              <span>Open bench mode</span>
-            </button>
-          </div>
-          )}
+          </SmoothCollapse>
           <Link
             to="/"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-line bg-shell px-4 py-2.5 text-[12px] font-medium text-ink transition-all hover:border-ink/40 active:scale-95"
+            className="press-apple inline-flex w-full items-center justify-center gap-2 rounded-full border border-line bg-shell px-4 py-2.5 text-[12px] font-medium text-ink transition-all hover:border-ink/40 active:scale-95"
           >
             <Store className="h-3.5 w-3.5 text-brick" />
             <span>View the shop</span>
@@ -249,7 +250,7 @@ export function Dashboard() {
           </nav>
         </div>
 
-        <main className="flex-1 px-4 py-5 sm:px-6 sm:py-6">
+        <main key={path} className="tab-fade-enter flex-1 px-4 py-5 sm:px-6 sm:py-6">
           <Routes>
             <Route
               index
