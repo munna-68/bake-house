@@ -3,7 +3,7 @@ import { CheckoutModal } from '../components/Checkout'
 import { AnnouncementBar, Header, LiveRegions, MobileOrderBar, Ticker, Toasts } from '../components/Chrome'
 import { Hero, TrustStrip } from '../components/Hero'
 import { ReviewSheet } from '../components/ReviewSheet'
-import { Explainer, Faq, Footer, Pricing, Reviews } from '../components/Sections'
+import { Explainer, Faq, Footer, Pricing, Reviews, WhatItDoes } from '../components/Sections'
 
 export function Shop() {
   return (
@@ -27,6 +27,7 @@ export function Shop() {
         <Explainer />
         <Faq />
         <Pricing />
+        <WhatItDoes />
       </main>
 
       <Footer />

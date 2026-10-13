@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { BASE_BUILD_CHECKLIST, BRAND, EXPLAINER, FAQS, REVIEWS } from '../lib/data'
+import { BASE_BUILD_CHECKLIST, BRAND, EXPLAINER, FAQS, REVIEWS, WHAT_IT_DOES } from '../lib/data'
 import { useShop } from '../lib/store'
 import {
   ArrowRight,
@@ -8,11 +8,16 @@ import {
   CheckCircle2,
   ChevronDown,
   Clock,
+  CreditCard,
   ExternalLink,
+  Globe,
+  MessageSquareOff,
+  PackageCheck,
   PackageOpen,
   RotateCcw,
   Sparkles,
   Star,
+  TrendingUp,
   Wallet,
 } from 'lucide-react'
 
@@ -379,6 +384,57 @@ export function Pricing() {
             </div>
           </div>
         </div>
+      </div>
+    </section>
+  )
+}
+
+export function WhatItDoes() {
+  const ICONS = [MessageSquareOff, PackageCheck, Clock, CreditCard, TrendingUp, Globe]
+
+  return (
+    <section id="what-it-does" className="scroll-mt-24 border-t border-line bg-cream py-14 sm:py-20">
+      <div className="container-page">
+        <header className="max-w-[58ch]">
+          <p className="label-caps text-[11px] tracking-[0.18em] text-ink-soft">Behind the counter</p>
+          <h2 className="heading-lg mt-2 text-ink">
+            Here is what it does
+            <br />
+            for you
+          </h2>
+          <p className="mt-3.5 text-[15.5px] leading-relaxed text-ink-soft sm:text-[17px]">
+            What you just clicked through is the part your customers see. What bakeries actually pay for is everything it stops happening behind the counter.
+          </p>
+        </header>
+
+        <ul className="mt-10 sm:mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
+          {WHAT_IT_DOES.map((item, idx) => {
+            const Icon = ICONS[idx] ?? Sparkles
+            return (
+              <li
+                key={item.n}
+                className="group relative flex flex-col justify-between rounded-[24px] border border-line bg-[#faf6f0] p-6 sm:p-7 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-ink/25 hover:shadow-sm"
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="font-display text-[32px] sm:text-[36px] leading-none text-brick">
+                      {item.n}
+                    </span>
+                    <span className="grid h-10 w-10 place-items-center rounded-full bg-shell border border-line text-ink shadow-xs transition-transform duration-300 group-hover:scale-110">
+                      <Icon className="h-5 w-5 text-cocoa" strokeWidth={1.8} />
+                    </span>
+                  </div>
+                  <h3 className="mt-4 font-display text-[21px] leading-tight text-ink sm:text-[23px]">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2.5 text-[14px] leading-relaxed text-ink-soft sm:text-[14.5px]">
+                    {item.body}
+                  </p>
+                </div>
+              </li>
+            )
+          })}
+        </ul>
 
         {/* Agency callout */}
         <div className="mt-12 rounded-[24px] border border-line bg-shell p-6 sm:p-8 shadow-xs">

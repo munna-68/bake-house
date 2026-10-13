@@ -300,6 +300,39 @@ export const BASE_BUILD_CHECKLIST = [
   'One round of changes, then it is yours to keep',
 ]
 
+export const WHAT_IT_DOES = [
+  {
+    n: '01',
+    title: 'The DMs stop',
+    body: 'No more answering what flavours do you have, forty times a week, at eleven at night. The page answers it, takes the order, and takes the money while you sleep.',
+  },
+  {
+    n: '02',
+    title: 'Nothing sells twice',
+    body: 'Stock is held the second someone orders. You will never again make the phone call where you apologise because two people bought the last box of Biscoff.',
+  },
+  {
+    n: '03',
+    title: 'Collection times are decided upfront',
+    body: 'People pick from windows you set, so nobody turns up at nine on a Sunday expecting a box. Your day is organised before it starts.',
+  },
+  {
+    n: '04',
+    title: 'You are paid before they arrive',
+    body: 'Card, Cash App, Venmo or bank transfer, each with a reference so you can match the payment in seconds instead of scrolling your banking app.',
+  },
+  {
+    n: '05',
+    title: 'Sold out becomes information',
+    body: 'Every customer who wanted something you had run out of gets counted. By morning you know exactly what to bake more of, and what it cost you not to.',
+  },
+  {
+    n: '06',
+    title: 'It is yours',
+    body: 'Your own domain, your own site, your own customer list, all in your name. If we ever part ways you keep every bit of it and nothing switches off.',
+  },
+]
+
 export const PAY_HANDLES = {
   cashapp: '$bakehouse',
   venmo: '@bakehouse',
