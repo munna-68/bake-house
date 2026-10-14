@@ -15,7 +15,7 @@ export function Wordmark({ className = '' }) {
     return (_jsxs("a", { href: "#top", className: `inline-flex min-h-11 items-center font-['Anton',sans-serif] text-[26px] leading-none tracking-[-0.02em] uppercase sm:min-h-0 ${className}`, "aria-label": `${BRAND.name} — back to top`, children: [_jsx("span", { className: "text-ink", children: BRAND.wordmark[0] }), _jsx("span", { className: "text-brick", children: BRAND.wordmark[1] })] }));
 }
 export function AnnouncementBar() {
-    return (_jsx("div", { className: "no-print bg-cocoa text-cream", children: _jsxs("div", { className: "container-page flex flex-wrap items-center justify-between gap-x-6 gap-y-1 py-2", children: [_jsx("p", { className: "label-caps text-[10px] leading-snug text-cream/80 sm:text-[11px]", children: DEMO_BANNER }), _jsx("a", { href: "#pricing", className: "label-caps shrink-0 text-[10px] text-gold underline decoration-gold/40 underline-offset-4 hover:decoration-gold sm:text-[11px]", children: "$29/mo or $750 all in \u2192" })] }) }));
+    return (_jsx("div", { className: "no-print bg-cocoa text-cream", children: _jsxs("div", { className: "container-page flex flex-wrap items-center justify-between gap-x-6 gap-y-1 py-2", children: [_jsx("p", { className: "label-caps text-[10px] leading-snug text-cream/80 sm:text-[11px]", children: DEMO_BANNER }), _jsx("a", { href: "#pricing", className: "label-caps shrink-0 text-[10px] text-gold underline decoration-gold/40 underline-offset-4 hover:decoration-gold sm:text-[11px]", children: "$19/mo or $750 all in \u2192" })] }) }));
 }
 export function Ticker() {
     const items = [...TICKER, ...TICKER];

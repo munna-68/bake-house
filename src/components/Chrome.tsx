@@ -34,7 +34,7 @@ export function AnnouncementBar() {
           href="#pricing"
           className="label-caps shrink-0 text-[10px] text-gold underline decoration-gold/40 underline-offset-4 hover:decoration-gold sm:text-[11px]"
         >
-          $29/mo or $750 all in →
+          $19/mo or $750 all in →
         </a>
       </div>
     </div>

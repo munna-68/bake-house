@@ -277,7 +277,7 @@ export function Pricing() {
               billing === 'monthly' ? 'bg-brick text-white shadow-xs' : 'text-ink-soft hover:text-ink'
             }`}
           >
-            Monthly · $29/mo
+            Monthly · $19/mo
           </button>
           <button
             type="button"
@@ -296,19 +296,61 @@ export function Pricing() {
           {/* Main pricing showcase card */}
           <div className="rounded-[26px] bg-cocoa p-6 text-cream sm:p-9 shadow-card flex flex-col justify-between">
             <div>
-              <div className="flex flex-wrap items-baseline justify-between gap-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <span className="label-caps text-[10px] text-gold tracking-widest uppercase">
                     {billing === 'monthly' ? 'Subscription plan' : 'Complete ownership'}
                   </span>
-                  <div className="mt-2 flex items-baseline gap-2">
-                    <span className="font-display text-[52px] leading-none text-gold sm:text-[66px]">
-                      {billing === 'monthly' ? '$29' : '$750'}
-                    </span>
-                    <span className="text-[16px] text-cream/75 font-medium">
-                      {billing === 'monthly' ? '/ month' : 'one-time'}
-                    </span>
-                  </div>
+
+                  {billing === 'monthly' ? (
+                    <div className="mt-2.5">
+                      <div className="flex items-center gap-2.5">
+                        <span className="relative inline-flex items-center">
+                          <span className="font-display text-[26px] leading-none text-cream/45 sm:text-[32px]">
+                            $29
+                          </span>
+                          <svg
+                            aria-hidden="true"
+                            className="pointer-events-none absolute -inset-x-2 -inset-y-1 h-[calc(100%+8px)] w-[calc(100%+16px)] overflow-visible"
+                            viewBox="0 0 100 100"
+                            preserveAspectRatio="none"
+                          >
+                            <line
+                              x1="2"
+                              y1="88"
+                              x2="98"
+                              y2="12"
+                              stroke="#c0452c"
+                              strokeWidth="2.8"
+                              strokeLinecap="round"
+                              vectorEffect="non-scaling-stroke"
+                            />
+                          </svg>
+                        </span>
+                        <span className="rounded-full bg-brick px-2.5 py-0.5 text-[10.5px] font-extrabold tracking-wider text-white uppercase shadow-xs">
+                          Now
+                        </span>
+                      </div>
+
+                      <div className="mt-1 flex items-baseline gap-2">
+                        <span className="font-display text-[56px] leading-none text-white sm:text-[72px]">
+                          $19
+                        </span>
+                        <span className="text-[17px] text-cream/75 font-medium">
+                          / month
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-2 flex items-baseline gap-2">
+                      <span className="font-display text-[52px] leading-none text-gold sm:text-[66px]">
+                        $750
+                      </span>
+                      <span className="text-[16px] text-cream/75 font-medium">
+                        one-time
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="rounded-[16px] border border-cream/15 bg-white/5 px-3.5 py-2 text-right">
@@ -319,7 +361,7 @@ export function Pricing() {
 
               <p className="mt-4 max-w-[42ch] text-[14.5px] leading-relaxed text-cream/80">
                 {billing === 'monthly'
-                  ? 'Get your shop live immediately for $29/month. High-speed hosting, automatic stock management, full kitchen dashboard, and ongoing maintenance included. Cancel anytime.'
+                  ? 'Get your shop live immediately for $19/month. High-speed hosting, automatic stock management, full kitchen dashboard, and ongoing maintenance included. Cancel anytime.'
                   : 'Pay $750 once and own everything outright. Full source code, complete commercial deployment on your domain, zero ongoing fees, and zero platform cuts forever.'}
               </p>
 
@@ -333,15 +375,19 @@ export function Pricing() {
                 </a>
                 <Link
                   to="/dashboard"
-                  className="inline-flex min-h-12 items-center justify-center rounded-full bg-cream px-6 py-3.5 text-center text-[11.5px] font-bold tracking-[0.09em] text-cocoa uppercase shadow-xs transition-all hover:bg-white active:scale-95"
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-cream/25 bg-transparent px-6 py-3.5 text-center text-[11.5px] font-bold tracking-[0.09em] text-cream uppercase transition-all hover:bg-white/10 hover:border-cream/40 active:scale-95"
                 >
-                  See kitchen dashboard
+                  <span>See kitchen dashboard</span>
+                  <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </Link>
               </div>
             </div>
 
             <div className="mt-8 border-t border-cream/15 pt-5 flex items-center justify-between text-[12.5px] text-cream/65">
-              <span>Ready in 48-72 hours</span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="h-3.5 w-3.5 text-cream/60" aria-hidden="true" />
+                <span>Ready in 48-72 hours</span>
+              </span>
               <span className="flex items-center gap-1.5 text-gold font-medium">
                 <Sparkles className="h-3.5 w-3.5" />
                 By sitekeep.studio
